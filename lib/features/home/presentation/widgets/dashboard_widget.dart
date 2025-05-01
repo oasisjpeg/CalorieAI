@@ -1,0 +1,288 @@
+import 'package:animated_flip_counter/animated_flip_counter.dart';
+import 'package:flutter/material.dart';
+import 'package:opennutritracker/features/home/presentation/widgets/macro_nutriments_widget.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:opennutritracker/generated/l10n.dart';
+
+class DashboardWidget extends StatefulWidget {
+  final double totalKcalDaily;
+  final double totalKcalLeft;
+  final double totalKcalSupplied;
+  final double totalKcalBurned;
+  final double totalCarbsIntake;
+  final double totalFatsIntake;
+  final double totalProteinsIntake;
+  final double totalCarbsGoal;
+  final double totalFatsGoal;
+  final double totalProteinsGoal;
+
+  const DashboardWidget({
+    super.key,
+    required this.totalKcalSupplied,
+    required this.totalKcalBurned,
+    required this.totalKcalDaily,
+    required this.totalKcalLeft,
+    required this.totalCarbsIntake,
+    required this.totalFatsIntake,
+    required this.totalProteinsIntake,
+    required this.totalCarbsGoal,
+    required this.totalFatsGoal,
+    required this.totalProteinsGoal,
+  });
+
+  @override
+  State<DashboardWidget> createState() => _DashboardWidgetState();
+}
+
+class _DashboardWidgetState extends State<DashboardWidget> {
+  @override
+  Widget build(BuildContext context) {
+    // Calculate values for progress indicators
+    double kcalLeftLabel = 0;
+    double gaugeValue = 0;
+    if (widget.totalKcalLeft > widget.totalKcalDaily) {
+      kcalLeftLabel = widget.totalKcalDaily;
+      gaugeValue = 0;
+    } else if (widget.totalKcalLeft < 0) {
+      kcalLeftLabel = 0;
+      gaugeValue = 1;
+    } else {
+      kcalLeftLabel = widget.totalKcalLeft;
+      gaugeValue = (widget.totalKcalDaily - widget.totalKcalLeft) /
+          widget.totalKcalDaily;
+    }
+
+    // Check if dark mode is active
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // Calculate macro nutrients values
+    final proteinsLeft =
+        (widget.totalProteinsGoal - widget.totalProteinsIntake).round();
+    final carbsLeft = (widget.totalCarbsGoal - widget.totalCarbsIntake).round();
+    final fatsLeft = (widget.totalFatsGoal - widget.totalFatsIntake).round();
+
+    // Calculate progress percentages
+    final proteinsPercent =
+        (widget.totalProteinsIntake / widget.totalProteinsGoal).clamp(0.0, 1.0);
+    final carbsPercent =
+        (widget.totalCarbsIntake / widget.totalCarbsGoal).clamp(0.0, 1.0);
+    final fatsPercent =
+        (widget.totalFatsIntake / widget.totalFatsGoal).clamp(0.0, 1.0);
+
+    final proteinColor = Colors.redAccent;
+    final proteinBg =
+        isDarkMode ? Colors.red.shade900.withOpacity(0.25) : Colors.red.shade50;
+    final carbsColor = Colors.orangeAccent;
+    final carbsBg = isDarkMode
+        ? Colors.orange.shade900.withOpacity(0.25)
+        : Colors.orange.shade50;
+    final fatsColor = Colors.blueAccent;
+    final fatsBg = isDarkMode
+        ? Colors.blue.shade900.withOpacity(0.25)
+        : Colors.blue.shade50;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          // Main calories card
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                if (!isDarkMode)
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Calories left section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnimatedFlipCounter(
+                      duration: const Duration(milliseconds: 1000),
+                      value: kcalLeftLabel.toInt(),
+                      textStyle: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Show "/ max kcal" next to the number, smaller and lighter
+                    Text(
+                      '/ ${widget.totalKcalDaily.toInt()}',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      S.of(context).kcalLeftLabel,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Circular progress indicator with flame icon
+                CircularPercentIndicator(
+                  radius: 54,
+                  lineWidth: 10,
+                  animation: true,
+                  percent: gaugeValue,
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor: isDarkMode
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.black87,
+                  backgroundColor: isDarkMode
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                      : Colors.grey.shade200,
+                  center: Icon(
+                    Icons.local_fire_department,
+                    color: isDarkMode
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.black54,
+                    size: 28,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Macro nutrients row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildMacroCard(
+                context,
+                value: proteinsLeft.abs(),
+                label: S.of(context).proteinLabel,
+                color: proteinColor,
+                bgColor: proteinBg,
+                icon: Icons.fitness_center,
+                percent: proteinsPercent,
+                isDarkMode: isDarkMode,
+                goalValue: widget.totalProteinsGoal,
+              ),
+              _buildMacroCard(
+                context,
+                value: carbsLeft.abs(),
+                label: S.of(context).carbsLabel,
+                color: carbsColor,
+                bgColor: carbsBg,
+                icon: Icons.bubble_chart,
+                percent: carbsPercent,
+                isDarkMode: isDarkMode,
+                goalValue: widget.totalCarbsGoal,
+              ),
+              _buildMacroCard(
+                context,
+                value: fatsLeft.abs(),
+                label: S.of(context).fatLabel,
+                color: fatsColor,
+                bgColor: fatsBg,
+                icon: Icons.opacity,
+                percent: fatsPercent,
+                isDarkMode: isDarkMode,
+                goalValue: widget.totalFatsGoal,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMacroCard(
+    BuildContext context, {
+    required int value,
+    required String label,
+    required Color color,
+    required Color bgColor,
+    required IconData icon,
+    required double percent,
+    required bool isDarkMode,
+    required double goalValue,
+  }) {
+    return Container(
+      width: 100,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.25),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          if (!isDarkMode)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Column(
+            children: [
+              Text(
+                "${value}g",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "/ ${goalValue.toInt()}g",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: color.withOpacity(0.7),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          CircularPercentIndicator(
+            radius: 22,
+            lineWidth: 6,
+            percent: percent,
+            circularStrokeCap: CircularStrokeCap.round,
+            backgroundColor: color.withOpacity(0.15),
+            progressColor: color,
+            center: Icon(icon, color: color, size: 16),
+          ),
+        ],
+      ),
+    );
+  }
+}

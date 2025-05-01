@@ -1,0 +1,38 @@
+{
+  "de": [
+    "onboardingWeightExampleHintLbs",
+    "onboardingHeightExampleHintFt",
+    "settingsSystemLabel",
+    "settingsMetricLabel",
+    "settingsImperialLabel",
+    "baseQuantityLabel",
+    "ftLabel",
+    "lbsLabel",
+    "paSkydiving"
+  ],
+
+  "tr": [
+    "buttonResetLabel",
+    "onboardingWeightExampleHintLbs",
+    "onboardingHeightExampleHintFt",
+    "settingsSystemLabel",
+    "settingsMetricLabel",
+    "settingsImperialLabel",
+    "dailyKcalAdjustmentLabel",
+    "macroDistributionLabel",
+    "exportImportLabel",
+    "exportImportDescription",
+    "exportImportSuccessLabel",
+    "exportImportErrorLabel",
+    "exportAction",
+    "importAction",
+    "baseQuantityLabel",
+    "ozUnit",
+    "flOzUnit",
+    "notAvailableLabel",
+    "servingLabel",
+    "perServingLabel",
+    "ftLabel",
+    "lbsLabel"
+  ]
+}

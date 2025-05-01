@@ -1,0 +1,2 @@
+/Users/marc/dev/windsurf/OpenNutriTracker-main/android/app/.cxx/Debug/176d4n3o/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/marc/dev/windsurf/OpenNutriTracker-main/android/app/.cxx/Debug/176d4n3o/arm64-v8a/CMakeFiles/rebuild_cache.dir
