@@ -75,7 +75,6 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       } else if (meal.isSolid) {
         _initialUnit = _usesImperialUnits
             ? UnitDropdownItem.oz.toString()
-
             : UnitDropdownItem.g.toString();
       } else {
         _initialUnit = UnitDropdownItem.gml.toString();
@@ -257,7 +256,55 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                     usesImperialUnits: _usesImperialUnits,
                     servingQuantity: meal.servingQuantity,
                     servingUnit: meal.servingUnit),
-                const SizedBox(height: 32.0),
+                const SizedBox(height: 24.0),
+                if (meal.foodItems != null ) ...[
+                  Padding(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ingredients',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: meal.foodItems!.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing:8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 1.2,
+                          ),
+                          itemBuilder: (context, index) {
+                            final item = meal.foodItems?[index];
+                            return Card(
+                              elevation: 2,
+                              color: Colors.black.withValues(alpha: 0.1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: Text(
+                                    item?['name'] ?? '',
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 16.0),
                 MealInfoButton(url: meal.url, source: meal.source),
                 meal.source == MealSourceEntity.off
                     ? const Column(
@@ -267,7 +314,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                         ],
                       )
                     : const SizedBox(),
-                const SizedBox(height: 200.0) // height added to scroll
+                const SizedBox(height: 200.0), // height added to scroll
+
               ],
             ),
           )

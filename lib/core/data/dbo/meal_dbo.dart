@@ -29,18 +29,20 @@ class MealDBO extends HiveObject {
   @HiveField(7)
   final String? mealUnit;
   @HiveField(8)
-  final double? servingQuantity;
-  @HiveField(9)
-  final String? servingUnit;
+  final MealNutrimentsDBO nutriments;
 
-  @HiveField(12)
+  @HiveField(9)
+  final double? servingQuantity;
+  @HiveField(10)
+  final String? servingUnit;
+  @HiveField(11)
   final String? servingSize;
 
-  @HiveField(10)
+  @HiveField(12)
   final MealSourceDBO source;
 
-  @HiveField(11)
-  final MealNutrimentsDBO nutriments;
+  @HiveField(13)
+  final List<Map<String, dynamic>>? foodItems;
 
   MealDBO(
       {required this.code,
@@ -55,7 +57,8 @@ class MealDBO extends HiveObject {
       required this.servingUnit,
       required this.servingSize,
       required this.nutriments,
-      required this.source});
+      required this.source,
+      this.foodItems});
 
   factory MealDBO.fromMealEntity(MealEntity mealEntity) => MealDBO(
       code: mealEntity.code,
@@ -72,7 +75,7 @@ class MealDBO extends HiveObject {
       nutriments:
           MealNutrimentsDBO.fromProductNutrimentsEntity(mealEntity.nutriments),
       source: MealSourceDBO.fromMealSourceEntity(mealEntity.source),
-  );
+      foodItems: mealEntity.foodItems);
 
   factory MealDBO.fromJson(Map<String, dynamic> json) =>
       _$MealDBOFromJson(json);

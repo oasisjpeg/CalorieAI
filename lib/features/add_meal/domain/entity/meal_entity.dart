@@ -90,7 +90,8 @@ class MealEntity extends Equatable {
       servingSize: mealDBO.servingSize,
       nutriments:
           MealNutrimentsEntity.fromMealNutrimentsDBO(mealDBO.nutriments),
-      source: MealSourceEntity.fromMealSourceDBO(mealDBO.source));
+      source: MealSourceEntity.fromMealSourceDBO(mealDBO.source),
+      foodItems: mealDBO.foodItems);
 
   factory MealEntity.fromOFFProduct(OFFProductDTO offProduct) {
     return MealEntity(

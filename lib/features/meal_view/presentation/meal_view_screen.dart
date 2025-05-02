@@ -58,7 +58,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
     // Initialize the bloc with meal's values
     final initialUnit = meal.mealUnit ?? 'g';
     final initialQuantity = meal.mealQuantity ?? '100';
-    
+
     _mealDetailBloc.add(UpdateKcalEvent(
       meal: meal,
       totalQuantity: initialQuantity,
@@ -199,38 +199,58 @@ class _MealViewScreenState extends State<MealViewScreen> {
                   product: meal,
                   usesImperialUnits: _usesImperialUnits,
                   servingQuantity: double.parse(totalQuantity),
-                  servingUnit: selectedUnit == UnitDropdownItem.serving.toString()
-                      ? meal.servingUnit
-                      : selectedUnit,
+                  servingUnit:
+                      selectedUnit == UnitDropdownItem.serving.toString()
+                          ? meal.servingUnit
+                          : selectedUnit,
                 ),
                 const SizedBox(height: 32.0),
-                if (meal.foodItems != null && meal.foodItems!.isNotEmpty) ...[
-                  const Text(
-                    'Food Components',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...meal.foodItems!.map((item) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
+                if (meal.foodItems != null) ...[
+                  Padding(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Text(
-                            item['name'] ?? 'Unknown',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                        ),
                         Text(
-                          '${item['estimated_grams']?.toStringAsFixed(1) ?? '0'}g',
-                          style: const TextStyle(color: Colors.grey),
+                          'Ingredients',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: meal.foodItems!.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 1.2,
+                          ),
+                          itemBuilder: (context, index) {
+                            final item = meal.foodItems?[index];
+                            return Card(
+                              elevation: 2,
+                              color: Colors.black.withValues(alpha: 0.1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: Text(
+                                    item?['name'] ?? '',
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
-                  )),
-                  const SizedBox(height: 32.0),
+                  ),
                 ],
                 MealInfoButton(url: meal.url, source: meal.source),
                 meal.source == MealSourceEntity.off
@@ -249,8 +269,6 @@ class _MealViewScreenState extends State<MealViewScreen> {
       ],
     );
   }
-
-
 }
 
 class MealViewScreenArguments {

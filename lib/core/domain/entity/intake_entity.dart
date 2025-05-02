@@ -11,6 +11,7 @@ class IntakeEntity extends Equatable {
   final DateTime dateTime;
 
   final MealEntity meal;
+  final List<Map<String, dynamic>>? foodItems;
 
   const IntakeEntity(
       {required this.id,
@@ -18,7 +19,8 @@ class IntakeEntity extends Equatable {
       required this.amount,
       required this.type,
       required this.meal,
-      required this.dateTime});
+      required this.dateTime,
+      this.foodItems});
 
   factory IntakeEntity.fromIntakeDBO(IntakeDBO intakeDBO) {
     return IntakeEntity(
@@ -27,7 +29,8 @@ class IntakeEntity extends Equatable {
         amount: intakeDBO.amount,
         type: IntakeTypeEntity.fromIntakeTypeDBO(intakeDBO.type),
         meal: MealEntity.fromMealDBO(intakeDBO.meal),
-        dateTime: intakeDBO.dateTime);
+        dateTime: intakeDBO.dateTime,
+        foodItems: intakeDBO.meal.foodItems);
   }
 
   double get totalKcal => amount * (meal.nutriments.energyPerUnit ?? 0);

@@ -134,7 +134,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
         setState(() {
           _foodData = parsedData;
-
         });
 
         if (_foodData != null && _foodData!['valid_food_image'] == true) {
@@ -182,7 +181,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     if (_foodData == null) {
       throw Exception('No food data available');
     }
-
 
     try {
       final title = _foodData!['title'] as String;
@@ -236,7 +234,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       final foodItems = foodItemsRaw
           .map((item) => Map<String, dynamic>.from(item as Map))
           .toList();
-      
+
       return MealEntity(
         code: IdGenerator.getUniqueID(),
         name: title,
@@ -260,53 +258,33 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     }
   }
 
-  // Add the analyzed food to the meal log
-  Future<void> addToMealLog(BuildContext context) async {
 
-
-    try {
-      // Create the meal entity and navigate to meal detail screen
-      final mealEntity = await createMealEntityFromGeminiData();
-
-      // Navigate to the meal view screen
-      Navigator.of(context).pushNamed(
-        NavigationOptions.mealViewRoute,
-        arguments: MealViewScreenArguments(
-          mealEntity,
-          widget.intakeType,
-          widget.day,
-          false)
-      );
-    } catch (e) {
-      log.severe('Error adding to meal log: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error adding to meal log: $e')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton.icon(
-                icon: const Icon(Icons.camera_alt),
-                label: const Text('Camera'), // TODO: Add translation
-                onPressed: () => _getImage(ImageSource.camera),
-              ),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.photo_library),
-                label: const Text('Gallery'), // TODO: Add translation
-                onPressed: () => _getImage(ImageSource.gallery),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (_imageFile != null) ...[
+          if (!_isAnalyzing)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Camera'),
+                  onPressed: () => _getImage(ImageSource.camera),
+                ),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.photo_library),
+                  label: const Text('Gallery'),
+                  onPressed: () => _getImage(ImageSource.gallery),
+                ),
+              ],
+            ),
+          if (_isAnalyzing)
+            const Center(child: CircularProgressIndicator())
+          // Only show image and results if not analyzing
+          else if (_imageFile != null) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.file(
@@ -317,60 +295,95 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
               ),
             ),
             const SizedBox(height: 8),
-            if (_isAnalyzing)
-              const Center(child: CircularProgressIndicator())
-            else if (_analysisResult.isNotEmpty) ...[
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.restaurant,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Food Analysis',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Divider(height: 1),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 250),
-                      child: SingleChildScrollView(
-                        child: Text(
-                          _analysisResult,
-                          style: const TextStyle(fontSize: 14, height: 1.4),
-                        ),
+            if (_analysisResult.isNotEmpty) ...[
+              if (_analysisResult
+                  .startsWith('Error analyzing image')) // Show error card
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  child: Card(
+                    elevation: 4,
+                    color: Theme.of(context).colorScheme.errorContainer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    child: ListTile(
+                      leading: Icon(Icons.error_outline,
+                          color: Theme.of(context).colorScheme.error, size: 36),
+                      title: Text(
+                        'Analysis Failed',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.error,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                      subtitle: Text(
+                        'There was a problem analyzing your image. Please try again.',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.refresh),
+                        tooltip: 'Retry',
+                        onPressed: () {
+                          if (_imageFile != null) _analyzeImage();
+                        },
                       ),
                     ),
-                    
-                  ],
+                  ),
+                )
+              else // Show normal analysis result
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.restaurant,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Food Analysis',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Divider(height: 1),
+                      const SizedBox(height: 8),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxHeight: 250),
+                        child: SingleChildScrollView(
+                          child: Text(
+                            _analysisResult,
+                            style: const TextStyle(fontSize: 14, height: 1.4),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+            ]
           ],
         ],
       ),
