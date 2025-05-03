@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:opennutritracker/core/services/imgbb_service.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
@@ -36,12 +37,15 @@ class FoodImageAnalyzer extends StatefulWidget {
 class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   final log = Logger('FoodImageAnalyzer');
   final ImagePicker _picker = ImagePicker();
+  final FocusNode _promptFocusNode = FocusNode();
 
   File? _imageFile;
   bool _isAnalyzing = false;
   String _analysisResult = '';
   Map<String, dynamic>? _foodData;
   late GeminiService _geminiService;
+  final TextEditingController _promptController = TextEditingController();
+  bool _hasPrompt = false;
 
   // Flag to track if we can add this food to the meal log
 
@@ -79,6 +83,13 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     _geminiService = locator<GeminiService>();
   }
 
+  @override
+  void dispose() {
+    _promptController.dispose();
+    _promptFocusNode.dispose();
+    super.dispose();
+  }
+
   Future<void> _getImage(ImageSource source) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
@@ -93,10 +104,9 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
           _imageFile = File(pickedFile.path);
           _analysisResult = '';
           _isAnalyzing = false;
+          _hasPrompt = false;
+          _promptController.clear();
         });
-
-        // Automatically analyze the image
-        _analyzeImage();
       }
     } catch (e) {
       log.severe('Error picking image: $e');
@@ -107,7 +117,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   }
 
   Future<void> _analyzeImage() async {
-    if (_imageFile == null) return;
+    if (_imageFile == null || !_hasPrompt) return;
 
     setState(() {
       _isAnalyzing = true;
@@ -116,8 +126,22 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     });
 
     try {
-      final imageBytes = await _imageFile!.readAsBytes();
-      final jsonResponse = await _geminiService.analyzeFoodImage(imageBytes);
+      final imageUrl = await _uploadImageToImgbb(_imageFile!);
+      if (imageUrl == null) {
+        setState(() {
+          _isAnalyzing = false;
+          _analysisResult = 'Failed to upload image';
+        });
+        return;
+      }
+
+      // Include the prompt in the Gemini analysis
+      final prompt = _promptController.text.trim();
+      final jsonResponse = await _geminiService.analyzeFoodImage(
+        imageBytes: _imageFile!.readAsBytesSync(),
+        context: context,
+        prompt: prompt,
+      );
 
       try {
         // Clean up the response if it contains markdown code blocks
@@ -154,18 +178,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         }
       } catch (jsonError) {
         log.warning('Error parsing JSON response: $jsonError');
-        setState(() {
-          // Fallback to showing the raw response
-          _analysisResult = jsonResponse;
-          _isAnalyzing = false;
-        });
-
-        // Try to extract search terms using the original method
-        final searchTerms =
-            await _geminiService.extractSearchTerms(jsonResponse);
-        if (searchTerms.isNotEmpty) {
-          widget.onSearchTermsExtracted(searchTerms);
-        }
       }
     } catch (e) {
       log.severe('Error analyzing image: $e');
@@ -258,14 +270,17 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          if (!_isAnalyzing)
+    return GestureDetector(
+      onTap: () {
+        _promptFocusNode.unfocus();
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+          // Show buttons if not analyzing and no image selected
+          if (!_isAnalyzing && _imageFile == null)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -281,10 +296,16 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                 ),
               ],
             ),
+
+          // Show loading indicator while analyzing
           if (_isAnalyzing)
-            const Center(child: CircularProgressIndicator())
-          // Only show image and results if not analyzing
-          else if (_imageFile != null) ...[
+            const Padding(
+              padding: EdgeInsets.all(40.0),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+
+          // Show image and prompt if image is selected and not analyzing
+          if (!_isAnalyzing && _imageFile != null) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.file(
@@ -294,99 +315,142 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 8),
-            if (_analysisResult.isNotEmpty) ...[
-              if (_analysisResult
-                  .startsWith('Error analyzing image')) // Show error card
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                  child: Card(
-                    elevation: 4,
-                    color: Theme.of(context).colorScheme.errorContainer,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: ListTile(
-                      leading: Icon(Icons.error_outline,
-                          color: Theme.of(context).colorScheme.error, size: 36),
-                      title: Text(
-                        'Analysis Failed',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.error,
-                                  fontWeight: FontWeight.bold,
-                                ),
+            if (!_hasPrompt)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _promptController,
+                      focusNode: _promptFocusNode,
+                      decoration: const InputDecoration(
+                        labelText: 'Add prompt for Gemini (optional)',
+                        hintText:
+                            'e.g., "This is a close-up of a salad with tomatoes and cucumbers"',
+                        border: OutlineInputBorder(),
                       ),
-                      subtitle: Text(
-                        'There was a problem analyzing your image. Please try again.',
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 3,
+                      minLines: 1,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (String value) {
+                        setState(() {
+                          _hasPrompt = value.trim().isNotEmpty;
+                          _isAnalyzing = true;
+                        });
+                        _analyzeImage();
+                        _promptFocusNode.unfocus();
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.refresh),
-                        tooltip: 'Retry',
-                        onPressed: () {
-                          if (_imageFile != null) _analyzeImage();
-                        },
-                      ),
+                      onPressed: () {
+                        setState(() {
+                          _hasPrompt = _promptController.text.trim().isNotEmpty;
+                          _isAnalyzing = true;
+                        });
+                        _analyzeImage();
+                      },
+                      child: const Text('Analyze with Gemini'),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+
+          const SizedBox(height: 8),
+
+          // Show analysis result (if any)
+          if (_analysisResult.isNotEmpty)
+            if (_analysisResult.startsWith('Error analyzing image'))
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                child: Card(
+                  elevation: 4,
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: ListTile(
+                    leading: Icon(Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error, size: 36),
+                    title: Text(
+                      'Analysis Failed',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.error,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    subtitle: Text(
+                      'There was a problem analyzing your image. Please try again.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.refresh),
+                      tooltip: 'Retry',
+                      onPressed: () {
+                        if (_imageFile != null) _analyzeImage();
+                      },
                     ),
                   ),
-                )
-              else // Show normal analysis result
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.restaurant,
-                            size: 20,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Food Analysis',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      const Divider(height: 1),
-                      const SizedBox(height: 8),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxHeight: 250),
-                        child: SingleChildScrollView(
-                          child: Text(
-                            _analysisResult,
-                            style: const TextStyle(fontSize: 14, height: 1.4),
-                          ),
+                ),
+              )
+            else
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.restaurant,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Food Analysis',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Divider(height: 1),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 250),
+                      child: SingleChildScrollView(
+                        child: Text(
+                          _analysisResult,
+                          style: const TextStyle(fontSize: 14, height: 1.4),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-            ]
-          ],
+              ),
         ],
       ),
-    );
+    ));
   }
 }

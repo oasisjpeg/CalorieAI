@@ -49,6 +49,10 @@
   "onboardingGoalQuestionSubtitle": "What's your current weight goal?",
   "onboardingSaveUserError": "Wrong input, please try again",
   "settingsUnitsLabel": "Units",
+  "stepsPermissionDenied": "Please grant access to Apple Health to track your steps",
+  "stepsGrantAccess": "Grant Access",
+  "steps": "Steps",
+  "stepsToday": "Today"
   "settingsCalculationsLabel": "Calculations",
   "settingsThemeLabel": "Theme",
   "settingsThemeLightLabel": "Light",

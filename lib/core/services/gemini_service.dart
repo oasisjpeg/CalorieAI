@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:logging/logging.dart';
 import 'package:opennutritracker/core/utils/env.dart';
@@ -18,11 +19,18 @@ class GeminiService {
   }
 
   /// Analyzes a food image and returns a description of the food with nutritional information in JSON format
-  Future<String> analyzeFoodImage(Uint8List imageBytes) async {
+  Future<String> analyzeFoodImage({
+    required Uint8List imageBytes,
+    required BuildContext context,
+    String? prompt,
+  }) async {
     try {
       log.fine('Analyzing food image with Gemini...');
 
-      final prompt = '''
+      final locale = Localizations.localeOf(context);
+      final languageText = locale.languageCode == 'de' ? "german" : "english";
+
+      final geminiPrompt = '''
       You are a culinary expert specializing in visual food analysis. For any provided image:
 
 1. Verify if the image contains edible food items or drinks (coca-cola or red-bulls or similar)
@@ -73,12 +81,15 @@ IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backti
   }
 }
 Provide exact food names (brand names if recognizable). Use standard nutritional databases. Maintain decimal precision.
-Give me the resposne of texts (except the tags) in german
+Give me the response of texts (except the tags) in $languageText
+
+Additional context: $prompt
       ''';
 
       final content = [
         Content.multi([
-          TextPart(prompt),
+          TextPart(geminiPrompt),
+          TextPart(prompt ?? ''),
           DataPart('image/jpeg', imageBytes),
         ])
       ];
@@ -107,27 +118,4 @@ Give me the resposne of texts (except the tags) in german
     }
   }
 
-  /// Extracts search terms from the food description
-  Future<String> extractSearchTerms(String foodDescription) async {
-    try {
-      log.fine('Extracting search terms from food description...');
-
-      final prompt = '''
-Extract the most relevant search terms for a food database from this food description. 
-Focus on the main food item and key ingredients.
-Return only the search terms as a comma-separated list with no additional text.
-
-Food description: $foodDescription
-''';
-
-      final response = await _model.generateContent([Content.text(prompt)]);
-      final searchTerms = response.text ?? '';
-
-      log.fine('Extracted search terms: $searchTerms');
-      return searchTerms;
-    } catch (e) {
-      log.severe('Error extracting search terms: $e');
-      return '';
-    }
   }
-}
