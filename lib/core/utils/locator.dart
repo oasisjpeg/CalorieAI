@@ -53,6 +53,8 @@ import 'package:opennutritracker/features/meal_detail/presentation/bloc/meal_det
 import 'package:opennutritracker/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:opennutritracker/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:opennutritracker/features/scanner/domain/usecase/search_product_by_barcode_usecase.dart';
+import 'package:opennutritracker/features/recipe_chatbot/data/recipe_chatbot_service.dart';
+import 'package:opennutritracker/features/recipe_chatbot/presentation/bloc/recipe_chatbot_bloc.dart';
 import 'package:opennutritracker/features/scanner/presentation/scanner_bloc.dart';
 import 'package:opennutritracker/features/settings/domain/usecase/export_data_usecase.dart';
 import 'package:opennutritracker/features/settings/domain/usecase/import_data_usecase.dart';
@@ -80,6 +82,9 @@ Future<void> initLocator() async {
       
   // AI Services
   locator.registerLazySingleton<GeminiService>(() => GeminiService());
+
+  // ChatbotService
+  locator.registerLazySingleton<RecipeChatbotService>(() => RecipeChatbotService(locator()));
 
   // BLoCs
   locator.registerLazySingleton<OnboardingBloc>(
@@ -118,6 +123,7 @@ Future<void> initLocator() async {
       .registerFactory<ProductsBloc>(() => ProductsBloc(locator(), locator()));
   locator.registerFactory<FoodBloc>(() => FoodBloc(locator(), locator()));
   locator.registerFactory(() => RecentMealBloc(locator(), locator()));
+  locator.registerFactory(() => RecipeChatbotBloc(locator()));
 
   // UseCases
   locator.registerLazySingleton<GetConfigUsecase>(

@@ -116,4 +116,45 @@ Give me the response of texts (except the tags) in $languageText
     }
   }
 
+    /// Sends a message to the Gemini model and returns the response
+  Future<String> sendMessage({
+    required String message,
+    List<Content>? history,
+  }) async {
+    try {
+      log.fine('Sending message to Gemini...');
+      final chat = _model.startChat(history: history);
+      
+      final chatContent = [
+        Content.text(message),
+      ];
+
+      final response = await chat.sendMessage(
+        Content.multi([
+        TextPart(message),
+        ])
+      );
+
+      final responseText = response.text;
+
+      if (responseText == null || responseText.isEmpty) {
+        log.warning('Empty response from Gemini');
+        return 'Could not process the message.';
+      }
+
+      // For display purposes, we'll format the response as a readable description
+      try {
+        log.fine('Successfully processed message');
+        return responseText;
+      } catch (formatError) {
+        log.warning('Error formatting response: $formatError');
+        return responseText; // Return the raw response if formatting fails
+      }
+    } catch (e, stackTrace) {
+      log.severe('Error sending message: $e', e, stackTrace);
+      return 'Error processing message: $e';
+    }
   }
+
+
+}

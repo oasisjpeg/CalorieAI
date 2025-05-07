@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:opennutritracker/core/presentation/widgets/add_item_bottom_sheet.dart';
+import 'package:opennutritracker/features/recipe_chatbot/presentation/recipe_chatbot_screen.dart';
 import 'package:opennutritracker/features/diary/diary_page.dart';
 import 'package:opennutritracker/core/presentation/widgets/home_appbar.dart';
 import 'package:opennutritracker/features/home/home_page.dart';
 import 'package:opennutritracker/core/presentation/widgets/main_appbar.dart';
 import 'package:opennutritracker/features/profile/profile_page.dart';
 import 'package:opennutritracker/generated/l10n.dart';
+
+enum MainScreenNavigation {
+  home,
+  diary,
+  chatbot,
+  profile
+}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,45 +23,49 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedPageIndex = 0;
+  MainScreenNavigation _selectedPageIndex = MainScreenNavigation.home;
 
   late List<Widget> _bodyPages;
   late List<PreferredSizeWidget> _appbarPages;
 
   @override
   void didChangeDependencies() {
+    final s = S.of(context);
     _bodyPages = [
       const HomePage(),
       const DiaryPage(),
+      const RecipeChatbotScreen(),
       const ProfilePage(),
     ];
     _appbarPages = [
       const HomeAppbar(),
-      MainAppbar(title: S.of(context).diaryLabel, iconData: Icons.book),
+      MainAppbar(title: s.diaryLabel, iconData: Icons.book),
+      MainAppbar(title: "Recipes", iconData: Icons.restaurant_menu),
       MainAppbar(
-          title: S.of(context).profileLabel, iconData: Icons.account_circle)
+          title: s.profileLabel, iconData: Icons.account_circle)
     ];
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
-      appBar: _appbarPages[_selectedPageIndex],
-      body: _bodyPages[_selectedPageIndex],
-      floatingActionButton: _selectedPageIndex == 0
+      appBar: _appbarPages[_selectedPageIndex.index],
+      body: _bodyPages[_selectedPageIndex.index],
+      floatingActionButton: _selectedPageIndex == MainScreenNavigation.home
           ? FloatingActionButton(
               onPressed: () => _onFabPressed(context),
-              tooltip: S.of(context).addLabel,
+              tooltip: s.addLabel,
               child: const Icon(Icons.add),
             )
           : null,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedPageIndex,
+        selectedIndex: _selectedPageIndex.index,
         onDestinationSelected: _setPage,
         destinations: [
           NavigationDestination(
-              icon: _selectedPageIndex == 0
+              icon: _selectedPageIndex == MainScreenNavigation.home
                   ? const Icon(Icons.home)
                   : const Icon(Icons.home_outlined),
               label: S.of(context).homeLabel),
@@ -61,20 +73,26 @@ class _MainScreenState extends State<MainScreen> {
               icon: _selectedPageIndex == 1
                   ? const Icon(Icons.book)
                   : const Icon((Icons.book_outlined)),
-              label: S.of(context).diaryLabel),
+              label: s.diaryLabel),
           NavigationDestination(
-              icon: _selectedPageIndex == 2
+            icon: _selectedPageIndex == MainScreenNavigation.chatbot
+                ? const Icon(Icons.restaurant_menu)
+                : const Icon(Icons.restaurant_menu_outlined),
+            label: "Recipes",
+          ),
+          NavigationDestination(
+              icon: _selectedPageIndex == MainScreenNavigation.profile
                   ? const Icon(Icons.account_circle)
                   : const Icon(Icons.account_circle_outlined),
-              label: S.of(context).profileLabel)
+              label: s.profileLabel)
         ],
       ),
     );
-  }
+  }    
 
-  void _setPage(int selectedIndex) {
+  void _setPage(int selectedIndex) {    
     setState(() {
-      _selectedPageIndex = selectedIndex;
+      _selectedPageIndex = MainScreenNavigation.values[selectedIndex];
     });
   }
 
