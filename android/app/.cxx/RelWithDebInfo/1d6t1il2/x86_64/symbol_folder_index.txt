@@ -1,0 +1,1 @@
+/Users/marc/dev/windsurf/OpenNutriTracker-main/build/app/intermediates/cxx/RelWithDebInfo/1d6t1il2/obj/x86_64

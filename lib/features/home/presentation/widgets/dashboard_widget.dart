@@ -88,7 +88,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           // Main calories card
           Container(
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.25),
+              color: isDarkMode ? Colors.black.withValues(alpha: 0.25) : Colors.white.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 if (!isDarkMode)
@@ -229,7 +229,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       width: 100,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.25),
+        color: isDarkMode ? Colors.black.withValues(alpha: 0.25) : Colors.white.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           if (!isDarkMode)

@@ -82,8 +82,6 @@ IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backti
 }
 Provide exact food names (brand names if recognizable). Use standard nutritional databases. Maintain decimal precision.
 Give me the response of texts (except the tags) in $languageText
-
-Additional context: $prompt
       ''';
 
       final content = [

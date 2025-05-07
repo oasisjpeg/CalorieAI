@@ -117,7 +117,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   }
 
   Future<void> _analyzeImage() async {
-    if (_imageFile == null || !_hasPrompt) return;
+    if (_imageFile == null ) return;
 
     setState(() {
       _isAnalyzing = true;

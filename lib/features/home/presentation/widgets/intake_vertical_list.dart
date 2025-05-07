@@ -19,7 +19,7 @@ class IntakeVerticalList extends StatefulWidget {
   final AddMealType addMealType;
   final List<IntakeEntity> intakeList;
   final bool usesImperialUnits;
-  final Function(BuildContext, IntakeEntity)? onItemLongPressedCallback;
+  final Function(BuildContext, IntakeEntity, bool)? onItemLongPressedCallback;
   final Function(bool)? onItemDragCallback;
   final Function(BuildContext, IntakeEntity, bool)? onItemTappedCallback;
 

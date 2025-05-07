@@ -4,12 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
+import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
 import 'package:opennutritracker/core/presentation/widgets/meal_value_unit_text.dart';
 import 'package:opennutritracker/core/presentation/widgets/image_full_screen.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/core/utils/navigation_options.dart';
+import 'package:opennutritracker/core/data/repository/intake_repository.dart';
+import 'package:opennutritracker/core/utils/id_generator.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
-import 'package:opennutritracker/features/edit_meal/presentation/edit_meal_screen.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_detail_macro_nutrients.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_detail_nutriments_table.dart';
@@ -38,10 +40,12 @@ class _MealViewScreenState extends State<MealViewScreen> {
   late DateTime _day;
   late IntakeTypeEntity intakeTypeEntity;
   late bool _usesImperialUnits;
+  late IntakeRepository _intakeRepository;
 
   @override
   void initState() {
     _mealDetailBloc = locator<MealDetailBloc>();
+    _intakeRepository = locator<IntakeRepository>();
 
     super.initState();
   }
@@ -94,6 +98,38 @@ class _MealViewScreenState extends State<MealViewScreen> {
     );
   }
 
+  void _showDeleteDialog(BuildContext context) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(S.of(context).deleteTimeDialogTitle),
+        content: Text(S.of(context).deleteTimeDialogContent),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(S.of(context).dialogCancelLabel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(S.of(context).dialogDeleteLabel),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true) {
+      await _intakeRepository.deleteIntake(IntakeEntity(
+        id: meal.code ?? IdGenerator.getUniqueID(),
+        unit: meal.mealUnit ?? 'g',
+        amount: double.parse(meal.mealQuantity ?? '100'),
+        type: intakeTypeEntity,
+        meal: meal,
+        dateTime: _day,
+      ));
+      Navigator.pop(context); // Close the meal view screen
+    }
+  }
+
   Widget _getLoadedContent(
       BuildContext context,
       String totalQuantity,
@@ -128,7 +164,12 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                 overflow: TextOverflow.ellipsis)
                             : const SizedBox()));
           }),
-          actions: [],
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => _showDeleteDialog(context),
+            ),
+          ],
         ),
         SliverList(
             delegate: SliverChildListDelegate([

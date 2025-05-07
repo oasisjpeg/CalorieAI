@@ -8,7 +8,7 @@ import 'package:opennutritracker/core/utils/locator.dart';
 
 class IntakeCard extends StatelessWidget {
   final IntakeEntity intake;
-  final Function(BuildContext, IntakeEntity)? onItemLongPressed;
+  final Function(BuildContext, IntakeEntity, bool)? onItemLongPressed;
   final Function(BuildContext, IntakeEntity, bool)? onItemTapped;
   final bool firstListElement;
   final bool usesImperialUnits;
@@ -38,7 +38,7 @@ class IntakeCard extends StatelessWidget {
             elevation: 1,
             child: InkWell(
               onLongPress: onItemLongPressed != null
-                  ? () => onLongPressedItem(context)
+                  ? () => onLongPressedItem(context, usesImperialUnits)
                   : null,
               onTap: onItemTapped != null
                   ? () => onTappedItem(context, usesImperialUnits)
@@ -128,8 +128,8 @@ class IntakeCard extends StatelessWidget {
     );
   }
 
-  void onLongPressedItem(BuildContext context) {
-    onItemLongPressed?.call(context, intake);
+  void onLongPressedItem(BuildContext context, bool usesImperialUnits) {
+    onItemLongPressed?.call(context, intake, usesImperialUnits);
   }
 
   void onTappedItem(BuildContext context, bool usesImperialUnits) {

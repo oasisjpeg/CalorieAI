@@ -7,6 +7,7 @@ import 'package:opennutritracker/core/domain/entity/user_activity_entity.dart';
 import 'package:opennutritracker/core/presentation/widgets/activity_vertial_list.dart';
 import 'package:opennutritracker/core/presentation/widgets/delete_dialog.dart';
 import 'package:opennutritracker/core/presentation/widgets/disclaimer_dialog.dart';
+import 'package:opennutritracker/core/presentation/widgets/edit_dialog.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/features/add_meal/presentation/add_meal_type.dart';
 import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
@@ -138,6 +139,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           addMealType: AddMealType.breakfastType,
           intakeList: breakfastIntakeList,
           onItemDragCallback: onIntakeItemDrag,
+          onItemLongPressedCallback: onIntakeItemLongPressed,
           onItemTappedCallback: onIntakeItemTapped,
           usesImperialUnits: usesImperialUnits,
         ),
@@ -149,6 +151,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           intakeList: lunchIntakeList,
           onItemDragCallback: onIntakeItemDrag,
           onItemTappedCallback: onIntakeItemTapped,
+          onItemLongPressedCallback: onIntakeItemLongPressed,
           usesImperialUnits: usesImperialUnits,
         ),
         IntakeVerticalList(
@@ -159,6 +162,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           intakeList: dinnerIntakeList,
           onItemDragCallback: onIntakeItemDrag,
           onItemTappedCallback: onIntakeItemTapped,
+          onItemLongPressedCallback: onIntakeItemLongPressed,
           usesImperialUnits: usesImperialUnits,
         ),
         IntakeVerticalList(
@@ -224,7 +228,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
-  void onIntakeItemLongPressed(
+  void onIntakeItemLongPressed(BuildContext context, IntakeEntity intakeEntity,
+      bool usesImperialUnits) async {
+    await Navigator.of(context).pushNamed(
+      NavigationOptions.mealViewRoute,
+      arguments: MealViewScreenArguments(
+        intakeEntity.meal,
+        intakeEntity.type,
+        DateTime.now(),
+        usesImperialUnits,
+      ),
+    );
+  }
+
+/*   void onIntakeItemLongPressed(
       BuildContext context, IntakeEntity intakeEntity) async {
     final deleteIntake = await showDialog<bool>(
         context: context, builder: (context) => const DeleteDialog());
@@ -237,7 +254,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             SnackBar(content: Text(S.of(context).itemDeletedSnackbar)));
       }
     }
-  }
+  } */
 
   void onIntakeItemDrag(bool isDragging) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -247,17 +264,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
-  void onIntakeItemTapped(BuildContext context, IntakeEntity intakeEntity,
+/*   void onIntakeItemTapped(BuildContext context, IntakeEntity intakeEntity,
       bool usesImperialUnits) async {
     await Navigator.of(context).pushNamed(
-      NavigationOptions.mealViewRoute,
-      arguments: MealViewScreenArguments(
+      NavigationOptions.mealDetailRoute,
+      arguments: MealDetailScreenArguments(
         intakeEntity.meal,
         intakeEntity.type,
         DateTime.now(),
         usesImperialUnits,
       ),
     );
+  } */
+
+  void onIntakeItemTapped(BuildContext context, IntakeEntity intakeEntity,
+      bool usesImperialUnits) async {
+    final changeIntakeAmount = await showDialog<double>(
+        context: context,
+        builder: (context) => EditDialog(
+            intakeEntity: intakeEntity, usesImperialUnits: usesImperialUnits));
+    if (changeIntakeAmount != null) {
+      _homeBloc
+          .updateIntakeItem(intakeEntity.id, {'amount': changeIntakeAmount});
+      _homeBloc.add(const LoadItemsEvent());
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(S.of(context).itemUpdatedSnackbar)));
+      }
+    }
   }
 
   void _confirmDelete(BuildContext context, IntakeEntity intake) async {

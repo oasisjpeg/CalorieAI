@@ -218,7 +218,7 @@ class DayInfoWidget extends StatelessWidget {
   }
 
   void onIntakeItemLongPressed(
-      BuildContext context, IntakeEntity intakeEntity) async {
+      BuildContext context, IntakeEntity intakeEntity, bool usesImperialUnits) async {
     if (DateUtils.isSameDay(selectedDay, DateTime.now())) {
       showDeleteIntakeDialog(context, intakeEntity);
     } else {
