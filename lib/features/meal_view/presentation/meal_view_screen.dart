@@ -30,9 +30,7 @@ class MealViewScreen extends StatefulWidget {
 
 class _MealViewScreenState extends State<MealViewScreen> {
   static const _containerSize = 350.0;
-
   final log = Logger('MealViewScreen');
-
   late MealDetailBloc _mealDetailBloc;
   final _scrollController = ScrollController();
 
@@ -46,7 +44,6 @@ class _MealViewScreenState extends State<MealViewScreen> {
   void initState() {
     _mealDetailBloc = locator<MealDetailBloc>();
     _intakeRepository = locator<IntakeRepository>();
-
     super.initState();
   }
 
@@ -59,7 +56,6 @@ class _MealViewScreenState extends State<MealViewScreen> {
     intakeTypeEntity = args.intakeTypeEntity;
     _usesImperialUnits = args.usesImperialUnits;
 
-    // Initialize the bloc with meal's values
     final initialUnit = meal.mealUnit ?? 'g';
     final initialQuantity = meal.mealQuantity ?? '100';
 
@@ -90,7 +86,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
             ),
           );
         } else {
-          return Scaffold(
+          return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
@@ -126,18 +122,22 @@ class _MealViewScreenState extends State<MealViewScreen> {
         meal: meal,
         dateTime: _day,
       ));
-      Navigator.pop(context); // Close the meal view screen
+      Navigator.pop(context);
     }
   }
 
   Widget _getLoadedContent(
-      BuildContext context,
-      String totalQuantity,
-      double totalKcal,
-      double totalCarbs,
-      double totalFat,
-      double totalProtein,
-      String selectedUnit) {
+    BuildContext context,
+    String totalQuantity,
+    double totalKcal,
+    double totalCarbs,
+    double totalFat,
+    double totalProtein,
+    String selectedUnit,
+  ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
@@ -145,25 +145,29 @@ class _MealViewScreenState extends State<MealViewScreen> {
           pinned: true,
           expandedHeight: 125,
           flexibleSpace: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            final top = constraints.biggest.height;
-            final barsHeight =
-                MediaQuery.of(context).padding.top + kToolbarHeight;
-            const offset = 10;
-            return FlexibleSpaceBar(
-                expandedTitleScale: 1, // don't scale title
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final top = constraints.biggest.height;
+              final barsHeight =
+                  MediaQuery.of(context).padding.top + kToolbarHeight;
+              const offset = 10;
+              return FlexibleSpaceBar(
+                expandedTitleScale: 1,
                 background: MealTitleExpanded(
                     meal: meal, usesImperialUnits: _usesImperialUnits),
                 title: AnimatedOpacity(
-                    opacity: 1.0,
-                    duration: const Duration(milliseconds: 300),
-                    child:
-                        top > barsHeight - offset && top < barsHeight + offset
-                            ? Text(meal.name ?? '',
-                                style: Theme.of(context).textTheme.titleLarge,
-                                overflow: TextOverflow.ellipsis)
-                            : const SizedBox()));
-          }),
+                  opacity: 1.0,
+                  duration: const Duration(milliseconds: 300),
+                  child: top > barsHeight - offset && top < barsHeight + offset
+                      ? Text(
+                          meal.name ?? '',
+                          style: theme.textTheme.titleLarge,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : const SizedBox(),
+                ),
+              );
+            },
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.delete),
@@ -172,12 +176,12 @@ class _MealViewScreenState extends State<MealViewScreen> {
           ],
         ),
         SliverList(
-            delegate: SliverChildListDelegate([
-          const SizedBox(height: 16),
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(80),
-              child: GestureDetector(
+          delegate: SliverChildListDelegate([
+            const SizedBox(height: 16),
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(80),
+                child: GestureDetector(
                   child: Hero(
                     tag: ImageFullScreen.fullScreenHeroTag,
                     child: CachedNetworkImage(
@@ -193,121 +197,255 @@ class _MealViewScreenState extends State<MealViewScreen> {
                   ),
                   onTap: () {
                     Navigator.of(context).pushNamed(
-                        NavigationOptions.imageFullScreenRoute,
-                        arguments:
-                            ImageFullScreenArguments(meal.mainImageUrl ?? ""));
-                  }),
+                      NavigationOptions.imageFullScreenRoute,
+                      arguments:
+                          ImageFullScreenArguments(meal.mainImageUrl ?? ""),
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text('${totalKcal.toInt()} ${S.of(context).kcalLabel}',
-                        style: Theme.of(context).textTheme.headlineSmall),
-                    MealValueUnitText(
-                      value: double.parse(totalQuantity),
-                      meal: meal,
-                      displayUnit:
-                          selectedUnit == UnitDropdownItem.serving.toString()
-                              ? meal.servingUnit
-                              : selectedUnit,
-                      usesImperialUnits: _usesImperialUnits,
-                      textStyle: Theme.of(context).textTheme.bodyMedium,
-                      prefix: ' / ',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    MealDetailMacroNutrients(
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '${totalKcal.toInt()} ${S.of(context).kcalLabel}',
+                        style: theme.textTheme.headlineSmall,
+                      ),
+                      MealValueUnitText(
+                        value: double.parse(totalQuantity),
+                        meal: meal,
+                        displayUnit:
+                            selectedUnit == UnitDropdownItem.serving.toString()
+                                ? meal.servingUnit
+                                : selectedUnit,
+                        usesImperialUnits: _usesImperialUnits,
+                        textStyle: theme.textTheme.bodyMedium,
+                        prefix: ' / ',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      MealDetailMacroNutrients(
                         typeString: S.of(context).carbsLabel,
-                        value: totalCarbs),
-                    MealDetailMacroNutrients(
-                        typeString: S.of(context).fatLabel, value: totalFat),
-                    MealDetailMacroNutrients(
+                        value: totalCarbs,
+                      ),
+                      MealDetailMacroNutrients(
+                        typeString: S.of(context).fatLabel,
+                        value: totalFat,
+                      ),
+                      MealDetailMacroNutrients(
                         typeString: S.of(context).proteinLabel,
-                        value: totalProtein)
-                  ],
-                ),
-                const Divider(),
-                const SizedBox(height: 16.0),
-                MealDetailNutrimentsTable(
-                  product: meal,
-                  usesImperialUnits: _usesImperialUnits,
-                  servingQuantity: double.parse(totalQuantity),
-                  servingUnit:
-                      selectedUnit == UnitDropdownItem.serving.toString()
-                          ? meal.servingUnit
-                          : selectedUnit,
-                ),
-                const SizedBox(height: 32.0),
-                if (meal.foodItems != null) ...[
-                  Padding(
-                    padding: EdgeInsets.zero,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ingredients',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: meal.foodItems!.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
-                            childAspectRatio: 1.2,
+                        value: totalProtein,
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 16.0),
+                  MealDetailNutrimentsTable(
+                    product: meal,
+                    usesImperialUnits: _usesImperialUnits,
+                    servingQuantity: double.parse(totalQuantity),
+                    servingUnit:
+                        selectedUnit == UnitDropdownItem.serving.toString()
+                            ? meal.servingUnit
+                            : selectedUnit,
+                  ),
+                  const SizedBox(height: 24.0),
+                  if (meal.foodItems != null && meal.foodItems!.isNotEmpty) ...[
+                    Padding(
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Ingredients',
+                            style: theme.textTheme.titleMedium,
                           ),
-                          itemBuilder: (context, index) {
-                            final item = meal.foodItems?[index];
-                            return Card(
-                              elevation: 2,
-                              color: Colors.black.withValues(alpha: 0.1),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Center(
-                                  child: Text(
-                                    item?['name'] ?? '',
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                          ListView.builder(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero, 
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: meal.foodItems!.length,
+                            itemBuilder: (context, index) {
+                              final item = meal.foodItems?[index];
+                              if (item == null) return const SizedBox.shrink();
+
+                              // Choose an icon based on type
+                              IconData typeIcon;
+                              Color iconColor;
+                              switch (item['type']) {
+                                case 'protein':
+                                  typeIcon = Icons.set_meal;
+                                  iconColor = Colors.green;
+                                  break;
+                                case 'carb':
+                                  typeIcon = Icons.rice_bowl;
+                                  iconColor = Colors.orange;
+                                  break;
+                                case 'fat':
+                                  typeIcon = Icons.oil_barrel;
+                                  iconColor = Colors.amber;
+                                  break;
+                                case 'vegetable':
+                                  typeIcon = Icons.eco;
+                                  iconColor = Colors.lightGreen;
+                                  break;
+                                default:
+                                  typeIcon = Icons.restaurant;
+                                  iconColor = Colors.blueGrey;
+                              }
+
+                              final isDark = Theme.of(context).brightness ==
+                                  Brightness.dark;
+
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6.0),
+                                child: Card(
+                                  elevation: 4,
+                                  color: isDark
+                                      ? Theme.of(context).colorScheme.primary.withAlpha(30)
+                                      : Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(typeIcon,
+                                            color: iconColor, size: 32),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                item['name'] ?? '',
+                                                style: theme
+                                                    .textTheme.titleMedium
+                                                    ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 6),
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.scale,
+                                                      size: 16,
+                                                      color: theme.hintColor),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    '${item['estimated_grams']?.toStringAsFixed(0) ?? '-'}g',
+                                                    style: theme
+                                                        .textTheme.bodySmall,
+                                                  ),
+                                                  const SizedBox(width: 16),
+                                                  Icon(
+                                                      Icons
+                                                          .local_fire_department,
+                                                      size: 16,
+                                                      color: Colors.redAccent),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    '${item['calories']?.toStringAsFixed(0) ?? '-'} kcal',
+                                                    style: theme
+                                                        .textTheme.bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Row(
+                                                children: [
+                                                  _macroChip(
+                                                    Icons.fitness_center,
+                                                    '${item['protein_g']?.toStringAsFixed(1) ?? '0'}g',
+                                                    Colors.green[100]!,
+                                                    Colors.green[700]!,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  _macroChip(
+                                                    Icons.bubble_chart,
+                                                    '${item['carbs_g']?.toStringAsFixed(1) ?? '0'}g',
+                                                    Colors.blue[100]!,
+                                                    Colors.blue[700]!,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  _macroChip(
+                                                    Icons.oil_barrel,
+                                                    '${item['fat_g']?.toStringAsFixed(1) ?? '0'}g',
+                                                    Colors.orange[100]!,
+                                                    Colors.orange[700]!,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                MealInfoButton(url: meal.url, source: meal.source),
-                meal.source == MealSourceEntity.off
-                    ? const Column(
-                        children: [
-                          SizedBox(height: 32),
-                          OffDisclaimer(),
+                              );
+                            },
+                          ),
                         ],
-                      )
-                    : const SizedBox(),
-                const SizedBox(height: 50.0) // height added to scroll
-              ],
+                      ),
+                    ),
+                  ],
+                  MealInfoButton(url: meal.url, source: meal.source),
+                  meal.source == MealSourceEntity.off
+                      ? const Column(
+                          children: [
+                            SizedBox(height: 32),
+                            OffDisclaimer(),
+                          ],
+                        )
+                      : const SizedBox(),
+                  const SizedBox(height: 50.0),
+                ],
+              ),
             ),
-          )
-        ]))
+          ]),
+        ),
       ],
+    );
+  }
+
+  Widget _macroChip(
+      IconData icon, String value, Color bgColor, Color iconColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: iconColor, size: 14),
+          const SizedBox(width: 2),
+          Text(
+            value,
+            style: TextStyle(
+              color: iconColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -319,5 +457,9 @@ class MealViewScreenArguments {
   final bool usesImperialUnits;
 
   MealViewScreenArguments(
-      this.mealEntity, this.intakeTypeEntity, this.day, this.usesImperialUnits);
+    this.mealEntity,
+    this.intakeTypeEntity,
+    this.day,
+    this.usesImperialUnits,
+  );
 }

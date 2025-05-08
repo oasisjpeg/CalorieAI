@@ -24,109 +24,96 @@ class MacroNutrientsView extends StatefulWidget {
 }
 
 class _MacroNutrientsViewState extends State<MacroNutrientsView> {
+  bool isOverLimit(double intake, double goal) {
+    return intake > goal;
+  }
+
+  Color getProgressColor(double intake, double goal, Color defaultColor) {
+    return isOverLimit(intake, goal) ? Colors.red : defaultColor;
+  }
+
+  Widget buildNutrientIndicator({
+    required double intake,
+    required double goal,
+    required String label,
+    required IconData icon,
+    required Color defaultColor,
+  }) {
+    final isOver = isOverLimit(intake, goal);
+    final theme = Theme.of(context);
+    
+    return Row(
+      children: [
+        CircularPercentIndicator(
+          radius: 15.0,
+          lineWidth: 6.0,
+          animation: true,
+          percent: getGoalPercentage(goal, intake),
+          progressColor: getProgressColor(intake, goal, defaultColor),
+          backgroundColor: getProgressColor(intake, goal, defaultColor).withAlpha(50),
+          circularStrokeCap: CircularStrokeCap.round,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    '${intake.toInt()}/${goal.toInt()} g',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  if (isOver) ...[
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.warning,
+                      size: 12,
+                      color: Colors.red,
+                    ),
+                  ]
+                ],
+              ),
+              Text(
+                label,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Row(
-          children: [
-            CircularPercentIndicator(
-              radius: 15.0,
-              lineWidth: 6.0,
-              animation: true,
-              percent: getGoalPercentage(
-                  widget.totalCarbsGoal, widget.totalCarbsIntake),
-              progressColor: Colors.orange,
-              backgroundColor: Colors.orange.withAlpha(50),
-              circularStrokeCap: CircularStrokeCap.round,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                children: [
-                  Text(
-                    '${widget.totalCarbsIntake.toInt()}/${widget.totalCarbsGoal.toInt()} g',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSurface),
-                  ),
-                  Text(
-                    S.of(context).carbsLabel,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSurface),
-                  )
-                ],
-              ),
-            )
-          ],
+        buildNutrientIndicator(
+          intake: widget.totalCarbsIntake,
+          goal: widget.totalCarbsGoal,
+          label: S.of(context).carbsLabel,
+          icon: Icons.bubble_chart,
+          defaultColor: Colors.orange,
         ),
-        Row(
-          children: [
-            CircularPercentIndicator(
-              radius: 15.0,
-              lineWidth: 6.0,
-              animation: true,
-              percent: getGoalPercentage(
-                  widget.totalFatsGoal, widget.totalFatsIntake),
-              progressColor: Colors.blue,
-              backgroundColor: Colors.blue.withAlpha(50),
-              circularStrokeCap: CircularStrokeCap.round,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                children: [
-                  Text(
-                    "${widget.totalFatsIntake.toInt()}/${widget.totalFatsGoal.toInt()} g",
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSurface),
-                  ),
-                  Text(S.of(context).fatLabel,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface)),
-                ],
-              ),
-            )
-          ],
+        buildNutrientIndicator(
+          intake: widget.totalFatsIntake,
+          goal: widget.totalFatsGoal,
+          label: S.of(context).fatLabel,
+          icon: Icons.local_pizza,
+          defaultColor: Colors.blue,
         ),
-        Row(
-          children: [
-            CircularPercentIndicator(
-              radius: 15.0,
-              lineWidth: 6.0,
-              animation: true,
-              percent: getGoalPercentage(
-                  widget.totalProteinsGoal, widget.totalProteinsIntake),
-              progressColor: Colors.purple,
-              backgroundColor: Colors.purple.withAlpha(50),
-              circularStrokeCap: CircularStrokeCap.round,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                children: [
-                  Text(
-                    "${widget.totalProteinsIntake.toInt()}/${widget.totalProteinsGoal.toInt()} g",
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSurface),
-                  ),
-                  Text(
-                    S.of(context).proteinLabel,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSurface),
-                  )
-                ],
-              ),
-            )
-          ],
-        )
+        buildNutrientIndicator(
+          intake: widget.totalProteinsIntake,
+          goal: widget.totalProteinsGoal,
+          label: S.of(context).proteinLabel,
+          icon: Icons.fitness_center,
+          defaultColor: Colors.green,
+        ),
       ],
     );
   }

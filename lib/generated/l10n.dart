@@ -53,7 +53,7 @@ class S {
   /// `OpenNutriTracker`
   String get appTitle {
     return Intl.message(
-      'OpenNutriTracker',
+      'CalorieAI',
       name: 'appTitle',
       desc: '',
       args: [],

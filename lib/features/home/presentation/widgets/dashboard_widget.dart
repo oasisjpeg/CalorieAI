@@ -56,10 +56,14 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Calculate macro nutrients values
-    final proteinsLeft =
-        (widget.totalProteinsGoal - widget.totalProteinsIntake).round();
-    final carbsLeft = (widget.totalCarbsGoal - widget.totalCarbsIntake).round();
-    final fatsLeft = (widget.totalFatsGoal - widget.totalFatsIntake).round();
+    final proteinsLeft = (widget.totalProteinsIntake - widget.totalProteinsGoal).round();
+    final carbsLeft = (widget.totalCarbsIntake - widget.totalCarbsGoal).round();
+    final fatsLeft = (widget.totalFatsIntake - widget.totalFatsGoal).round();
+
+    // Check if any nutrients are over limit
+    final proteinsOverLimit = widget.totalProteinsIntake > widget.totalProteinsGoal;
+    final carbsOverLimit = widget.totalCarbsIntake > widget.totalCarbsGoal;
+    final fatsOverLimit = widget.totalFatsIntake > widget.totalFatsGoal;
 
     // Calculate progress percentages
     final proteinsPercent =
@@ -69,17 +73,22 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final fatsPercent =
         (widget.totalFatsIntake / widget.totalFatsGoal).clamp(0.0, 1.0);
 
-    final proteinColor = Colors.redAccent;
-    final proteinBg =
-        isDarkMode ? Colors.red.shade900.withOpacity(0.25) : Colors.red.shade50;
-    final carbsColor = Colors.orangeAccent;
-    final carbsBg = isDarkMode
-        ? Colors.orange.shade900.withOpacity(0.25)
-        : Colors.orange.shade50;
-    final fatsColor = Colors.blueAccent;
-    final fatsBg = isDarkMode
-        ? Colors.blue.shade900.withOpacity(0.25)
-        : Colors.blue.shade50;
+    final proteinColor = proteinsOverLimit ? Colors.red : Colors.redAccent;
+    final proteinBg = proteinsOverLimit
+        ? Colors.red.withOpacity(0.25)
+        : (isDarkMode ? Colors.red.shade900.withOpacity(0.25) : Colors.red.shade50);
+    final carbsColor = carbsOverLimit ? Colors.red : Colors.orangeAccent;
+    final carbsBg = carbsOverLimit
+        ? Colors.red.withOpacity(0.25)
+        : (isDarkMode
+            ? Colors.orange.shade900.withOpacity(0.25)
+            : Colors.orange.shade50);
+    final fatsColor = fatsOverLimit ? Colors.red : Colors.blueAccent;
+    final fatsBg = fatsOverLimit
+        ? Colors.red.withOpacity(0.25)
+        : (isDarkMode
+            ? Colors.blue.shade900.withOpacity(0.25)
+            : Colors.blue.shade50);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -176,7 +185,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             children: [
               _buildMacroCard(
                 context,
-                value: proteinsLeft.abs(),
+                value: proteinsLeft,
                 label: S.of(context).proteinLabel,
                 color: proteinColor,
                 bgColor: proteinBg,
@@ -187,7 +196,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               ),
               _buildMacroCard(
                 context,
-                value: carbsLeft.abs(),
+                value: carbsLeft,
                 label: S.of(context).carbsLabel,
                 color: carbsColor,
                 bgColor: carbsBg,
@@ -198,7 +207,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               ),
               _buildMacroCard(
                 context,
-                value: fatsLeft.abs(),
+                value: fatsLeft,
                 label: S.of(context).fatLabel,
                 color: fatsColor,
                 bgColor: fatsBg,
@@ -225,6 +234,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     required bool isDarkMode,
     required double goalValue,
   }) {
+    final isOverLimit = value > 0;
+    final hasWarning = isOverLimit;
     return Container(
       width: 100,
       padding: const EdgeInsets.all(12),
@@ -244,13 +255,27 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         children: [
           Column(
             children: [
-              Text(
-                "${value}g",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${value > 0 ? '+${value}g' : '${-value}g'}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                    if (hasWarning)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(
+                        Icons.warning,
+                        size: 12,
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 4),
               Text(
@@ -262,12 +287,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               ),
             ],
           ),
+        
           const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(
               fontSize: 13,
-              color: isDarkMode ? Colors.white70 : Colors.black87,
+              color: color ,
             ),
             textAlign: TextAlign.center,
           ),
