@@ -1,22 +1,33 @@
 import 'package:equatable/equatable.dart';
 
-abstract class RecipeChatbotEvent extends Equatable {
+class RecipeChatbotEvent extends Equatable {
   const RecipeChatbotEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-class RecipeChatbotLoad extends RecipeChatbotEvent {}
+class FetchRecipes extends RecipeChatbotEvent {
+  final Map<String, dynamic> filters;
 
-class RecipeChatbotUpdateParameter extends RecipeChatbotEvent {
-  final String key;
-  final String value;
-
-  const RecipeChatbotUpdateParameter({required this.key, required this.value});
+  const FetchRecipes(this.filters);
 
   @override
-  List<Object> get props => [key, value];
+  List<Object?> get props => [filters];
 }
 
-class RecipeChatbotClear extends RecipeChatbotEvent {}
+class RecipeSelected extends RecipeChatbotEvent {
+  final Map<String, dynamic> recipe;
+
+  const RecipeSelected(this.recipe);
+
+  @override
+  List<Object?> get props => [recipe];
+}
+
+class RecipeUnselected extends RecipeChatbotEvent {
+  const RecipeUnselected();
+
+  @override
+  List<Object?> get props => [];
+}

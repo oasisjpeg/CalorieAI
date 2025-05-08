@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,46 @@ class GeminiService {
       model: 'gemini-2.0-flash-lite',
       apiKey: Env.geminiApiKey,
     );
+  }
+
+  /// Generates content based on the provided prompt
+  Future<String> generate(String prompt) async {
+    try {
+      log.fine('Generating content with Gemini...');
+
+      final content = [
+        Content.text(prompt),
+      ];
+
+      final response = await _model.generateContent(content);
+      final responseText = response.text;
+
+      if (responseText == null || responseText.isEmpty) {
+        log.warning('Empty response from Gemini');
+        throw Exception('No response from Gemini');
+      }
+
+      // Clean up the response by removing markdown formatting
+      final cleanedResponse = responseText
+          .replaceAll('```json', '')
+          .replaceAll('```', '');
+
+      // Try to parse the JSON
+      try {
+        final decoded = json.decode(cleanedResponse);
+        if (decoded is Map && decoded.containsKey('recipes')) {
+          return cleanedResponse;
+        }
+        throw FormatException('Invalid JSON format: Missing recipes array');
+      } catch (e) {
+        log.warning('Could not parse JSON response: $e');
+        return cleanedResponse;
+      }
+
+    } catch (e) {
+      log.severe('Error generating content: $e');
+      rethrow;
+    }
   }
 
   /// Analyzes a food image and returns a description of the food with nutritional information in JSON format
