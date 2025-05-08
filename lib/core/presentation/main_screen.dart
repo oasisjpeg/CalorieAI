@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:opennutritracker/core/presentation/widgets/add_item_bottom_sheet.dart';
-import 'package:opennutritracker/features/recipe_chatbot/presentation/recipe_chatbot_screen.dart';
 import 'package:opennutritracker/features/diary/diary_page.dart';
 import 'package:opennutritracker/core/presentation/widgets/home_appbar.dart';
 import 'package:opennutritracker/features/home/home_page.dart';
@@ -20,14 +19,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  MainScreenNavigation _selectedPageIndex = MainScreenNavigation.home;
+  int _selectedPageIndex = 0;
 
   late List<Widget> _bodyPages;
   late List<PreferredSizeWidget> _appbarPages;
 
   @override
   void didChangeDependencies() {
-    final s = S.of(context);
     _bodyPages = [
       const HomePage(),
       const DiaryPage(),
@@ -48,23 +46,22 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
     return Scaffold(
-      appBar: _appbarPages[_selectedPageIndex.index],
-      body: _bodyPages[_selectedPageIndex.index],
-      floatingActionButton: _selectedPageIndex == MainScreenNavigation.home
+      appBar: _appbarPages[_selectedPageIndex],
+      body: _bodyPages[_selectedPageIndex],
+      floatingActionButton: _selectedPageIndex == 0
           ? FloatingActionButton(
               onPressed: () => _onFabPressed(context),
-              tooltip: s.addLabel,
+              tooltip: S.of(context).addLabel,
               child: const Icon(Icons.add),
             )
           : null,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedPageIndex.index,
+        selectedIndex: _selectedPageIndex,
         onDestinationSelected: _setPage,
         destinations: [
           NavigationDestination(
-              icon: _selectedPageIndex == MainScreenNavigation.home
+              icon: _selectedPageIndex == 0
                   ? const Icon(Icons.home)
                   : const Icon(Icons.home_outlined),
               label: S.of(context).homeLabel),
@@ -82,15 +79,15 @@ class _MainScreenState extends State<MainScreen> {
               icon: _selectedPageIndex == 4
                   ? const Icon(Icons.account_circle)
                   : const Icon(Icons.account_circle_outlined),
-              label: s.profileLabel)
+              label: S.of(context).profileLabel)
         ],
       ),
     );
-  }    
+  }
 
-  void _setPage(int selectedIndex) {    
+  void _setPage(int selectedIndex) {
     setState(() {
-      _selectedPageIndex = MainScreenNavigation.values[selectedIndex];
+      _selectedPageIndex = selectedIndex;
     });
   }
 
