@@ -64,8 +64,8 @@ class _IntakeVerticalListState extends State<IntakeVerticalList> {
           alignment: Alignment.centerLeft,
           child: Row(
             children: [
-              Icon(widget.listIcon,
-                  size: 24, color: Theme.of(context).colorScheme.onSurface),
+              // Icon(widget.listIcon,
+              //     size: 24, color: Theme.of(context).colorScheme.onSurface),
               const SizedBox(width: 4.0),
               Text(
                 widget.title,

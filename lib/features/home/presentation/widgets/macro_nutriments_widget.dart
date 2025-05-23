@@ -67,10 +67,9 @@ class _MacroNutrientsViewState extends State<MacroNutrientsView> {
                   ),
                   if (isOver) ...[
                     const SizedBox(width: 4),
-                    Icon(
-                      Icons.warning,
-                      size: 12,
-                      color: Colors.red,
+                    const Text(
+                      '⚠️',
+                      style: TextStyle(fontSize: 12, color: Colors.red),
                     ),
                   ]
                 ],

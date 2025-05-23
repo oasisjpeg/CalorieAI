@@ -16,6 +16,7 @@ import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dar
 import 'package:opennutritracker/features/meal_view/presentation/meal_view_screen.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_nutriments_entity.dart';
 import 'package:opennutritracker/features/meal_detail/meal_detail_screen.dart';
+import 'package:opennutritracker/features/add_meal/presentation/widgets/food_items_adjustable_list.dart';
 // import 'package:opennutritracker/generated/l10n.dart'; // Removed unused import
 
 class FoodImageAnalyzer extends StatefulWidget {
@@ -117,7 +118,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   }
 
   Future<void> _analyzeImage() async {
-    if (_imageFile == null ) return;
+    if (_imageFile == null) return;
 
     setState(() {
       _isAnalyzing = true;
@@ -158,24 +159,11 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
         setState(() {
           _foodData = parsedData;
+          _analysisResult = 'Successfully analyzed food image';
         });
+        _isAnalyzing = false;
 
-        if (_foodData != null && _foodData!['valid_food_image'] == true) {
-          // Immediately create the meal entity and navigate
-          final mealEntity = await createMealEntityFromGeminiData();
-          log.fine('Meal entity created: $mealEntity');
-          if (!mounted) return; // Ensure widget is still in tree
-          Navigator.of(context).pushReplacementNamed(
-            NavigationOptions.mealDetailRoute,
-            arguments: MealDetailScreenArguments(
-              mealEntity,
-              widget.intakeType,
-              widget.day,
-              false, // usesImperialUnits
-            ),
-          );
-          return; // Do not setState or show preview
-        }
+        // Do not navigate here! Instead, show the adjustable ingredient list and "Save Meal" button.
       } catch (jsonError) {
         log.warning('Error parsing JSON response: $jsonError');
       }
@@ -188,8 +176,12 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     }
   }
 
-  // Create a MealEntity from the Gemini analysis data
-  Future<MealEntity> createMealEntityFromGeminiData() async {
+  // Store the adjusted food items from the list
+  List<Map<String, dynamic>>? _adjustedFoodItems;
+
+  // Create a MealEntity from the Gemini analysis data, using adjusted items if provided
+  Future<MealEntity> createMealEntityFromGeminiData(
+      [List<Map<String, dynamic>>? adjustedItems]) async {
     if (_foodData == null) {
       throw Exception('No food data available');
     }
@@ -197,34 +189,93 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     try {
       final title = _foodData!['title'] as String;
       final totals = _foodData!['totals'] as Map<String, dynamic>;
+      final isLiquid = _foodData!['is_liquid'] as bool;
+      final mealUnit = isLiquid ? 'ml' : 'g';
+      final servingUnit = isLiquid ? 'ml' : 'g';
 
-      // Calculate nutritional values per total grams and total values
-      final totalGrams = totals['total_grams'] as double;
-      final carbsPer100g =
-          ((totals['carbs_g'] as double) * 100 / totalGrams).roundToDouble();
-      final fatPer100g =
-          ((totals['fat_g'] as double) * 100 / totalGrams).roundToDouble();
-      final proteinPer100g =
-          ((totals['protein_g'] as double) * 100 / totalGrams).roundToDouble();
-      final sugarPer100g =
-          ((totals['sugar_g'] as double) * 100 / totalGrams).roundToDouble();
-      final saturatedFatPer100g =
-          ((totals['saturated_fat_g'] as double) * 100 / totalGrams)
-              .roundToDouble();
-      final fiberPer100g =
-          ((totals['fiber_g'] as double) * 100 / totalGrams).roundToDouble();
+      // Use adjusted items if provided, otherwise original
+      final foodItems = adjustedItems ??
+          (_foodData!['items'] as List<dynamic>)
+              .map((item) => Map<String, dynamic>.from(item as Map))
+              .toList();
 
-      // Calculate nutritional values per 100g
-      final energyKcal100 =
-          ((totals['calories'] as double) * 100 / totalGrams).roundToDouble();
-      final carbs100 = carbsPer100g;
-      final fat100 = fatPer100g;
-      final proteins100 = proteinPer100g;
-      final sugars100 = sugarPer100g;
-      final saturatedFat100 = saturatedFatPer100g;
-      final fiber100 = fiberPer100g;
+      // Nutrition calculation
+      double totalGrams;
+      double totalCalories,
+          totalCarbs,
+          totalFat,
+          totalProtein,
+          totalSugars,
+          totalSaturatedFat,
+          totalFiber;
+      if (adjustedItems != null) {
+        totalGrams = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum + (item['estimated_grams'] as num? ?? 0).toDouble());
+        totalCalories = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum +
+                ((item['calories'] as num? ?? 0) *
+                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+        totalCarbs = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum +
+                ((item['carbs_g'] as num? ?? 0) *
+                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+        totalFat = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum +
+                ((item['fat_g'] as num? ?? 0) *
+                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+        totalProtein = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum +
+                ((item['protein_g'] as num? ?? 0) *
+                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+        totalSugars = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum +
+                ((item['sugar_g'] as num? ?? 0) *
+                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+        totalSaturatedFat = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum +
+                ((item['saturated_fat_g'] as num? ?? 0) *
+                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+        totalFiber = foodItems.fold<double>(
+            0,
+            (sum, item) =>
+                sum +
+                ((item['fiber_g'] as num? ?? 0) *
+                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+      } else {
+        totalGrams = totals['total_grams'] as double;
+        totalCalories = totals['calories'] as double;
+        totalCarbs = totals['carbs_g'] as double;
+        totalFat = totals['fat_g'] as double;
+        totalProtein = totals['protein_g'] as double;
+        totalSugars = totals['sugar_g'] as double;
+        totalSaturatedFat = totals['saturated_fat_g'] as double;
+        totalFiber = totals['fiber_g'] as double;
+      }
 
-      // Store the nutritional values in the entity
+      // Calculate per 100g values
+      final energyKcal100 = (totalCalories * 100 / totalGrams).roundToDouble();
+      final carbs100 = (totalCarbs * 100 / totalGrams).roundToDouble();
+      final fat100 = (totalFat * 100 / totalGrams).roundToDouble();
+      final proteins100 = (totalProtein * 100 / totalGrams).roundToDouble();
+      final sugars100 = (totalSugars * 100 / totalGrams).roundToDouble();
+      final saturatedFat100 =
+          (totalSaturatedFat * 100 / totalGrams).roundToDouble();
+      final fiber100 = (totalFiber * 100 / totalGrams).roundToDouble();
+
       final nutrimentsPerTotal = MealNutrimentsEntity(
         energyKcal100: energyKcal100,
         carbohydrates100: carbs100,
@@ -236,16 +287,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       );
 
       final imageUrl = await _uploadImageToImgbb(_imageFile!);
-
-      // Set appropriate units based on whether it's a liquid or solid
-      final isLiquid = _foodData!['is_liquid'] as bool;
-      final mealUnit = isLiquid ? 'ml' : 'g';
-      final servingUnit = isLiquid ? 'ml' : 'g';
-
-      final foodItemsRaw = _foodData!['items'] as List<dynamic>;
-      final foodItems = foodItemsRaw
-          .map((item) => Map<String, dynamic>.from(item as Map))
-          .toList();
 
       return MealEntity(
         code: IdGenerator.getUniqueID(),
@@ -273,184 +314,226 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        _promptFocusNode.unfocus();
-      },
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-          // Show buttons if not analyzing and no image selected
-          if (!_isAnalyzing && _imageFile == null)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.camera_alt),
-                  label: const Text('Camera'),
-                  onPressed: () => _getImage(ImageSource.camera),
-                ),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.photo_library),
-                  label: const Text('Gallery'),
-                  onPressed: () => _getImage(ImageSource.gallery),
-                ),
-              ],
-            ),
-
-          // Show loading indicator while analyzing
-          if (_isAnalyzing)
-            const Padding(
-              padding: EdgeInsets.all(40.0),
-              child: Center(child: CircularProgressIndicator()),
-            ),
-
-          // Show image and prompt if image is selected and not analyzing
-          if (!_isAnalyzing && _imageFile != null) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(
-                _imageFile!,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            if (!_hasPrompt)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
+        onTap: () {
+          _promptFocusNode.unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Show buttons if not analyzing and no image selected
+              if (!_isAnalyzing && _imageFile == null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    TextField(
-                      controller: _promptController,
-                      focusNode: _promptFocusNode,
-                      decoration: const InputDecoration(
-                        labelText: 'Add prompt for Gemini (optional)',
-                        hintText:
-                            'e.g., "This is a close-up of a salad with tomatoes and cucumbers"',
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 3,
-                      minLines: 1,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (String value) {
-                        setState(() {
-                          _hasPrompt = value.trim().isNotEmpty;
-                          _isAnalyzing = true;
-                        });
-                        _analyzeImage();
-                        _promptFocusNode.unfocus();
-                      },
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.camera_alt),
+                      label: const Text('Camera'),
+                      onPressed: () => _getImage(ImageSource.camera),
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _hasPrompt = _promptController.text.trim().isNotEmpty;
-                          _isAnalyzing = true;
-                        });
-                        _analyzeImage();
-                      },
-                      child: const Text('Analyze with Gemini'),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.photo_library),
+                      label: const Text('Gallery'),
+                      onPressed: () => _getImage(ImageSource.gallery),
                     ),
                   ],
                 ),
-              ),
-          ],
 
-          const SizedBox(height: 8),
+              // Show loading indicator while analyzing
+              if (_isAnalyzing)
+                const Padding(
+                  padding: EdgeInsets.all(40.0),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
 
-          // Show analysis result (if any)
-          if (_analysisResult.isNotEmpty)
-            if (_analysisResult.startsWith('Error analyzing image'))
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                child: Card(
-                  elevation: 4,
-                  color: Theme.of(context).colorScheme.errorContainer,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  child: ListTile(
-                    leading: Icon(Icons.error_outline,
-                        color: Theme.of(context).colorScheme.error, size: 36),
-                    title: Text(
-                      'Analysis Failed',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.error,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    subtitle: Text(
-                      'There was a problem analyzing your image. Please try again.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.refresh),
-                      tooltip: 'Retry',
-                      onPressed: () {
-                        if (_imageFile != null) _analyzeImage();
-                      },
-                    ),
+              // Show image and prompt if image is selected, not analyzing, and no food data yet
+              if (!_isAnalyzing && _imageFile != null && _foodData == null) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    _imageFile!,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                   ),
                 ),
-              )
-            else
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                if (!_hasPrompt)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
                       children: [
-                        Icon(
-                          Icons.restaurant,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
+                        TextField(
+                          controller: _promptController,
+                          focusNode: _promptFocusNode,
+                          decoration: const InputDecoration(
+                            labelText: 'Add prompt for Gemini (optional)',
+                            hintText:
+                                'e.g., "This is a close-up of a salad with tomatoes and cucumbers"',
+                            border: OutlineInputBorder(),
+                          ),
+                          maxLines: 3,
+                          minLines: 1,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (String value) {
+                            setState(() {
+                              _hasPrompt = value.trim().isNotEmpty;
+                              _isAnalyzing = true;
+                            });
+                            _analyzeImage();
+                            _promptFocusNode.unfocus();
+                          },
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Food Analysis',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _hasPrompt =
+                                  _promptController.text.trim().isNotEmpty;
+                              _isAnalyzing = true;
+                            });
+                            _analyzeImage();
+                          },
+                          child: const Text('Analyze with Gemini'),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    const Divider(height: 1),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 250),
-                      child: SingleChildScrollView(
-                        child: Text(
-                          _analysisResult,
-                          style: const TextStyle(fontSize: 14, height: 1.4),
+                  ),
+              ],
+
+              const SizedBox(height: 8),
+
+              // Show title of the analyzed food if we have data
+              if (_foodData != null && _foodData!['title'] != null)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        _foodData!['title'],
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Adjust quantities as needed',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).hintColor,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              // Show analysis result (if any)
+              if (_analysisResult.isNotEmpty)
+                if (_analysisResult.startsWith('Error analyzing image'))
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                    child: Card(
+                      elevation: 4,
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      child: ListTile(
+                        leading: Icon(Icons.error_outline,
+                            color: Theme.of(context).colorScheme.error,
+                            size: 36),
+                        title: Text(
+                          'Analysis Failed',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        subtitle: Text(
+                          'There was a problem analyzing your image. Please try again.',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.refresh),
+                          tooltip: 'Retry',
+                          onPressed: () {
+                            if (_imageFile != null) _analyzeImage();
+                          },
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-        ],
-      ),
-    ));
+                  )
+                else
+                  _foodData != null && _foodData!['items'] != null
+                      ? Column(
+                          children: [
+                            const SizedBox(height: 8),
+                            FoodItemsAdjustableList(
+                              foodItems: _foodData!['items'],
+                              totals: _foodData!['totals'],
+                              key: const ValueKey('adjustable-list'),
+                              onChanged: (adjustedItems) {
+                                setState(() {
+                                  _adjustedFoodItems = adjustedItems;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton.icon(
+                              icon: const Icon(Icons.check),
+                              label: const Text('Save Meal'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              onPressed: () async {
+                                final mealEntity =
+                                    await createMealEntityFromGeminiData(
+                                        _adjustedFoodItems);
+                                if (!mounted) return;
+                                Navigator.of(context).pushReplacementNamed(
+                                  NavigationOptions.mealDetailRoute,
+                                  arguments: MealDetailScreenArguments(
+                                    mealEntity,
+                                    widget.intakeType,
+                                    widget.day,
+                                    false, // usesImperialUnits
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        )
+                      : Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(_analysisResult,
+                              style:
+                                  const TextStyle(fontSize: 14, height: 1.4)),
+                        ),
+            ],
+          ),
+        ));
   }
 }

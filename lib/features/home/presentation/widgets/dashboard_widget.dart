@@ -165,12 +165,14 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   backgroundColor: isDarkMode
                       ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
                       : Colors.grey.shade200,
-                  center: Icon(
-                    Icons.local_fire_department,
-                    color: isDarkMode
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.black54,
-                    size: 28,
+                  center: Text(
+                    '🔥',
+                    style: TextStyle(
+                      fontSize: 36,
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.black54,
+                    ),
                   ),
                 ),
               ],
@@ -189,7 +191,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 label: S.of(context).proteinLabel,
                 color: proteinColor,
                 bgColor: proteinBg,
-                icon: Icons.fitness_center,
+                emoji: '💪',
                 percent: proteinsPercent,
                 isDarkMode: isDarkMode,
                 goalValue: widget.totalProteinsGoal,
@@ -200,7 +202,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 label: S.of(context).carbsLabel,
                 color: carbsColor,
                 bgColor: carbsBg,
-                icon: Icons.bubble_chart,
+                emoji: '🌾',
                 percent: carbsPercent,
                 isDarkMode: isDarkMode,
                 goalValue: widget.totalCarbsGoal,
@@ -211,7 +213,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 label: S.of(context).fatLabel,
                 color: fatsColor,
                 bgColor: fatsBg,
-                icon: Icons.opacity,
+                emoji: '🥑',
                 percent: fatsPercent,
                 isDarkMode: isDarkMode,
                 goalValue: widget.totalFatsGoal,
@@ -229,7 +231,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     required String label,
     required Color color,
     required Color bgColor,
-    required IconData icon,
+    required String emoji,
     required double percent,
     required bool isDarkMode,
     required double goalValue,
@@ -269,10 +271,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     if (hasWarning)
                     Padding(
                       padding: const EdgeInsets.only(left: 4),
-                      child: Icon(
-                        Icons.warning,
-                        size: 12,
-                        color: Colors.red,
+                      child: Text(
+                        emoji,
+                        style: TextStyle(fontSize: 16),
                       ),
                     ),
                 ],
@@ -299,13 +300,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           ),
           const SizedBox(height: 8),
           CircularPercentIndicator(
-            radius: 22,
+            radius: 26,
             lineWidth: 6,
             percent: percent,
             circularStrokeCap: CircularStrokeCap.round,
             backgroundColor: color.withOpacity(0.15),
             progressColor: color,
-            center: Icon(icon, color: color, size: 16),
+            center: Text(emoji, style: TextStyle(fontSize: 16)),
           ),
         ],
       ),

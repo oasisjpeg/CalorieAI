@@ -145,6 +145,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       double totalFat,
       double totalProtein,
       String selectedUnit) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
@@ -257,7 +259,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                     servingQuantity: meal.servingQuantity,
                     servingUnit: meal.servingUnit),
                 const SizedBox(height: 24.0),
-                if (meal.foodItems != null ) ...[
+                if (meal.foodItems != null) ...[
                   Padding(
                     padding: EdgeInsets.zero,
                     child: Column(
@@ -265,35 +267,129 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                       children: [
                         Text(
                           'Ingredients',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: theme.textTheme.titleMedium,
                         ),
-                        GridView.builder(
+                        ListView.builder(
                           shrinkWrap: true,
+                          padding: EdgeInsets.zero,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: meal.foodItems!.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing:8,
-                            crossAxisSpacing: 8,
-                            childAspectRatio: 1.2,
-                          ),
                           itemBuilder: (context, index) {
                             final item = meal.foodItems?[index];
-                            return Card(
-                              elevation: 2,
-                              color: Colors.black.withValues(alpha: 0.1),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Center(
-                                  child: Text(
-                                    item?['name'] ?? '',
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                            if (item == null) return const SizedBox.shrink();
+
+                            // Choose an emoji based on type
+                            String emoji;
+                            switch (item['type']) {
+                              case 'protein':
+                                emoji = '🥩';
+                                break;
+                              case 'carb':
+                                emoji = '🍚';
+                                break;
+                              case 'fat':
+                                emoji = '🥑';
+                                break;
+                              case 'vegetable':
+                                emoji = '🥦';
+                                break;
+                              default:
+                                emoji = '🍽️';
+                            }
+
+                            final isDark =
+                                Theme.of(context).brightness == Brightness.dark;
+
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6.0),
+                              child: Card(
+                                elevation: 4,
+                                color: isDark
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withAlpha(30)
+                                    : Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(emoji,
+                                          style: TextStyle(fontSize: 32)),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item['name'] ?? '',
+                                              style: theme.textTheme.titleMedium
+                                                  ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                Text('⚖️',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  '${item['estimated_grams']?.toStringAsFixed(0) ?? '-'}g',
+                                                  style:
+                                                      theme.textTheme.bodySmall,
+                                                ),
+                                                const SizedBox(width: 16),
+                                                Text('🔥',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  '${item['calories']?.toStringAsFixed(0) ?? '-'} kcal',
+                                                  style:
+                                                      theme.textTheme.bodySmall,
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              children: [
+                                                _macroChip(
+                                                  '💪',
+                                                  '${item['protein_g']?.toStringAsFixed(1) ?? '0'}g',
+                                                  Colors.green[100]!,
+                                                  Colors.green[700]!,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                _macroChip(
+                                                  '🌾',
+                                                  '${item['carbs_g']?.toStringAsFixed(1) ?? '0'}g',
+                                                  Colors.blue[100]!,
+                                                  Colors.blue[700]!,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                _macroChip(
+                                                  '🥑',
+                                                  '${item['fat_g']?.toStringAsFixed(1) ?? '0'}g',
+                                                  Colors.orange[100]!,
+                                                  Colors.orange[700]!,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -315,7 +411,6 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                       )
                     : const SizedBox(),
                 const SizedBox(height: 200.0), // height added to scroll
-
               ],
             ),
           )
@@ -341,6 +436,31 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
         curve: Curves.easeInOut,
       );
     }
+  }
+
+  Widget _macroChip(
+      String emoji, String value, Color bgColor, Color textColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: 2),
+          Text(
+            value,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
