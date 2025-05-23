@@ -365,7 +365,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                           controller: _promptController,
                           focusNode: _promptFocusNode,
                           decoration: const InputDecoration(
-                            labelText: 'Add prompt for Gemini (optional)',
+                            labelText: 'Add prompt for Gemini (recommended)',
                             hintText:
                                 'e.g., "This is a close-up of a salad with tomatoes and cucumbers"',
                             border: OutlineInputBorder(),

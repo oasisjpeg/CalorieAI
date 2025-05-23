@@ -1,16 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
-import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
 import 'package:opennutritracker/core/presentation/widgets/meal_value_unit_text.dart';
 import 'package:opennutritracker/core/presentation/widgets/image_full_screen.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/core/utils/navigation_options.dart';
 import 'package:opennutritracker/core/data/repository/intake_repository.dart';
-import 'package:opennutritracker/core/utils/id_generator.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_detail_macro_nutrients.dart';
@@ -114,15 +113,35 @@ class _MealViewScreenState extends State<MealViewScreen> {
     );
 
     if (shouldDelete == true) {
-      await _intakeRepository.deleteIntake(IntakeEntity(
-        id: meal.code ?? IdGenerator.getUniqueID(),
-        unit: meal.mealUnit ?? 'g',
-        amount: double.parse(meal.mealQuantity ?? '100'),
-        type: intakeTypeEntity,
-        meal: meal,
-        dateTime: _day,
-      ));
-      Navigator.pop(context);
+      try {
+        // Get all intakes for the current day and type
+        final intakes = await _intakeRepository.getIntakeByDateAndType(
+            intakeTypeEntity, _day);
+
+        // Find the intake that matches our meal
+        final intakeToDelete = intakes.firstWhere(
+          (intake) => intake.meal.code == meal.code,
+          orElse: () =>
+              throw Exception('No matching intake found for this meal'),
+        );
+
+        // Use HomeBloc to delete the intake, which will update the UI
+        final homeBloc = locator<HomeBloc>();
+        homeBloc.deleteIntakeItem(intakeToDelete);
+        homeBloc.add(const LoadItemsEvent());
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(S.of(context).itemDeletedSnackbar)));
+        }
+        Navigator.pop(context);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to delete meal: ${e.toString()}')),
+          );
+        }
+      }
     }
   }
 
@@ -270,36 +289,30 @@ class _MealViewScreenState extends State<MealViewScreen> {
                           ),
                           ListView.builder(
                             shrinkWrap: true,
-                            padding: EdgeInsets.zero, 
+                            padding: EdgeInsets.zero,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: meal.foodItems!.length,
                             itemBuilder: (context, index) {
                               final item = meal.foodItems?[index];
                               if (item == null) return const SizedBox.shrink();
 
-                              // Choose an icon based on type
-                              IconData typeIcon;
-                              Color iconColor;
+                              // Choose an emoji based on type
+                              String emoji;
                               switch (item['type']) {
                                 case 'protein':
-                                  typeIcon = Icons.set_meal;
-                                  iconColor = Colors.green;
+                                  emoji = '🥩';
                                   break;
                                 case 'carb':
-                                  typeIcon = Icons.rice_bowl;
-                                  iconColor = Colors.orange;
+                                  emoji = '🍚';
                                   break;
                                 case 'fat':
-                                  typeIcon = Icons.oil_barrel;
-                                  iconColor = Colors.amber;
+                                  emoji = '🥑';
                                   break;
                                 case 'vegetable':
-                                  typeIcon = Icons.eco;
-                                  iconColor = Colors.lightGreen;
+                                  emoji = '🥦';
                                   break;
                                 default:
-                                  typeIcon = Icons.restaurant;
-                                  iconColor = Colors.blueGrey;
+                                  emoji = '🍽️';
                               }
 
                               final isDark = Theme.of(context).brightness ==
@@ -311,7 +324,10 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                 child: Card(
                                   elevation: 4,
                                   color: isDark
-                                      ? Theme.of(context).colorScheme.primary.withAlpha(30)
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withAlpha(30)
                                       : Colors.black,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
@@ -322,8 +338,8 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Icon(typeIcon,
-                                            color: iconColor, size: 32),
+                                        Text(emoji,
+                                            style: TextStyle(fontSize: 32)),
                                         const SizedBox(width: 16),
                                         Expanded(
                                           child: Column(
@@ -343,9 +359,9 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                               const SizedBox(height: 6),
                                               Row(
                                                 children: [
-                                                  Icon(Icons.scale,
-                                                      size: 16,
-                                                      color: theme.hintColor),
+                                                  Text('⚖️',
+                                                      style: TextStyle(
+                                                          fontSize: 16)),
                                                   const SizedBox(width: 4),
                                                   Text(
                                                     '${item['estimated_grams']?.toStringAsFixed(0) ?? '-'}g',
@@ -353,11 +369,9 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                                         .textTheme.bodySmall,
                                                   ),
                                                   const SizedBox(width: 16),
-                                                  Icon(
-                                                      Icons
-                                                          .local_fire_department,
-                                                      size: 16,
-                                                      color: Colors.redAccent),
+                                                  Text('🔥',
+                                                      style: TextStyle(
+                                                          fontSize: 16)),
                                                   const SizedBox(width: 4),
                                                   Text(
                                                     '${item['calories']?.toStringAsFixed(0) ?? '-'} kcal',
@@ -370,21 +384,21 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                               Row(
                                                 children: [
                                                   _macroChip(
-                                                    Icons.fitness_center,
+                                                    '💪',
                                                     '${item['protein_g']?.toStringAsFixed(1) ?? '0'}g',
                                                     Colors.green[100]!,
                                                     Colors.green[700]!,
                                                   ),
                                                   const SizedBox(width: 8),
                                                   _macroChip(
-                                                    Icons.bubble_chart,
+                                                    '🌾',
                                                     '${item['carbs_g']?.toStringAsFixed(1) ?? '0'}g',
                                                     Colors.blue[100]!,
                                                     Colors.blue[700]!,
                                                   ),
                                                   const SizedBox(width: 8),
                                                   _macroChip(
-                                                    Icons.oil_barrel,
+                                                    '🥑',
                                                     '${item['fat_g']?.toStringAsFixed(1) ?? '0'}g',
                                                     Colors.orange[100]!,
                                                     Colors.orange[700]!,
@@ -425,7 +439,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
   }
 
   Widget _macroChip(
-      IconData icon, String value, Color bgColor, Color iconColor) {
+      String emoji, String value, Color bgColor, Color textColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -434,12 +448,12 @@ class _MealViewScreenState extends State<MealViewScreen> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: iconColor, size: 14),
+          Text(emoji, style: const TextStyle(fontSize: 14)),
           const SizedBox(width: 2),
           Text(
             value,
             style: TextStyle(
-              color: iconColor,
+              color: textColor,
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
