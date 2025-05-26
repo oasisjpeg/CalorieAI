@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:convert';
 
@@ -166,9 +165,6 @@ Give me the response of texts (except the tags) in $languageText
       log.fine('Sending message to Gemini...');
       final chat = _model.startChat(history: history);
       
-      final chatContent = [
-        Content.text(message),
-      ];
 
       final response = await chat.sendMessage(
         Content.multi([

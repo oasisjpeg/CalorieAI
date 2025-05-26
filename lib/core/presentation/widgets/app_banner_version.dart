@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/presentation/widgets/dynamic_ont_logo.dart';
 import 'package:opennutritracker/generated/l10n.dart';
 
 class AppBannerVersion extends StatelessWidget {

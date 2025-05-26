@@ -7,8 +7,10 @@ import 'package:opennutritracker/core/presentation/widgets/activity_vertial_list
 import 'package:opennutritracker/core/presentation/widgets/copy_dialog.dart';
 import 'package:opennutritracker/core/presentation/widgets/delete_dialog.dart';
 import 'package:opennutritracker/core/utils/custom_icons.dart';
+import 'package:opennutritracker/core/utils/navigation_options.dart';
 import 'package:opennutritracker/features/add_meal/presentation/add_meal_type.dart';
 import 'package:opennutritracker/features/home/presentation/widgets/intake_vertical_list.dart';
+import 'package:opennutritracker/features/meal_view/presentation/meal_view_screen.dart';
 import 'package:opennutritracker/generated/l10n.dart';
 
 import '../../../../core/presentation/widgets/copy_or_delete_dialog.dart';
@@ -127,6 +129,7 @@ class DayInfoWidget extends StatelessWidget {
               addMealType: AddMealType.breakfastType,
               intakeList: breakfastIntake,
               onItemLongPressedCallback: onIntakeItemLongPressed,
+              onItemTappedCallback: onIntakeItemTapped,
               usesImperialUnits: usesImperialUnits,
             ),
             IntakeVerticalList(
@@ -136,6 +139,7 @@ class DayInfoWidget extends StatelessWidget {
               addMealType: AddMealType.lunchType,
               intakeList: lunchIntake,
               onItemLongPressedCallback: onIntakeItemLongPressed,
+              onItemTappedCallback: onIntakeItemTapped,
               usesImperialUnits: usesImperialUnits,
             ),
             IntakeVerticalList(
@@ -145,6 +149,7 @@ class DayInfoWidget extends StatelessWidget {
               addMealType: AddMealType.dinnerType,
               intakeList: dinnerIntake,
               onItemLongPressedCallback: onIntakeItemLongPressed,
+              onItemTappedCallback: onIntakeItemTapped,
               usesImperialUnits: usesImperialUnits,
             ),
             IntakeVerticalList(
@@ -224,6 +229,18 @@ class DayInfoWidget extends StatelessWidget {
     } else {
       showCopyOrDeleteIntakeDialog(context, intakeEntity);
     }
+  }
+
+  void onIntakeItemTapped(BuildContext context, IntakeEntity intakeEntity, bool firstListElement) async {
+    await Navigator.of(context).pushNamed(
+      NavigationOptions.mealViewRoute,
+      arguments: MealViewScreenArguments(
+        intakeEntity.meal,
+        intakeEntity.type,
+        DateTime.now(),
+        usesImperialUnits,
+      ),
+    );
   }
 
   void onActivityItemLongPressed(
