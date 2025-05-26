@@ -173,6 +173,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           intakeList: snackIntakeList,
           onItemDragCallback: onIntakeItemDrag,
           onItemTappedCallback: onIntakeItemTapped,
+          onItemLongPressedCallback: onIntakeItemLongPressed,
           usesImperialUnits: usesImperialUnits,
         ),
         ActivityVerticalList(

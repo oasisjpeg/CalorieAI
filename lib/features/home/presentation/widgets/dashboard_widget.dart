@@ -75,17 +75,17 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
     final proteinColor = proteinsOverLimit ? Colors.red : Colors.redAccent;
     final proteinBg = proteinsOverLimit
-        ? Colors.red.withOpacity(0.25)
-        : (isDarkMode ? Colors.red.shade900.withOpacity(0.25) : Colors.red.shade50);
+        ? Colors.red.withValues(alpha: 0.25)
+        : (isDarkMode ? Colors.red.shade900.withValues(alpha: 0.25) : Colors.red.shade50);
     final carbsColor = carbsOverLimit ? Colors.red : Colors.orangeAccent;
     final carbsBg = carbsOverLimit
-        ? Colors.red.withOpacity(0.25)
+        ? Colors.red.withValues(alpha: 0.25)
         : (isDarkMode
-            ? Colors.orange.shade900.withOpacity(0.25)
+            ? Colors.orange.shade900.withValues(alpha: 0.25)
             : Colors.orange.shade50);
     final fatsColor = fatsOverLimit ? Colors.red : Colors.blueAccent;
     final fatsBg = fatsOverLimit
-        ? Colors.red.withOpacity(0.25)
+        ? Colors.red.withValues(alpha: 0.25)
         : (isDarkMode
             ? Colors.blue.shade900.withOpacity(0.25)
             : Colors.blue.shade50);
@@ -102,7 +102,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               boxShadow: [
                 if (!isDarkMode)
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -146,7 +146,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -163,8 +163,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                       ? Theme.of(context).colorScheme.primary
                       : Colors.black87,
                   backgroundColor: isDarkMode
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
-                      : Colors.grey.shade200,
+                      ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
+                      : Colors.grey.shade300,
                   center: Text(
                     '🔥',
                     style: TextStyle(

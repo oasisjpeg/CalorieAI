@@ -328,7 +328,10 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                           .colorScheme
                                           .primary
                                           .withAlpha(30)
-                                      : Colors.black,
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                          ,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
