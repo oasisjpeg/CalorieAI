@@ -11,9 +11,9 @@ import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dar
 import 'package:opennutritracker/features/diary/presentation/widgets/diary_table_calendar.dart';
 import 'package:opennutritracker/features/diary/presentation/widgets/day_info_widget.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-
+import 'package:opennutritracker/l10n/app_localizations.dart';
 import '../../core/domain/entity/intake_type_entity.dart';
+typedef S = AppLocalizations;
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});

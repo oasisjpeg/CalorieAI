@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:opennutritracker/core/presentation/widgets/add_item_bottom_sheet.dart';
 import 'package:opennutritracker/features/diary/diary_page.dart';
 import 'package:opennutritracker/core/presentation/widgets/home_appbar.dart';
 import 'package:opennutritracker/features/home/home_page.dart';
 import 'package:opennutritracker/core/presentation/widgets/main_appbar.dart';
 import 'package:opennutritracker/features/profile/profile_page.dart';
-import 'package:opennutritracker/features/recipe_chatbot/presentation/recipe_chatbot_screen.dart';
-import 'package:opennutritracker/features/recipe_chatbot/presentation/bloc/recipe_chatbot_bloc.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
+import 'package:opennutritracker/features/recipe_chatbot/presentation/recipe_feature_wrapper.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+
+typedef S = AppLocalizations;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -29,10 +28,7 @@ class _MainScreenState extends State<MainScreen> {
     _bodyPages = [
       const HomePage(),
       const DiaryPage(),
-      BlocProvider(
-        create: (context) => locator<RecipeChatbotBloc>(),
-        child: const RecipeChatbotScreen(),
-      ),
+      const RecipeFeatureWrapper(),
       const ProfilePage(),
     ];
     _appbarPages = [

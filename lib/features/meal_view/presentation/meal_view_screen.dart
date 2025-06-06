@@ -18,7 +18,8 @@ import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_placeholder.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_title_expanded.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/off_disclaimer.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 
 class MealViewScreen extends StatefulWidget {
   const MealViewScreen({super.key});

@@ -14,7 +14,8 @@ import 'package:opennutritracker/features/profile/presentation/widgets/set_goal_
 import 'package:opennutritracker/features/profile/presentation/widgets/set_height_dialog.dart';
 import 'package:opennutritracker/features/profile/presentation/widgets/set_pal_category_dialog.dart';
 import 'package:opennutritracker/features/profile/presentation/widgets/set_weight_dialog.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

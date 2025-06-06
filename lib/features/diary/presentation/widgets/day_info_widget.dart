@@ -11,9 +11,9 @@ import 'package:opennutritracker/core/utils/navigation_options.dart';
 import 'package:opennutritracker/features/add_meal/presentation/add_meal_type.dart';
 import 'package:opennutritracker/features/home/presentation/widgets/intake_vertical_list.dart';
 import 'package:opennutritracker/features/meal_view/presentation/meal_view_screen.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-
+import 'package:opennutritracker/l10n/app_localizations.dart';
 import '../../../../core/presentation/widgets/copy_or_delete_dialog.dart';
+typedef S = AppLocalizations;
 
 class DayInfoWidget extends StatelessWidget {
   final DateTime selectedDay;

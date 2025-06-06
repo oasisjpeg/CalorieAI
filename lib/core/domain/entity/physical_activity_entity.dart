@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:opennutritracker/core/data/dbo/physical_activity_dbo.dart';
 import 'package:opennutritracker/core/utils/custom_icons.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 /// A physical activity with it's measured MET value by the
 /// '2011 Compendium of Physical Activities'
 /// https://pubmed.ncbi.nlm.nih.gov/21681120/

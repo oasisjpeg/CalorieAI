@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 class UserBMIEntity extends Equatable {
   final double bmiValue;
   final UserNutritionalStatus nutritionalStatus;

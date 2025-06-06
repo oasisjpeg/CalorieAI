@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:opennutritracker/features/home/presentation/widgets/dashboard_widget.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 
 void main() {
   testWidgets('DashboardWidget displays correct data',
@@ -11,12 +12,12 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(
       localizationsDelegates: const [
-        S.delegate,
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: S.delegate.supportedLocales,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const DashboardWidget(
         totalKcalSupplied: 1500,
         totalKcalBurned: 500,

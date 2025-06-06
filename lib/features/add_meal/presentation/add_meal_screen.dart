@@ -16,7 +16,8 @@ import 'package:opennutritracker/features/add_meal/presentation/bloc/products_bl
 import 'package:opennutritracker/features/add_meal/presentation/widgets/food_image_analyzer.dart';
 import 'package:opennutritracker/features/edit_meal/presentation/edit_meal_screen.dart';
 import 'package:opennutritracker/features/scanner/scanner_screen.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 
 class AddMealScreen extends StatefulWidget {
   const AddMealScreen({super.key});

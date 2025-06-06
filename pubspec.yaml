@@ -75,6 +75,9 @@ dependencies:
   # Gemini AI integration
   google_generative_ai: ^0.4.0
   image_picker: ^1.0.7
+  
+  # In-App Purchases
+  in_app_purchase: ^3.1.13
 
 dev_dependencies:
   flutter_test:
@@ -89,7 +92,7 @@ dev_dependencies:
   mockito: ^5.4.5
 
 flutter:
-
+  generate: false
   uses-material-design: true
 
   assets:

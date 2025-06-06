@@ -13,12 +13,13 @@ import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart'
 import 'package:opennutritracker/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:opennutritracker/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:opennutritracker/features/settings/presentation/widgets/export_import_dialog.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:opennutritracker/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
 import 'package:url_launcher/url_launcher.dart';
 import 'package:opennutritracker/features/settings/presentation/widgets/calculations_dialog.dart';
+typedef S = AppLocalizations;
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

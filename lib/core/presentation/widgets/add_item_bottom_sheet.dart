@@ -5,8 +5,8 @@ import 'package:opennutritracker/core/utils/navigation_options.dart';
 import 'package:opennutritracker/features/add_activity/presentation/add_activity_screen.dart';
 import 'package:opennutritracker/features/add_meal/presentation/add_meal_screen.dart';
 import 'package:opennutritracker/features/add_meal/presentation/add_meal_type.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 class AddItemBottomSheet extends StatelessWidget {
   final DateTime day;
 

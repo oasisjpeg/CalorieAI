@@ -8,17 +8,18 @@ class SecureAppStorageProvider {
   static const _sharedPrefsName = "SharedPrefs";
   static const _hiveEncryptionTag = "HiveEncryptionTag";
 
-  static const _androidOptions = AndroidOptions(
+  // Make these public by removing the underscore
+  static const androidOptions = AndroidOptions(
       encryptedSharedPreferences: true,
       storageCipherAlgorithm: StorageCipherAlgorithm.AES_CBC_PKCS7Padding,
       sharedPreferencesName: _sharedPrefsName);
-  static const _iOSOptions = IOSOptions();
+  static const iOSOptions = IOSOptions();
 
   static const FlutterSecureStorage secureAppStorage =
-      FlutterSecureStorage(iOptions: _iOSOptions, aOptions: _androidOptions);
+      FlutterSecureStorage(iOptions: iOSOptions, aOptions: androidOptions);
 
   final _secureStorage = const FlutterSecureStorage(
-      aOptions: _androidOptions, iOptions: _iOSOptions);
+      aOptions: androidOptions, iOptions: iOSOptions);
 
   Future<Uint8List> getHiveEncryptionKey() async {
     Uint8List encryptionKey;

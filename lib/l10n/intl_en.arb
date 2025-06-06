@@ -52,7 +52,7 @@
   "stepsPermissionDenied": "Please grant access to Apple Health to track your steps",
   "stepsGrantAccess": "Grant Access",
   "steps": "Steps",
-  "stepsToday": "Today"
+  "stepsToday": "Today",
   "settingsCalculationsLabel": "Calculations",
   "settingsThemeLabel": "Theme",
   "settingsThemeLightLabel": "Light",
@@ -410,5 +410,33 @@
   "paSkiingGeneral": "skiing",
   "paSkiingGeneralDesc": "general",
   "paSnowShovingModerate": "snow shoveling",
-  "paSnowShovingModerateDesc": "by hand, moderate effort"
+  "paSnowShovingModerateDesc": "by hand, moderate effort",
+  "dailyLimitReachedTitle": "Daily Limit Reached",
+  "upgradeForUnlimitedAccess": "Upgrade for unlimited access to all features.",
+  "maybeLater": "Maybe Later",
+  "dailyLimitMessage": "You have {remaining} free analyses left today. Upgrade to premium for unlimited access.",
+  "@dailyLimitMessage": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "upgradeToPremium": "Upgrade to Premium",
+  "purchaseError": "Error processing purchase. Please try again.",
+  "restorePurchases": "Restore Purchases",
+  "purchaseSuccessful": "Thank you for upgrading to Premium!",
+  "unlockPremiumFeatures": "Unlock Premium Features",
+  "getUnlimitedAccessToAllFeatures": "Get unlimited access to all features and remove daily limits.",
+  "premiumFeatures": "Premium Features",
+  "unlimitedFoodAnalysis": "Unlimited food analysis",
+  "accessToRecipeFinder": "Access to recipe finder",
+  "noAds": "No ads",
+  "prioritySupport": "Priority support",
+  "premium": "Premium",
+  "cancelAnytime": "Cancel anytime",
+  "subscribeFor": "Subscribe for",
+  "premiumActive": "Premium Active",
+  "subscriptionTerms": "Subscription will be charged to your payment method. Auto-renews unless canceled 24 hours before the end of the current period. Manage in your account settings.",
+  "remainingAnalyses": "Remaining Analyses"
 }

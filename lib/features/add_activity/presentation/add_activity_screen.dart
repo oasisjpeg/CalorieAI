@@ -6,7 +6,8 @@ import 'package:opennutritracker/features/add_activity/presentation/bloc/activit
 import 'package:opennutritracker/features/add_activity/presentation/bloc/recent_activities_bloc.dart';
 import 'package:opennutritracker/features/add_activity/presentation/widgets/activity_item_card.dart';
 import 'package:opennutritracker/features/add_meal/presentation/widgets/no_results_widget.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({super.key});

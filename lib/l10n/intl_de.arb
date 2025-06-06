@@ -397,5 +397,33 @@
   "paSkiingGeneral": "Skifahren",
   "paSkiingGeneralDesc": "allgemein",
   "paSnowShovingModerate": "Schnee schaufeln",
-  "paSnowShovingModerateDesc": "manuell, mäßige Anstrengung"
+  "paSnowShovingModerateDesc": "manuell, mäßige Anstrengung",
+  "dailyLimitReachedTitle": "Tageslimit erreicht",
+  "upgradeForUnlimitedAccess": "Upgrade für unbegrenzten Zugang zu allen Funktionen.",
+  "maybeLater": "Vielleicht später",
+  "dailyLimitMessage": "Sie haben heute noch {remaining} kostenlose Analysen übrig. Upgraden Sie auf Premium für unbegrenzten Zugang.",
+  "@dailyLimitMessage": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "upgradeToPremium": "Auf Premium upgraden",
+  "purchaseError": "Fehler beim Verarbeiten des Kaufs. Bitte versuchen Sie es erneut.",
+  "restorePurchases": "Käufe wiederherstellen",
+  "purchaseSuccessful": "Vielen Dank für das Upgrade auf Premium!",
+    "unlockPremiumFeatures": "Premium-Funktionen freischalten",
+  "getUnlimitedAccessToAllFeatures": "Erhalten Sie unbegrenzten Zugang zu allen Funktionen und entfernen Sie tägliche Limits.",
+  "premiumFeatures": "Premium-Funktionen",
+  "unlimitedFoodAnalysis": "Unbegrenzte Lebensmittelanalyse",
+  "accessToRecipeFinder": "Zugang zum Rezeptfinder",
+  "noAds": "Keine Werbung",
+  "prioritySupport": "Prioritäts-Support",
+  "premium": "Premium",
+  "cancelAnytime": "Jederzeit kündbar",
+  "subscribeFor": "Abonnieren für",
+  "premiumActive": "Premium aktiv",
+  "subscriptionTerms": "Das Abonnement wird über Ihre Zahlungsmethode abgerechnet. Verlängert sich automatisch, es sei denn, es wird 24 Stunden vor Ende der aktuellen Periode gekündigt. Verwalten Sie es in Ihren Kontoeinstellungen.",
+  "remainingAnalyses": "Verbleibende Analysen"
 }

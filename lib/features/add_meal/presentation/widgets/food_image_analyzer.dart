@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:opennutritracker/core/services/imgbb_service.dart';
 
 import 'package:flutter/material.dart';
@@ -13,12 +14,15 @@ import 'package:opennutritracker/core/utils/id_generator.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/core/utils/navigation_options.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
+import 'package:opennutritracker/features/iap/presentation/pages/iap_screen.dart';
 import 'package:opennutritracker/features/meal_view/presentation/meal_view_screen.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_nutriments_entity.dart';
 import 'package:opennutritracker/features/meal_detail/meal_detail_screen.dart';
 import 'package:opennutritracker/features/add_meal/presentation/widgets/food_items_adjustable_list.dart';
-// import 'package:opennutritracker/generated/l10n.dart'; // Removed unused import
-
+import 'package:opennutritracker/features/iap/presentation/bloc/iap_bloc.dart';
+import 'package:opennutritracker/features/iap/presentation/bloc/iap_event.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 class FoodImageAnalyzer extends StatefulWidget {
   final Function(String) onSearchTermsExtracted;
   final DateTime day;
@@ -126,7 +130,48 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       _foodData = null;
     });
 
+    // Check if user has premium access or remaining analyses
+    final iapBloc = context.read<IAPBloc>();
+    final iapState = iapBloc.state;
+    
+    if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
+      // Show upgrade dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(S.of(context)!.upgradeToPremium),
+            content: Text(S.of(context)!.getUnlimitedAccessToAllFeatures),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(S.of(context).dialogCancelLabel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Navigate to IAP screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const IAPScreen()),
+                  );
+                },
+                child: Text(S.of(context)!.upgradeToPremium),
+              ),
+            ],
+          ),
+        );
+      }
+      setState(() => _isAnalyzing = false);
+      return;
+    }
+
     try {
+      // Record the analysis usage
+      if (!iapState.hasPremiumAccess) {
+        iapBloc.add(const RecordAnalysisPerformed());
+      }
+
       final imageUrl = await _uploadImageToImgbb(_imageFile!);
       if (imageUrl == null) {
         setState(() {
@@ -139,9 +184,9 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       // Include the prompt in the Gemini analysis
       final prompt = _promptController.text.trim();
       final jsonResponse = await _geminiService.analyzeFoodImage(
-        imageBytes: _imageFile!.readAsBytesSync(),
+        imageBytes: await _imageFile!.readAsBytes(),
         context: context,
-        prompt: prompt,
+        prompt: prompt.isNotEmpty ? prompt : null,
       );
 
       try {
@@ -160,6 +205,21 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         setState(() {
           _foodData = parsedData;
           _analysisResult = 'Successfully analyzed food image';
+          // Show remaining uses if not premium
+          if (!iapState.hasPremiumAccess) {
+            final remaining = iapState.remainingDailyAnalyses - 1;
+            if (remaining >= 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '${S.of(context).remainingAnalyses}: $remaining',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+              );
+            }
+          }
         });
         _isAnalyzing = false;
 

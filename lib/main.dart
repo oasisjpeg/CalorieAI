@@ -1,15 +1,20 @@
 // import 'package:flutter/foundation.dart'; // Removed unused import
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:opennutritracker/core/data/data_source/user_data_source.dart';
+import 'package:opennutritracker/core/data/datasource/local/iap_local_data_source.dart';
 import 'package:opennutritracker/core/data/repository/config_repository.dart';
 import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
 import 'package:opennutritracker/core/presentation/main_screen.dart';
 import 'package:opennutritracker/core/presentation/widgets/image_full_screen.dart';
 import 'package:opennutritracker/core/styles/color_schemes.dart';
 import 'package:opennutritracker/core/styles/fonts.dart';
-// import 'package:opennutritracker/core/utils/env.dart'; // Removed unused import
+import 'package:opennutritracker/features/iap/domain/service/daily_limit_service.dart';
+import 'package:opennutritracker/features/iap/presentation/bloc/iap_bloc.dart';
+import 'package:opennutritracker/features/iap/presentation/bloc/iap_event.dart';
+import 'package:opennutritracker/shared/iap_service.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/core/utils/logger_config.dart';
 import 'package:opennutritracker/core/utils/navigation_options.dart';
@@ -23,9 +28,10 @@ import 'package:opennutritracker/features/scanner/scanner_screen.dart';
 import 'package:opennutritracker/features/meal_detail/meal_detail_screen.dart';
 import 'package:opennutritracker/features/meal_view/presentation/meal_view_screen.dart';
 import 'package:opennutritracker/features/settings/settings_screen.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 // import 'package:sentry_flutter/sentry_flutter.dart'; // Disabled for simulator compatibility
+typedef S = AppLocalizations;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,7 +64,18 @@ void runAppWithChangeNotifiers(
         bool userInitialized, AppThemeEntity savedAppTheme) =>
     runApp(ChangeNotifierProvider(
         create: (_) => ThemeModeProvider(appTheme: savedAppTheme),
-        child: OpenNutriTrackerApp(userInitialized: userInitialized)));
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider<IAPBloc>(
+              create: (context) => IAPBloc(
+                dailyLimitService: DailyLimitService(
+                  localDataSource: IAPLocalDataSource(),
+                ),
+              )..add(const LoadIAPStatus()),
+            ),
+          ],
+          child: OpenNutriTrackerApp(userInitialized: userInitialized),
+        )));
 
 class OpenNutriTrackerApp extends StatelessWidget {
   final bool userInitialized;
@@ -68,7 +85,7 @@ class OpenNutriTrackerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateTitle: (context) => S.of(context).appTitle,
+      onGenerateTitle: (context) => S.of(context)?.appTitle ?? 'CalorieAI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           useMaterial3: true,
@@ -80,12 +97,12 @@ class OpenNutriTrackerApp extends StatelessWidget {
           textTheme: appTextTheme),
       themeMode: Provider.of<ThemeModeProvider>(context).themeMode,
       localizationsDelegates: const [
-        S.delegate,
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: S.delegate.supportedLocales,
+      supportedLocales: AppLocalizations.supportedLocales,
       initialRoute: userInitialized
           ? NavigationOptions.mainRoute
           : NavigationOptions.onboardingRoute,

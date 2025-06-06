@@ -13,8 +13,9 @@ import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dar
 import 'package:opennutritracker/features/edit_meal/presentation/bloc/edit_meal_bloc.dart';
 import 'package:opennutritracker/features/edit_meal/presentation/widgets/default_meal_image.dart';
 import 'package:opennutritracker/features/meal_detail/meal_detail_screen.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
 import 'package:opennutritracker/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+typedef S = AppLocalizations;
 
 class EditMealScreen extends StatefulWidget {
   const EditMealScreen({super.key});

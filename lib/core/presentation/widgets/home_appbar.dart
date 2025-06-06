@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:opennutritracker/core/utils/navigation_options.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-
+import 'package:opennutritracker/features/iap/presentation/widgets/usage_counter.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 class HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppbar({super.key});
 
@@ -32,6 +33,10 @@ class HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: UsageCounter(),
+        ),
         IconButton(
           icon: Icon(Icons.settings_outlined,
               color: Theme.of(context).colorScheme.onSurface),
@@ -39,7 +44,7 @@ class HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             Navigator.of(context).pushNamed(NavigationOptions.settingsRoute);
           },
-        )
+        ),
       ],
     );
   }

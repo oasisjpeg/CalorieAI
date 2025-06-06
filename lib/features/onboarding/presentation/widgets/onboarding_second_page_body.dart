@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:opennutritracker/core/utils/calc/unit_calc.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 
 class OnboardingSecondPageBody extends StatefulWidget {
   final Function(bool active, double? selectedHeight, double? selectedWeight,

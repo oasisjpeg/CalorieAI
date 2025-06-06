@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/generated/l10n.dart';
-
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 class DeleteDialog extends StatelessWidget {
   const DeleteDialog({super.key});
 

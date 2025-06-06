@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:opennutritracker/core/utils/extensions.dart';
-import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/l10n/app_localizations.dart';
+typedef S = AppLocalizations;
 
 class UnitCalc {
   static double cmToInches(double cm) {
