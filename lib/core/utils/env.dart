@@ -16,4 +16,6 @@ abstract class Env {
   static final String geminiApiKey = _Env.geminiApiKey;
   @EnviedField(varName: 'IMGBB_API_KEY', obfuscate: true)
   static final String imgbbApiKey = _Env.imgbbApiKey;
+  @EnviedField(varName: 'PREMIUM_SUBSCRIPTION_ID', obfuscate: true)
+  static final String premiumSubscriptionId = _Env.premiumSubscriptionId;
 }

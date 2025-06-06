@@ -32,7 +32,7 @@ class OutOfLimitsDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            IAPConstants.getDailyLimitMessage(remainingAnalyses),
+            s.dailyLimitMessage(remainingAnalyses),
             style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: 16),
@@ -61,7 +61,7 @@ class OutOfLimitsDialog extends StatelessWidget {
               ),
             );
           },
-          child: Text(IAPConstants.upgradeToPremium),
+          child: Text(S.of(context).upgradeToPremium),
         ),
       ],
     );
