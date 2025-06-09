@@ -438,5 +438,16 @@
   "subscribeFor": "Subscribe for",
   "premiumActive": "Premium Active",
   "subscriptionTerms": "Subscription will be charged to your payment method. Auto-renews unless canceled 24 hours before the end of the current period. Manage in your account settings.",
-  "remainingAnalyses": "Remaining Analyses"
+  "remainingAnalyses": "Remaining Analyses",
+  "addPromptForGemini": "Add prompt for Gemini (recommended)",
+  "addPromptForGeminiHint": "e.g., \"This is a close-up of a salad with tomatoes and cucumbers\"",
+  "analyzeWithGemini": "Analyze with Gemini",
+  "adjustQuantitiesAsNeeded": "Adjust quantities as needed",
+  "analysisFailed": "Analysis failed",
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "hideDescription": "Hide Description",
+  "addDescription": "Add Description",
+  "addPromptForGeminiDescription": "Describe your dish here",
+  "addPromptForGeminiHintDescription": "e.g., \"I ate rice with...\""
 }

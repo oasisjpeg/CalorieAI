@@ -1313,4 +1313,37 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get remainingAnalyses => 'Remaining Analyses';
+
+  @override
+  String get addPromptForGemini => 'Add prompt for Gemini (recommended)';
+
+  @override
+  String get addPromptForGeminiHint => 'e.g., \"This is a close-up of a salad with tomatoes and cucumbers\"';
+
+  @override
+  String get analyzeWithGemini => 'Analyze with Gemini';
+
+  @override
+  String get adjustQuantitiesAsNeeded => 'Adjust quantities as needed';
+
+  @override
+  String get analysisFailed => 'Analysis failed';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get hideDescription => 'Hide Description';
+
+  @override
+  String get addDescription => 'Add Description';
+
+  @override
+  String get addPromptForGeminiDescription => 'Describe your dish here';
+
+  @override
+  String get addPromptForGeminiHintDescription => 'e.g., \"I ate rice with...\"';
 }

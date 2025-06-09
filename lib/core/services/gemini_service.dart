@@ -36,9 +36,8 @@ class GeminiService {
       }
 
       // Clean up the response by removing markdown formatting
-      final cleanedResponse = responseText
-          .replaceAll('```json', '')
-          .replaceAll('```', '');
+      final cleanedResponse =
+          responseText.replaceAll('```json', '').replaceAll('```', '');
 
       // Try to parse the JSON
       try {
@@ -51,7 +50,6 @@ class GeminiService {
         log.warning('Could not parse JSON response: $e');
         return cleanedResponse;
       }
-
     } catch (e) {
       log.severe('Error generating content: $e');
       rethrow;
@@ -143,8 +141,7 @@ Give me the response of texts (except the tags) in $languageText
       // For display purposes, we'll format the JSON response as a readable description
       try {
         // Keep the original JSON response for now, we'll handle parsing in the UI
-        log.fine(
-            'Successfully analyzed food image');
+        log.fine('Successfully analyzed food image');
         return responseText;
       } catch (formatError) {
         log.warning('Error formatting JSON response: $formatError');
@@ -156,7 +153,97 @@ Give me the response of texts (except the tags) in $languageText
     }
   }
 
-    /// Sends a message to the Gemini model and returns the response
+  Future<String> analyzeFoodDescription({
+    required BuildContext context,
+    String? prompt,
+  }) async {
+    try {
+      log.fine('Analyzing food description with Gemini...');
+
+      final locale = Localizations.localeOf(context);
+      final languageText = locale.languageCode == 'de' ? "german" : "english";
+
+      final geminiPrompt = '''
+You are a culinary expert specializing in food analysis based on descriptions. For any provided food description:
+
+Verify if the description contains edible food items or drinks (coca-cola or red-bulls or similar)
+If non-food or non-drinks detected, respond with: {"error": "No food detected"}
+For valid food descriptions:
+Identify each component with maximum specificity (e.g., "whole wheat spaghetti" not "pasta")
+Use the provided portion sizes in grams from the description. If not explicitly stated, assume a standard serving size (e.g., 100g) for that item and note this assumption.
+Calculate nutritional values per 100g and scale to the provided or assumed portion
+Sum totals for the entire dish
+Return the total grams in the totals section
+For valid drink descriptions:
+Identify the drink with maximum specificity (e.g., "coca-cola" not "soft drink")
+Use the provided portion sizes in grams from the description (convert ml to g if ml is provided). If not explicitly stated, assume a standard serving size (e.g., 250ml or 250g) for that item and note this assumption.
+Calculate nutritional values per 100g and scale to the provided or assumed portion
+Sum totals for the entire drink
+Return the total grams in the totals section
+is_liquid is only true if you only describe liquids (only can of red-bull and nothing else), not if meals contain liquids (e.g. pasta with red-bull)
+IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backticks, or any formatting. Output raw JSON only by using this structure:
+{
+"valid_food_image": boolean,
+"is_liquid": boolean,
+"title": "Specific meal name",
+"items": [
+{
+"name": "specific food name",
+"type": "category (e.g., grain, protein)",
+"estimated_grams": X.X,
+"calories": X.X,
+"protein_g": X.X,
+"carbs_g": X.X,
+"fat_g": X.X,
+"sugar_g": X.X,
+"saturated_fat_g": X.X,
+"fiber_g": X.X
+}
+],
+"totals": {
+"total_grams": X.X,
+"calories": X.X,
+"protein_g": X.X,
+"carbs_g": X.X,
+"fat_g": X.X,
+"sugar_g": X.X,
+"saturated_fat_g": X.X,
+"fiber_g": X.X
+}
+}
+Provide exact food names (brand names if recognizable). Use standard nutritional databases. Maintain decimal precision.
+Give me the response of texts (except the tags) in $languageText
+      ''';
+
+      final content = [
+        Content.multi([
+          TextPart(geminiPrompt),
+          TextPart(prompt ?? ''),
+        ])
+      ];
+
+      final response = await _model.generateContent(content);
+      final responseText = response.text;
+
+      if (responseText == null || responseText.isEmpty) {
+        log.warning('Empty response from Gemini');
+        return 'Could not identify the food in the image.';
+      }
+
+      try {
+        log.fine('Successfully analyzed food image');
+        return responseText;
+      } catch (formatError) {
+        log.warning('Error formatting JSON response: $formatError');
+        return responseText;
+      }
+    } catch (e, stackTrace) {
+      log.severe('Error analyzing food image: $e', e, stackTrace);
+      return 'Error analyzing image: $e';
+    }
+  }
+
+  /// Sends a message to the Gemini model and returns the response
   Future<String> sendMessage({
     required String message,
     List<Content>? history,
@@ -164,13 +251,10 @@ Give me the response of texts (except the tags) in $languageText
     try {
       log.fine('Sending message to Gemini...');
       final chat = _model.startChat(history: history);
-      
 
-      final response = await chat.sendMessage(
-        Content.multi([
+      final response = await chat.sendMessage(Content.multi([
         TextPart(message),
-        ])
-      );
+      ]));
 
       final responseText = response.text;
 
@@ -192,6 +276,4 @@ Give me the response of texts (except the tags) in $languageText
       return 'Error processing message: $e';
     }
   }
-
-
 }

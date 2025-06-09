@@ -2688,6 +2688,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remaining Analyses'**
   String get remainingAnalyses;
+
+  /// No description provided for @addPromptForGemini.
+  ///
+  /// In en, this message translates to:
+  /// **'Add prompt for Gemini (recommended)'**
+  String get addPromptForGemini;
+
+  /// No description provided for @addPromptForGeminiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., \"This is a close-up of a salad with tomatoes and cucumbers\"'**
+  String get addPromptForGeminiHint;
+
+  /// No description provided for @analyzeWithGemini.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze with Gemini'**
+  String get analyzeWithGemini;
+
+  /// No description provided for @adjustQuantitiesAsNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust quantities as needed'**
+  String get adjustQuantitiesAsNeeded;
+
+  /// No description provided for @analysisFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis failed'**
+  String get analysisFailed;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @hideDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Description'**
+  String get hideDescription;
+
+  /// No description provided for @addDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Description'**
+  String get addDescription;
+
+  /// No description provided for @addPromptForGeminiDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your dish here'**
+  String get addPromptForGeminiDescription;
+
+  /// No description provided for @addPromptForGeminiHintDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., \"I ate rice with...\"'**
+  String get addPromptForGeminiHintDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -1313,4 +1313,37 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get remainingAnalyses => 'Verbleibende Analysen';
+
+  @override
+  String get addPromptForGemini => 'Fügen Sie ein Prompt für Gemini hinzu (empfohlen)';
+
+  @override
+  String get addPromptForGeminiHint => 'z. B. \"Dies ist ein Gericht mit ...\"';
+
+  @override
+  String get analyzeWithGemini => 'Mit Gemini analysieren';
+
+  @override
+  String get adjustQuantitiesAsNeeded => 'Mengen anpassen, wenn nötig';
+
+  @override
+  String get analysisFailed => 'Analyse fehlgeschlagen';
+
+  @override
+  String get camera => 'Kamera';
+
+  @override
+  String get gallery => 'Galerie';
+
+  @override
+  String get hideDescription => 'Beschreibung verbergen';
+
+  @override
+  String get addDescription => 'Beschreibung hinzufügen';
+
+  @override
+  String get addPromptForGeminiDescription => 'Beschreiben Sie hier Ihr Gericht';
+
+  @override
+  String get addPromptForGeminiHintDescription => 'z. B. \"Ich habe folgendes Gericht mit ...\"';
 }

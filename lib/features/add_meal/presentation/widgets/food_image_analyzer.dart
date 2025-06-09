@@ -22,7 +22,9 @@ import 'package:opennutritracker/features/add_meal/presentation/widgets/food_ite
 import 'package:opennutritracker/features/iap/presentation/bloc/iap_bloc.dart';
 import 'package:opennutritracker/features/iap/presentation/bloc/iap_event.dart';
 import 'package:opennutritracker/l10n/app_localizations.dart';
+
 typedef S = AppLocalizations;
+
 class FoodImageAnalyzer extends StatefulWidget {
   final Function(String) onSearchTermsExtracted;
   final DateTime day;
@@ -46,6 +48,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
   File? _imageFile;
   bool _isAnalyzing = false;
+  bool _isAnalyzingDescription = false;
   String _analysisResult = '';
   Map<String, dynamic>? _foodData;
   late GeminiService _geminiService;
@@ -133,7 +136,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     // Check if user has premium access or remaining analyses
     final iapBloc = context.read<IAPBloc>();
     final iapState = iapBloc.state;
-    
+
     if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
       // Show upgrade dialog
       if (mounted) {
@@ -205,6 +208,113 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         setState(() {
           _foodData = parsedData;
           _analysisResult = 'Successfully analyzed food image';
+          // Show remaining uses if not premium
+          if (!iapState.hasPremiumAccess) {
+            final remaining = iapState.remainingDailyAnalyses - 1;
+            if (remaining >= 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '${S.of(context).remainingAnalyses}: $remaining',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+              );
+            }
+          }
+        });
+        _isAnalyzing = false;
+
+        // Do not navigate here! Instead, show the adjustable ingredient list and "Save Meal" button.
+      } catch (jsonError) {
+        log.warning('Error parsing JSON response: $jsonError');
+      }
+    } catch (e) {
+      log.severe('Error analyzing image: $e');
+      setState(() {
+        _analysisResult = 'Error analyzing image: $e';
+        _isAnalyzing = false;
+      });
+    }
+  }
+
+  Future<void> _analyzeFoodDescription() async {
+    if (!_hasPrompt) return;
+
+    setState(() {
+      _isAnalyzing = true;
+      _analysisResult = '';
+      _foodData = null;
+    });
+
+    // Check if user has premium access or remaining analyses
+    final iapBloc = context.read<IAPBloc>();
+    final iapState = iapBloc.state;
+
+    if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
+      // Show upgrade dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(S.of(context)!.upgradeToPremium),
+            content: Text(S.of(context)!.getUnlimitedAccessToAllFeatures),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(S.of(context).dialogCancelLabel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Navigate to IAP screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const IAPScreen()),
+                  );
+                },
+                child: Text(S.of(context)!.upgradeToPremium),
+              ),
+            ],
+          ),
+        );
+      }
+      setState(() => _isAnalyzing = false);
+      return;
+    }
+
+    try {
+      // Record the analysis usage
+      if (!iapState.hasPremiumAccess) {
+        iapBloc.add(const RecordAnalysisPerformed());
+      }
+
+
+      // Include the prompt in the Gemini analysis
+      final prompt = _promptController.text.trim();
+      final jsonResponse = await _geminiService.analyzeFoodDescription(
+        context: context,
+        prompt: prompt,
+      );
+
+      try {
+        // Clean up the response if it contains markdown code blocks
+        String cleanedResponse = jsonResponse;
+        if (jsonResponse.contains('```json')) {
+          cleanedResponse = jsonResponse
+              .replaceAll('```json', '')
+              .replaceAll('```', '')
+              .trim();
+        }
+
+        // Try to parse the JSON response
+        final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
+
+        setState(() {
+          _foodData = parsedData;
+          _analysisResult = 'Successfully analyzed food image';
+          _isAnalyzingDescription = false;
           // Show remaining uses if not premium
           if (!iapState.hasPremiumAccess) {
             final remaining = iapState.remainingDailyAnalyses - 1;
@@ -387,17 +497,85 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                   children: [
                     ElevatedButton.icon(
                       icon: const Icon(Icons.camera_alt),
-                      label: const Text('Camera'),
+                      label: Text(S.of(context).camera),
                       onPressed: () => _getImage(ImageSource.camera),
                     ),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.photo_library),
-                      label: const Text('Gallery'),
+                      label: Text(S.of(context).gallery),
                       onPressed: () => _getImage(ImageSource.gallery),
                     ),
                   ],
                 ),
-
+                const SizedBox(height: 8),
+                Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    icon: Icon(_isAnalyzingDescription ? Icons.close : Icons.edit),
+                    label: Text(_isAnalyzingDescription ? S.of(context).hideDescription : S.of(context).addDescription),
+                    onPressed: () {
+                      setState(() {
+                        _isAnalyzingDescription = !_isAnalyzingDescription;
+                        if (!_isAnalyzingDescription) {
+                          _promptController.clear();
+                          _hasPrompt = false;
+                          _promptFocusNode.unfocus();
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+              if (_isAnalyzingDescription)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _promptController,
+                        focusNode: _promptFocusNode,
+                        decoration: InputDecoration(
+                          labelText: S.of(context).addPromptForGeminiDescription,
+                          hintText:
+                              S.of(context).addPromptForGeminiHintDescription,
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                        minLines: 1,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (String value) {
+                          setState(() {
+                            _hasPrompt = value.trim().isNotEmpty;
+                            _isAnalyzing = true;
+                          });
+                          _analyzeImage();
+                          _promptFocusNode.unfocus();
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _hasPrompt =
+                                _promptController.text.trim().isNotEmpty;
+                            _isAnalyzing = true;
+                          });
+                          _analyzeFoodDescription();
+                        },
+                        child: Text(S.of(context).analyzeWithGemini),
+                      ),
+                    ],
+                  ),
+                ),
+              
               // Show loading indicator while analyzing
               if (_isAnalyzing)
                 const Padding(
@@ -424,10 +602,10 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                         TextField(
                           controller: _promptController,
                           focusNode: _promptFocusNode,
-                          decoration: const InputDecoration(
-                            labelText: 'Add prompt for Gemini (recommended)',
+                          decoration: InputDecoration(
+                            labelText: S.of(context)!.addPromptForGemini,
                             hintText:
-                                'e.g., "This is a close-up of a salad with tomatoes and cucumbers"',
+                                S.of(context)!.addPromptForGeminiHint,
                             border: OutlineInputBorder(),
                           ),
                           maxLines: 3,
@@ -459,7 +637,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                             });
                             _analyzeImage();
                           },
-                          child: const Text('Analyze with Gemini'),
+                          child: Text(S.of(context)!.analyzeWithGemini),
                         ),
                       ],
                     ),
@@ -484,7 +662,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Adjust quantities as needed',
+                        S.of(context).adjustQuantitiesAsNeeded,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context).hintColor,
                             ),
@@ -509,7 +687,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                             color: Theme.of(context).colorScheme.error,
                             size: 36),
                         title: Text(
-                          'Analysis Failed',
+                          S.of(context).analysisFailed,
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     color: Theme.of(context).colorScheme.error,
@@ -517,7 +695,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                                   ),
                         ),
                         subtitle: Text(
-                          'There was a problem analyzing your image. Please try again.',
+                          S.of(context).analysisFailed,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         trailing: IconButton(

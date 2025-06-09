@@ -425,5 +425,16 @@
   "subscribeFor": "Abonnieren für",
   "premiumActive": "Premium aktiv",
   "subscriptionTerms": "Das Abonnement wird über Ihre Zahlungsmethode abgerechnet. Verlängert sich automatisch, es sei denn, es wird 24 Stunden vor Ende der aktuellen Periode gekündigt. Verwalten Sie es in Ihren Kontoeinstellungen.",
-  "remainingAnalyses": "Verbleibende Analysen"
+  "remainingAnalyses": "Verbleibende Analysen",
+  "addPromptForGemini": "Fügen Sie ein Prompt für Gemini hinzu (empfohlen)",
+  "addPromptForGeminiHint": "z. B. \"Dies ist ein Gericht mit ...\"",
+  "analyzeWithGemini": "Mit Gemini analysieren",
+  "adjustQuantitiesAsNeeded": "Mengen anpassen, wenn nötig",
+  "analysisFailed": "Analyse fehlgeschlagen",
+  "camera": "Kamera",
+  "gallery": "Galerie",
+  "hideDescription": "Beschreibung verbergen",
+  "addDescription": "Beschreibung hinzufügen",
+  "addPromptForGeminiDescription": "Beschreiben Sie hier Ihr Gericht",
+  "addPromptForGeminiHintDescription": "z. B. \"Ich habe folgendes Gericht mit ...\""
 }
