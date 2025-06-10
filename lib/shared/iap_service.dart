@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:in_app_purchase/in_app_purchase.dart' as iap;
-import 'package:opennutritracker/core/data/repository/iap_repository_impl.dart';
-import 'package:opennutritracker/core/domain/entity/iap_product.dart';
-import 'package:opennutritracker/core/domain/entity/purchase_status.dart';
-import 'package:opennutritracker/core/domain/repository/iap_repository.dart';
-import 'package:opennutritracker/core/utils/iap_constants.dart';
+import 'package:calorieai/core/data/repository/iap_repository_impl.dart';
+import 'package:calorieai/core/domain/entity/iap_product.dart';
+import 'package:calorieai/core/domain/entity/purchase_status.dart';
+import 'package:calorieai/core/domain/repository/iap_repository.dart';
+import 'package:calorieai/core/utils/iap_constants.dart';
 
 class IAPService {
   static final IAPService _instance = IAPService._internal();

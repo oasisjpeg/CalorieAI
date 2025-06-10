@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:opennutritracker/features/settings/domain/usecase/export_data_usecase.dart';
-import 'package:opennutritracker/features/settings/domain/usecase/import_data_usecase.dart';
+import 'package:calorieai/features/settings/domain/usecase/export_data_usecase.dart';
+import 'package:calorieai/features/settings/domain/usecase/import_data_usecase.dart';
 
 part 'export_import_event.dart';
 

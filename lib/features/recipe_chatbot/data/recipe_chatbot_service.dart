@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:opennutritracker/core/services/gemini_service.dart';
-import 'package:opennutritracker/features/recipe_chatbot/domain/recipe_entity.dart';
+import 'package:calorieai/core/services/gemini_service.dart';
+import 'package:calorieai/features/recipe_chatbot/domain/recipe_entity.dart';
 
 class RecipeChatbotService {
   final GeminiService geminiService;

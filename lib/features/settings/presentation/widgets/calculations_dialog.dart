@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_bloc.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
-import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
-import 'package:opennutritracker/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:opennutritracker/features/settings/presentation/bloc/settings_bloc.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
+import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
+import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
+import 'package:calorieai/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:calorieai/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 
 class CalculationsDialog extends StatefulWidget {

@@ -3,9 +3,9 @@ import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:opennutritracker/core/data/repository/intake_repository.dart';
-import 'package:opennutritracker/core/data/repository/tracked_day_repository.dart';
-import 'package:opennutritracker/core/data/repository/user_activity_repository.dart';
+import 'package:calorieai/core/data/repository/intake_repository.dart';
+import 'package:calorieai/core/data/repository/tracked_day_repository.dart';
+import 'package:calorieai/core/data/repository/user_activity_repository.dart';
 
 class ExportDataUsecase {
   final UserActivityRepository _userActivityRepository;

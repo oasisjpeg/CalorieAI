@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/features/recipe_chatbot/domain/recipe_entity.dart';
+import 'package:calorieai/features/recipe_chatbot/domain/recipe_entity.dart';
 
 class RecipeCard extends StatelessWidget {
   final RecipeEntity recipe;

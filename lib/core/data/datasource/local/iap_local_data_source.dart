@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:opennutritracker/core/utils/iap_constants.dart';
-import 'package:opennutritracker/core/utils/secure_app_storage_provider.dart';
-import 'package:opennutritracker/core/utils/logger.dart';
+import 'package:calorieai/core/utils/iap_constants.dart';
+import 'package:calorieai/core/utils/secure_app_storage_provider.dart';
+import 'package:calorieai/core/utils/logger.dart';
 
 class IAPLocalDataSource {
   final FlutterSecureStorage _secureStorage;

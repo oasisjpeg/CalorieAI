@@ -1,4 +1,4 @@
-import 'package:opennutritracker/core/utils/env.dart';
+import 'package:calorieai/core/utils/env.dart';
 
 class IAPConstants {
   // Product IDs - These should match your products in App Store Connect and Google Play Console

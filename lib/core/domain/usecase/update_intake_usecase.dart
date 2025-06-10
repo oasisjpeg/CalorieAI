@@ -1,5 +1,5 @@
-import 'package:opennutritracker/core/data/repository/intake_repository.dart';
-import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
+import 'package:calorieai/core/data/repository/intake_repository.dart';
+import 'package:calorieai/core/domain/entity/intake_entity.dart';
 
 class UpdateIntakeUsecase {
   final IntakeRepository _intakeRepository;

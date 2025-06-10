@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:opennutritracker/core/domain/entity/iap_product.dart';
-import 'package:opennutritracker/core/domain/entity/purchase_status.dart';
+import 'package:calorieai/core/domain/entity/iap_product.dart';
+import 'package:calorieai/core/domain/entity/purchase_status.dart';
 
 class IAPState extends Equatable {
   final bool isLoading;

@@ -1,4 +1,4 @@
-import 'package:opennutritracker/core/utils/supported_language.dart';
+import 'package:calorieai/core/utils/supported_language.dart';
 
 class SPConst {
   static const maxNumberOfItems = 20;

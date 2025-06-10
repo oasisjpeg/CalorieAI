@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/data/dbo/user_gender_dbo.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/data/dbo/user_gender_dbo.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 enum UserGenderEntity {
   male,

@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:opennutritracker/core/utils/iap_constants.dart';
-import 'package:opennutritracker/features/iap/presentation/bloc/iap_bloc.dart';
-import 'package:opennutritracker/features/iap/presentation/bloc/iap_event.dart';
-import 'package:opennutritracker/features/iap/presentation/bloc/iap_state.dart';
-import 'package:opennutritracker/features/iap/presentation/pages/iap_screen.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/utils/iap_constants.dart';
+import 'package:calorieai/features/iap/presentation/bloc/iap_bloc.dart';
+import 'package:calorieai/features/iap/presentation/bloc/iap_event.dart';
+import 'package:calorieai/features/iap/presentation/bloc/iap_state.dart';
+import 'package:calorieai/features/iap/presentation/pages/iap_screen.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 
 typedef S = AppLocalizations;
 

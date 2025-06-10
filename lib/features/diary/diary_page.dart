@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
-import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
-import 'package:opennutritracker/core/domain/entity/tracked_day_entity.dart';
-import 'package:opennutritracker/core/domain/entity/user_activity_entity.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
-import 'package:opennutritracker/features/add_meal/presentation/add_meal_type.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_bloc.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
-import 'package:opennutritracker/features/diary/presentation/widgets/diary_table_calendar.dart';
-import 'package:opennutritracker/features/diary/presentation/widgets/day_info_widget.dart';
-import 'package:opennutritracker/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/domain/entity/intake_entity.dart';
+import 'package:calorieai/core/domain/entity/tracked_day_entity.dart';
+import 'package:calorieai/core/domain/entity/user_activity_entity.dart';
+import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/features/add_meal/presentation/add_meal_type.dart';
+import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
+import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
+import 'package:calorieai/features/diary/presentation/widgets/diary_table_calendar.dart';
+import 'package:calorieai/features/diary/presentation/widgets/day_info_widget.dart';
+import 'package:calorieai/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 import '../../core/domain/entity/intake_type_entity.dart';
 typedef S = AppLocalizations;
 

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:opennutritracker/core/utils/iap_constants.dart';
+import 'package:calorieai/core/utils/iap_constants.dart';
 
 enum AppPurchaseState { notPurchased, pending, purchased, error }
 

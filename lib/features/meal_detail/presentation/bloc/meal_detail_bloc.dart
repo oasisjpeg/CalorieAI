@@ -2,16 +2,16 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
-import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
-import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
-import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/add_tracked_day_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/get_macro_goal_usecase.dart';
-import 'package:opennutritracker/core/utils/calc/unit_calc.dart';
-import 'package:opennutritracker/core/utils/id_generator.dart';
-import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
-import 'package:opennutritracker/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:calorieai/core/domain/entity/intake_entity.dart';
+import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
+import 'package:calorieai/core/domain/usecase/add_intake_usecase.dart';
+import 'package:calorieai/core/domain/usecase/add_tracked_day_usecase.dart';
+import 'package:calorieai/core/domain/usecase/get_kcal_goal_usecase.dart';
+import 'package:calorieai/core/domain/usecase/get_macro_goal_usecase.dart';
+import 'package:calorieai/core/utils/calc/unit_calc.dart';
+import 'package:calorieai/core/utils/id_generator.dart';
+import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
+import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
 
 part 'meal_detail_event.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/utils/navigation_options.dart';
-import 'package:opennutritracker/features/iap/presentation/widgets/usage_counter.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/utils/navigation_options.dart';
+import 'package:calorieai/features/iap/presentation/widgets/usage_counter.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 class HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppbar({super.key});

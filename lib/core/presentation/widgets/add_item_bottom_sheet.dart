@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
-import 'package:opennutritracker/core/domain/entity/user_activity_entity.dart';
-import 'package:opennutritracker/core/utils/navigation_options.dart';
-import 'package:opennutritracker/features/add_activity/presentation/add_activity_screen.dart';
-import 'package:opennutritracker/features/add_meal/presentation/add_meal_screen.dart';
-import 'package:opennutritracker/features/add_meal/presentation/add_meal_type.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
+import 'package:calorieai/core/domain/entity/user_activity_entity.dart';
+import 'package:calorieai/core/utils/navigation_options.dart';
+import 'package:calorieai/features/add_activity/presentation/add_activity_screen.dart';
+import 'package:calorieai/features/add_meal/presentation/add_meal_screen.dart';
+import 'package:calorieai/features/add_meal/presentation/add_meal_type.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 class AddItemBottomSheet extends StatelessWidget {
   final DateTime day;

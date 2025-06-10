@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
-import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
-import 'package:opennutritracker/core/utils/calc/unit_calc.dart';
-import 'package:opennutritracker/core/utils/custom_text_input_formatter.dart';
-import 'package:opennutritracker/core/utils/extensions.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
-import 'package:opennutritracker/core/utils/navigation_options.dart';
-import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
-import 'package:opennutritracker/features/edit_meal/presentation/bloc/edit_meal_bloc.dart';
-import 'package:opennutritracker/features/edit_meal/presentation/widgets/default_meal_image.dart';
-import 'package:opennutritracker/features/meal_detail/meal_detail_screen.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
-import 'package:opennutritracker/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
+import 'package:calorieai/core/utils/calc/unit_calc.dart';
+import 'package:calorieai/core/utils/custom_text_input_formatter.dart';
+import 'package:calorieai/core/utils/extensions.dart';
+import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/core/utils/navigation_options.dart';
+import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
+import 'package:calorieai/features/edit_meal/presentation/bloc/edit_meal_bloc.dart';
+import 'package:calorieai/features/edit_meal/presentation/widgets/default_meal_image.dart';
+import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
+import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
 typedef S = AppLocalizations;
 
 class EditMealScreen extends StatefulWidget {

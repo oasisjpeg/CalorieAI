@@ -1,8 +1,8 @@
-import 'package:opennutritracker/core/data/data_source/config_data_source.dart';
-import 'package:opennutritracker/core/data/dbo/app_theme_dbo.dart';
-import 'package:opennutritracker/core/data/dbo/config_dbo.dart';
-import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
-import 'package:opennutritracker/core/domain/entity/config_entity.dart';
+import 'package:calorieai/core/data/data_source/config_data_source.dart';
+import 'package:calorieai/core/data/dbo/app_theme_dbo.dart';
+import 'package:calorieai/core/data/dbo/config_dbo.dart';
+import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
+import 'package:calorieai/core/domain/entity/config_entity.dart';
 
 class ConfigRepository {
   final ConfigDataSource _configDataSource;

@@ -1,6 +1,6 @@
 // lib/features/iap/domain/service/daily_limit_service.dart
-import 'package:opennutritracker/core/data/datasource/local/iap_local_data_source.dart';
-import 'package:opennutritracker/core/utils/iap_constants.dart';
+import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
+import 'package:calorieai/core/utils/iap_constants.dart';
 
 class DailyLimitService {
   final IAPLocalDataSource _localDataSource;

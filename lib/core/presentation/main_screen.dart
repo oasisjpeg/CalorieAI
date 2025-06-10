@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/presentation/widgets/add_item_bottom_sheet.dart';
-import 'package:opennutritracker/features/diary/diary_page.dart';
-import 'package:opennutritracker/core/presentation/widgets/home_appbar.dart';
-import 'package:opennutritracker/features/home/home_page.dart';
-import 'package:opennutritracker/core/presentation/widgets/main_appbar.dart';
-import 'package:opennutritracker/features/profile/profile_page.dart';
-import 'package:opennutritracker/features/recipe_chatbot/presentation/recipe_feature_wrapper.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/presentation/widgets/add_item_bottom_sheet.dart';
+import 'package:calorieai/features/diary/diary_page.dart';
+import 'package:calorieai/core/presentation/widgets/home_appbar.dart';
+import 'package:calorieai/features/home/home_page.dart';
+import 'package:calorieai/core/presentation/widgets/main_appbar.dart';
+import 'package:calorieai/features/profile/profile_page.dart';
+import 'package:calorieai/features/recipe_chatbot/presentation/recipe_feature_wrapper.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 
 typedef S = AppLocalizations;
 

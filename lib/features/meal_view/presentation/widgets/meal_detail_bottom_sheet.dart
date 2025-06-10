@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
-import 'package:opennutritracker/core/utils/navigation_options.dart';
-import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_bloc.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
-import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
-import 'package:opennutritracker/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
+import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/core/utils/navigation_options.dart';
+import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
+import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
+import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
+import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
+import 'package:calorieai/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 
 class MealDetailBottomSheet extends StatelessWidget {

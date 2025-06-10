@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:opennutritracker/core/data/datasource/local/iap_local_data_source.dart';
-import 'package:opennutritracker/core/domain/entity/iap_product.dart';
-import 'package:opennutritracker/core/domain/entity/purchase_status.dart';
-import 'package:opennutritracker/features/iap/domain/service/daily_limit_service.dart';
-import 'package:opennutritracker/shared/iap_service.dart';
-import 'package:opennutritracker/features/iap/presentation/bloc/iap_event.dart';
-import 'package:opennutritracker/features/iap/presentation/bloc/iap_state.dart';
+import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
+import 'package:calorieai/core/domain/entity/iap_product.dart';
+import 'package:calorieai/core/domain/entity/purchase_status.dart';
+import 'package:calorieai/features/iap/domain/service/daily_limit_service.dart';
+import 'package:calorieai/shared/iap_service.dart';
+import 'package:calorieai/features/iap/presentation/bloc/iap_event.dart';
+import 'package:calorieai/features/iap/presentation/bloc/iap_state.dart';
 
 class IAPBloc extends Bloc<IAPEvent, IAPState> {
   final IAPService _iapService = IAPService();

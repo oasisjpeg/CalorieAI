@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/presentation/widgets/info_dialog.dart';
-import 'package:opennutritracker/features/onboarding/domain/entity/user_activity_selection_entity.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/presentation/widgets/info_dialog.dart';
+import 'package:calorieai/features/onboarding/domain/entity/user_activity_selection_entity.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 
 class OnboardingThirdPageBody extends StatefulWidget {

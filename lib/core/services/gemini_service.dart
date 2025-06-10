@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:logging/logging.dart';
-import 'package:opennutritracker/core/utils/env.dart';
+import 'package:calorieai/core/utils/env.dart';
 
 class GeminiService {
   final log = Logger('GeminiService');

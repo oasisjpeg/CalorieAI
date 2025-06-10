@@ -1,6 +1,6 @@
-import 'package:opennutritracker/core/data/data_source/tracked_day_data_source.dart';
-import 'package:opennutritracker/core/data/dbo/tracked_day_dbo.dart';
-import 'package:opennutritracker/core/domain/entity/tracked_day_entity.dart';
+import 'package:calorieai/core/data/data_source/tracked_day_data_source.dart';
+import 'package:calorieai/core/data/dbo/tracked_day_dbo.dart';
+import 'package:calorieai/core/domain/entity/tracked_day_entity.dart';
 
 class TrackedDayRepository {
   final TrackedDayDataSource _trackedDayDataSource;

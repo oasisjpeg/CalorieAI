@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:logging/logging.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:opennutritracker/core/utils/env.dart';
-import 'package:opennutritracker/features/add_meal/data/dto/fdc/fdc_const.dart';
-import 'package:opennutritracker/features/add_meal/data/dto/fdc/fdc_word_response_dto.dart';
-import 'package:opennutritracker/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:calorieai/core/utils/env.dart';
+import 'package:calorieai/features/add_meal/data/dto/fdc/fdc_const.dart';
+import 'package:calorieai/features/add_meal/data/dto/fdc/fdc_word_response_dto.dart';
+import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
 
 class FDCDataSource {
   static const _timeoutDuration = Duration(seconds: 10);

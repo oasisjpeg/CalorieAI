@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
-import 'package:opennutritracker/core/utils/env.dart';
+import 'package:calorieai/core/utils/env.dart';
 
 class ImgBBService {
   final log = Logger('ImgBBService');

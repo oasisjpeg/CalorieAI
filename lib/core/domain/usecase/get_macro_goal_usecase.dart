@@ -1,5 +1,5 @@
-import 'package:opennutritracker/core/data/repository/config_repository.dart';
-import 'package:opennutritracker/core/utils/calc/macro_calc.dart';
+import 'package:calorieai/core/data/repository/config_repository.dart';
+import 'package:calorieai/core/utils/calc/macro_calc.dart';
 
 class GetMacroGoalUsecase {
   final ConfigRepository _configRepository;

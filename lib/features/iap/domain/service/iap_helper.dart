@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/features/iap/domain/service/daily_limit_service.dart';
-import 'package:opennutritracker/features/iap/presentation/bloc/iap_bloc.dart';
-import 'package:opennutritracker/features/iap/presentation/bloc/iap_event.dart';
-import 'package:opennutritracker/features/iap/presentation/widgets/out_of_limits_dialog.dart';
-import 'package:opennutritracker/features/iap/presentation/widgets/premium_feature_locked_dialog.dart';
+import 'package:calorieai/features/iap/domain/service/daily_limit_service.dart';
+import 'package:calorieai/features/iap/presentation/bloc/iap_bloc.dart';
+import 'package:calorieai/features/iap/presentation/bloc/iap_event.dart';
+import 'package:calorieai/features/iap/presentation/widgets/out_of_limits_dialog.dart';
+import 'package:calorieai/features/iap/presentation/widgets/premium_feature_locked_dialog.dart';
 
 class IAPHelper {
   final BuildContext context;

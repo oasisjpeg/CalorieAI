@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:in_app_purchase/in_app_purchase.dart' as iap;
-import 'package:opennutritracker/core/data/datasource/local/iap_local_data_source.dart';
-import 'package:opennutritracker/core/domain/entity/iap_product.dart';
-import 'package:opennutritracker/core/domain/entity/purchase_status.dart';
-import 'package:opennutritracker/core/domain/entity/purchase_status.dart'
+import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
+import 'package:calorieai/core/domain/entity/iap_product.dart';
+import 'package:calorieai/core/domain/entity/purchase_status.dart';
+import 'package:calorieai/core/domain/entity/purchase_status.dart'
     as iap_entity;
-import 'package:opennutritracker/core/domain/repository/iap_repository.dart';
-import 'package:opennutritracker/core/utils/iap_constants.dart';
+import 'package:calorieai/core/domain/repository/iap_repository.dart';
+import 'package:calorieai/core/utils/iap_constants.dart';
 
 class IAPRepositoryImpl implements IAPRepository {
   final IAPLocalDataSource _localDataSource;

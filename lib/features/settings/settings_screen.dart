@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
-import 'package:opennutritracker/core/presentation/widgets/app_banner_version.dart';
-import 'package:opennutritracker/core/presentation/widgets/disclaimer_dialog.dart';
-import 'package:opennutritracker/core/utils/app_const.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
-import 'package:opennutritracker/core/utils/theme_mode_provider.dart';
-import 'package:opennutritracker/core/utils/url_const.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_bloc.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
-import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
-import 'package:opennutritracker/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:opennutritracker/features/settings/presentation/bloc/settings_bloc.dart';
-import 'package:opennutritracker/features/settings/presentation/widgets/export_import_dialog.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
+import 'package:calorieai/core/presentation/widgets/app_banner_version.dart';
+import 'package:calorieai/core/presentation/widgets/disclaimer_dialog.dart';
+import 'package:calorieai/core/utils/app_const.dart';
+import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/core/utils/theme_mode_provider.dart';
+import 'package:calorieai/core/utils/url_const.dart';
+import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
+import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
+import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
+import 'package:calorieai/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:calorieai/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:calorieai/features/settings/presentation/widgets/export_import_dialog.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:opennutritracker/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
 import 'package:url_launcher/url_launcher.dart';
-import 'package:opennutritracker/features/settings/presentation/widgets/calculations_dialog.dart';
+import 'package:calorieai/features/settings/presentation/widgets/calculations_dialog.dart';
 typedef S = AppLocalizations;
 
 class SettingsScreen extends StatefulWidget {

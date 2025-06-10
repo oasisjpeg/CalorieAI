@@ -1,5 +1,5 @@
-import 'package:opennutritracker/core/data/repository/user_activity_repository.dart';
-import 'package:opennutritracker/core/domain/entity/user_activity_entity.dart';
+import 'package:calorieai/core/data/repository/user_activity_repository.dart';
+import 'package:calorieai/core/domain/entity/user_activity_entity.dart';
 
 class DeleteUserActivityUsecase {
   final UserActivityRepository _userActivityRepository;

@@ -1,6 +1,6 @@
-import 'package:opennutritracker/core/data/data_source/user_data_source.dart';
-import 'package:opennutritracker/core/data/dbo/user_dbo.dart';
-import 'package:opennutritracker/core/domain/entity/user_entity.dart';
+import 'package:calorieai/core/data/data_source/user_data_source.dart';
+import 'package:calorieai/core/data/dbo/user_dbo.dart';
+import 'package:calorieai/core/domain/entity/user_entity.dart';
 
 class UserRepository {
   final UserDataSource _userDataSource;

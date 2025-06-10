@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:opennutritracker/core/data/data_source/user_activity_dbo.dart';
-import 'package:opennutritracker/core/data/dbo/intake_dbo.dart';
-import 'package:opennutritracker/core/data/dbo/tracked_day_dbo.dart';
-import 'package:opennutritracker/core/data/repository/intake_repository.dart';
-import 'package:opennutritracker/core/data/repository/tracked_day_repository.dart';
-import 'package:opennutritracker/core/data/repository/user_activity_repository.dart';
+import 'package:calorieai/core/data/data_source/user_activity_dbo.dart';
+import 'package:calorieai/core/data/dbo/intake_dbo.dart';
+import 'package:calorieai/core/data/dbo/tracked_day_dbo.dart';
+import 'package:calorieai/core/data/repository/intake_repository.dart';
+import 'package:calorieai/core/data/repository/tracked_day_repository.dart';
+import 'package:calorieai/core/data/repository/user_activity_repository.dart';
 
 class ImportDataUsecase {
   final UserActivityRepository _userActivityRepository;

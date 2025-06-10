@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_bloc.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
-import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
-import 'package:opennutritracker/features/settings/presentation/bloc/export_import_bloc.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
+import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
+import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
+import 'package:calorieai/features/settings/presentation/bloc/export_import_bloc.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 
 class ExportImportDialog extends StatelessWidget {

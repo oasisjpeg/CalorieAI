@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/utils/navigation_options.dart';
+import 'package:calorieai/core/utils/navigation_options.dart';
 
 class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;

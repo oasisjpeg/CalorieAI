@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
-import 'package:opennutritracker/features/recipe_chatbot/presentation/bloc/recipe_chatbot_bloc.dart';
+import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:opennutritracker/features/recipe_chatbot/presentation/bloc/recipe_chatbot_event.dart';
-import 'package:opennutritracker/features/recipe_chatbot/presentation/bloc/recipe_chatbot_state.dart';
-import 'package:opennutritracker/core/services/gemini_service.dart';
-import 'package:opennutritracker/core/domain/usecase/get_macro_goal_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_usecase.dart';
+import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_event.dart';
+import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_state.dart';
+import 'package:calorieai/core/services/gemini_service.dart';
+import 'package:calorieai/core/domain/usecase/get_macro_goal_usecase.dart';
+import 'package:calorieai/core/domain/usecase/get_intake_usecase.dart';
+import 'package:calorieai/core/domain/usecase/get_kcal_goal_usecase.dart';
 
 class RecipeChatbotScreen extends StatefulWidget {
   const RecipeChatbotScreen({super.key});

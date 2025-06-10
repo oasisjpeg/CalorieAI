@@ -1,5 +1,5 @@
-import 'package:opennutritracker/core/data/data_source/physical_activity_data_source.dart';
-import 'package:opennutritracker/core/domain/entity/physical_activity_entity.dart';
+import 'package:calorieai/core/data/data_source/physical_activity_data_source.dart';
+import 'package:calorieai/core/domain/entity/physical_activity_entity.dart';
 
 class PhysicalActivityRepository {
   final PhysicalActivityDataSource _physicalActivityDataSource;

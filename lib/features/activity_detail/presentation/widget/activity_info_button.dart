@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:opennutritracker/core/utils/url_const.dart';
-import 'package:opennutritracker/l10n/app_localizations.dart';
+import 'package:calorieai/core/utils/url_const.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 typedef S = AppLocalizations;
 
