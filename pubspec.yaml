@@ -1,4 +1,4 @@
-name: opennutritracker
+name: CalorieAi
 description: Kalorien & Aktivitäts Tracker
 
 # The following line prevents the package from being accidentally published to
@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.10.4+2
+version: 1.11.2+3
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -96,11 +96,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icon/ont_logo_square.png
-    - assets/icon/ont_logo_square.svg
-    - assets/icon/ont_logo_square_light.png
-    - assets/icon/ont_banner_top.png
-    - assets/icon/ont_banner_top_light.png
+    - assets/icon/calorieai_logo.png
 
   fonts:
     - family: CustomIcons
@@ -158,9 +154,9 @@ flutter_intl:
 
 flutter_launcher_icons:
   android: true
-  adaptive_icon_foreground: "assets/icon/ont_logo_square.png"
+  adaptive_icon_foreground: "assets/icon/calorieai_logo.png"
   adaptive_icon_background: "#ffffff"
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/icon/ont_logo_square.png"
+  image_path: "assets/icon/calorieai_logo.png"
   min_sdk_android: 21

@@ -356,7 +356,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           context: context,
           applicationName: "CalorieAI",
           applicationIcon: SizedBox(
-              width: 40, child: Image.asset('assets/icon/ont_logo_square.png')),
+              width: 40, child: Image.asset('assets/icon/calorieai_logo.png')),
           applicationVersion: packageInfo.version,
           applicationLegalese: S.of(context).appLicenseLabel,
           children: [

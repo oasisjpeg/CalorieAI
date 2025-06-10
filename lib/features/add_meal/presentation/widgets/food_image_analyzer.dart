@@ -214,11 +214,9 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
             if (remaining >= 0) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    '${S.of(context).remainingAnalyses}: $remaining',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Theme.of(context).primaryColor,
+                  content:
+                      Text('${S.of(context).remainingAnalyses}: $remaining'),
+                  duration: Duration(seconds: 2),
                 ),
               );
             }
@@ -289,7 +287,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       if (!iapState.hasPremiumAccess) {
         iapBloc.add(const RecordAnalysisPerformed());
       }
-
 
       // Include the prompt in the Gemini analysis
       final prompt = _promptController.text.trim();
@@ -455,7 +452,23 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         saturatedFat100: saturatedFat100,
         fiber100: fiber100,
       );
-
+      if (_imageFile == null) {
+        return MealEntity(
+          code: IdGenerator.getUniqueID(),
+          name: title,
+          url: null,
+          mealQuantity: totalGrams.toString(),
+          mealUnit: mealUnit,
+          servingQuantity: totalGrams,
+          servingUnit: servingUnit,
+          servingSize: isLiquid
+              ? '${totalGrams.toStringAsFixed(0)}ml'
+              : '${totalGrams.toStringAsFixed(0)}g',
+          nutriments: nutrimentsPerTotal,
+          source: MealSourceEntity.custom,
+          foodItems: foodItems,
+        );
+      }
       final imageUrl = await _uploadImageToImgbb(_imageFile!);
 
       return MealEntity(
@@ -507,13 +520,16 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Row(
+              const SizedBox(height: 8),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton.icon(
-                    icon: Icon(_isAnalyzingDescription ? Icons.close : Icons.edit),
-                    label: Text(_isAnalyzingDescription ? S.of(context).hideDescription : S.of(context).addDescription),
+                    icon: Icon(
+                        _isAnalyzingDescription ? Icons.close : Icons.edit),
+                    label: Text(_isAnalyzingDescription
+                        ? S.of(context).hideDescription
+                        : S.of(context).addDescription),
                     onPressed: () {
                       setState(() {
                         _isAnalyzingDescription = !_isAnalyzingDescription;
@@ -536,7 +552,8 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                         controller: _promptController,
                         focusNode: _promptFocusNode,
                         decoration: InputDecoration(
-                          labelText: S.of(context).addPromptForGeminiDescription,
+                          labelText:
+                              S.of(context).addPromptForGeminiDescription,
                           hintText:
                               S.of(context).addPromptForGeminiHintDescription,
                           border: OutlineInputBorder(),
@@ -575,7 +592,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                     ],
                   ),
                 ),
-              
+
               // Show loading indicator while analyzing
               if (_isAnalyzing)
                 const Padding(
@@ -604,8 +621,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                           focusNode: _promptFocusNode,
                           decoration: InputDecoration(
                             labelText: S.of(context)!.addPromptForGemini,
-                            hintText:
-                                S.of(context)!.addPromptForGeminiHint,
+                            hintText: S.of(context)!.addPromptForGeminiHint,
                             border: OutlineInputBorder(),
                           ),
                           maxLines: 3,

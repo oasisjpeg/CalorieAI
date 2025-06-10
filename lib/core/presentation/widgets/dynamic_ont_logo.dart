@@ -12,7 +12,7 @@ class DynamicOntLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
       future: DefaultAssetBundle.of(context)
-          .loadString('assets/icon/ont_logo_square.svg'),
+          .loadString('assets/icon/calorieai_logo.png'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData) {
@@ -28,9 +28,7 @@ class DynamicOntLogo extends StatelessWidget {
           return const SizedBox();
         } else {
           return Image.asset(
-              MediaQuery.of(context).platformBrightness == Brightness.light
-                  ? 'assets/icon/ont_logo_square.png'
-                  : 'assets/icon/ont_logo_square_light.png');
+                  'assets/icon/calorieai_logo.png');
         }
       },
     );

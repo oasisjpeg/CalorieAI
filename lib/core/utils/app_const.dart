@@ -5,7 +5,7 @@ class AppConst {
   static const userAgentAppName = "CalorieAI";
   static const platformNameAndroid = "Android";
   static const platformNameIOS = "iOS";
-  static const reportErrorEmail = "marc.reutz@pm.me";
+  static const reportErrorEmail = "kontaktœaxiona.at";
   static const sourceCodeUrl =
       "https://github.com/oasisjpeg/CalorieAI";
 
