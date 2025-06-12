@@ -284,9 +284,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
     try {
       // Record the analysis usage
-      if (!iapState.hasPremiumAccess) {
-        iapBloc.add(const RecordAnalysisPerformed());
-      }
 
       // Include the prompt in the Gemini analysis
       final prompt = _promptController.text.trim();
@@ -313,20 +310,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
           _analysisResult = 'Successfully analyzed food image';
           _isAnalyzingDescription = false;
           // Show remaining uses if not premium
-          if (!iapState.hasPremiumAccess) {
-            final remaining = iapState.remainingDailyAnalyses - 1;
-            if (remaining >= 0) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    '${S.of(context).remainingAnalyses}: $remaining',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-              );
-            }
-          }
         });
         _isAnalyzing = false;
 
@@ -353,6 +336,12 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       throw Exception('No food data available');
     }
 
+    // Check if user has premium access or remaining analyses
+    final iapBloc = context.read<IAPBloc>();
+    final iapState = iapBloc.state;
+    if (!iapState.hasPremiumAccess) {
+      iapBloc.add(const RecordAnalysisPerformed());
+    }
     try {
       final title = _foodData!['title'] as String;
       final totals = _foodData!['totals'] as Map<String, dynamic>;
@@ -452,6 +441,21 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         saturatedFat100: saturatedFat100,
         fiber100: fiber100,
       );
+
+      if (!iapState.hasPremiumAccess) {
+        final remaining = iapState.remainingDailyAnalyses - 1;
+        if (remaining >= 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${S.of(context).remainingAnalyses}: $remaining',
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+            ),
+          );
+        }
+      }
       if (_imageFile == null) {
         return MealEntity(
           code: IdGenerator.getUniqueID(),
@@ -742,7 +746,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                             const SizedBox(height: 16),
                             ElevatedButton.icon(
                               icon: const Icon(Icons.check),
-                              label: const Text('Save Meal'),
+                              label: Text(S.of(context).saveMeal),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Theme.of(context).colorScheme.primary,

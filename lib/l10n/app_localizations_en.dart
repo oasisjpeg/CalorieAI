@@ -1346,4 +1346,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addPromptForGeminiHintDescription => 'e.g., \"I ate rice with...\"';
+
+  @override
+  String get saveMeal => 'Save Meal';
 }

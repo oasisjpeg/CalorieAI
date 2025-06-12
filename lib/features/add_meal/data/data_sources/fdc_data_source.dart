@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:calorieai/core/utils/env.dart';
 import 'package:calorieai/features/add_meal/data/dto/fdc/fdc_const.dart';
 import 'package:calorieai/features/add_meal/data/dto/fdc/fdc_word_response_dto.dart';
-import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:sentry_flutter/sentry_flutter.dart'; // Mock Sentry for simulator compatibility
 
 class FDCDataSource {
   static const _timeoutDuration = Duration(seconds: 10);

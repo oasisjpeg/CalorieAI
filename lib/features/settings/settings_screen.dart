@@ -17,7 +17,7 @@ import 'package:calorieai/features/settings/presentation/widgets/export_import_d
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:sentry_flutter/sentry_flutter.dart'; // Mock Sentry for simulator compatibility
 import 'package:url_launcher/url_launcher.dart';
 import 'package:calorieai/features/settings/presentation/widgets/calculations_dialog.dart';
 

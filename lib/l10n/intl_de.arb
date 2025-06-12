@@ -436,5 +436,6 @@
   "hideDescription": "Beschreibung verbergen",
   "addDescription": "Beschreibung hinzufügen",
   "addPromptForGeminiDescription": "Beschreiben Sie hier Ihr Gericht",
-  "addPromptForGeminiHintDescription": "z. B. \"Ich habe folgendes Gericht mit ...\""
+  "addPromptForGeminiHintDescription": "z. B. \"Ich habe folgendes Gericht mit ...\"",
+  "saveMeal": "Speichern"
 }

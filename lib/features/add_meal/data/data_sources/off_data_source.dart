@@ -8,7 +8,7 @@ import 'package:calorieai/core/utils/ont_http_client.dart';
 import 'package:calorieai/features/add_meal/data/dto/off/off_product_response_dto.dart';
 import 'package:calorieai/features/add_meal/data/dto/off/off_word_response_dto.dart';
 import 'package:calorieai/features/scanner/data/product_not_found_exception.dart';
-import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:sentry_flutter/sentry_flutter.dart'; // Mock Sentry for simulator compatibility
 
 class OFFDataSource {
   static const _timeoutDuration = Duration(seconds: 20); // TODO lower timeout

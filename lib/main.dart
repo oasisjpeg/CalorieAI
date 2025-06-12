@@ -1,4 +1,5 @@
 // import 'package:flutter/foundation.dart'; // Removed unused import
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -30,7 +31,9 @@ import 'package:calorieai/features/meal_view/presentation/meal_view_screen.dart'
 import 'package:calorieai/features/settings/settings_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-// import 'package:sentry_flutter/sentry_flutter.dart'; // Disabled for simulator compatibility
+import 'package:calorieai/core/utils/env.dart';
+import 'package:sentry_flutter/sentry_flutter.dart'; // Disabled for simulator compatibility
+
 typedef S = AppLocalizations;
 
 Future<void> main() async {
@@ -39,26 +42,29 @@ Future<void> main() async {
   await initLocator();
   final isUserInitialized = await locator<UserDataSource>().hasUserData();
   final configRepo = locator<ConfigRepository>();
-  // Removed unused variable: hasAcceptedAnonymousData
-  // await configRepo.getConfigHasAcceptedAnonymousData();
+  final hasAcceptedAnonymousData =
+      await configRepo.getConfigHasAcceptedAnonymousData();
   final savedAppTheme = await configRepo.getConfigAppTheme();
   final log = Logger('main');
-
-  // Sentry disabled for simulator compatibility
-  log.info('Starting App without Sentry...');
-  runAppWithChangeNotifiers(isUserInitialized, savedAppTheme);
+  
+  if (kReleaseMode && hasAcceptedAnonymousData) {
+    log.info('Starting App with Sentry enabled ...');
+    _runAppWithSentryReporting(isUserInitialized, savedAppTheme);
+  } else {
+    log.info('Starting App ...');
+    runAppWithChangeNotifiers(isUserInitialized, savedAppTheme);
+  }
 }
 
-// Sentry reporting disabled for simulator compatibility
-// void _runAppWithSentryReporting(
-//     bool isUserInitialized, AppThemeEntity savedAppTheme) async {
-//   await SentryFlutter.init((options) {
-//     options.dsn = Env.sentryDns;
-//     options.tracesSampleRate = 1.0;
-//   },
-//       appRunner: () =>
-//           runAppWithChangeNotifiers(isUserInitialized, savedAppTheme));
-// }
+void _runAppWithSentryReporting(
+    bool isUserInitialized, AppThemeEntity savedAppTheme) async {
+  await SentryFlutter.init((options) {
+    options.dsn = Env.sentryDns;
+    options.tracesSampleRate = 1.0;
+  },
+      appRunner: () =>
+          runAppWithChangeNotifiers(isUserInitialized, savedAppTheme));
+}
 
 void runAppWithChangeNotifiers(
         bool userInitialized, AppThemeEntity savedAppTheme) =>

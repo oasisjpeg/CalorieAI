@@ -449,5 +449,6 @@
   "hideDescription": "Hide Description",
   "addDescription": "Add Description",
   "addPromptForGeminiDescription": "Describe your dish here",
-  "addPromptForGeminiHintDescription": "e.g., \"I ate rice with...\""
+  "addPromptForGeminiHintDescription": "e.g., \"I ate rice with...\"",
+  "saveMeal": "Save Meal"
 }

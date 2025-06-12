@@ -14,7 +14,7 @@ import 'package:calorieai/features/edit_meal/presentation/bloc/edit_meal_bloc.da
 import 'package:calorieai/features/edit_meal/presentation/widgets/default_meal_image.dart';
 import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
-import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:sentry_flutter/sentry_flutter.dart'; // Mock Sentry for simulator compatibility
 typedef S = AppLocalizations;
 
 class EditMealScreen extends StatefulWidget {

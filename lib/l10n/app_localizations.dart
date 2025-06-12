@@ -2754,6 +2754,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'e.g., \"I ate rice with...\"'**
   String get addPromptForGeminiHintDescription;
+
+  /// No description provided for @saveMeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Meal'**
+  String get saveMeal;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

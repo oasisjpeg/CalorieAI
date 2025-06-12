@@ -5,7 +5,7 @@ import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/core/utils/supported_language.dart';
 import 'package:calorieai/features/add_meal/data/dto/fdc_sp/sp_const.dart';
 import 'package:calorieai/features/add_meal/data/dto/fdc_sp/sp_fdc_food_dto.dart';
-import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:sentry_flutter/sentry_flutter.dart'; // Mock Sentry for simulator compatibility
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SpFdcDataSource {
