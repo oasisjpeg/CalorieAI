@@ -8,7 +8,7 @@ Hirma 10
 Austria  
 
 Represented by: Marc Reutz  
-Contact: mailto:kontakt@axiona.at  
+Contact: kontakt@axiona.at  
 
 ## 2. Basic Information
 
@@ -70,6 +70,6 @@ Hirma 10
 6841 Mäder  
 Austria  
 
-Contact: mailto:kontakt@axiona.at  
+Contact: kontakt@axiona.at  
 
 Last updated: June 12, 2025
