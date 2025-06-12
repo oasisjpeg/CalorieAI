@@ -1,3 +1,4 @@
+import 'package:calorieai/features/onboarding/presentation/widgets/markdown_viewer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
@@ -19,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
 import 'package:url_launcher/url_launcher.dart';
 import 'package:calorieai/features/settings/presentation/widgets/calculations_dialog.dart';
+
 typedef S = AppLocalizations;
 
 class SettingsScreen extends StatefulWidget {
@@ -391,9 +393,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _launchUrl(context, sourceCodeUri);
   }
 
-  void _launchPrivacyPolicyUrl(BuildContext context) async {
-    final sourceCodeUri = Uri.parse(URLConst.privacyPolicyURLEn);
-    _launchUrl(context, sourceCodeUri);
+  void _launchPrivacyPolicyUrl(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const MarkdownViewerScreen(
+          assetPath: 'assets/datenschutzerklaerung.md',
+          title: 'Privacy Policy',
+        ),
+      ),
+    );
   }
 
   void _launchUrl(BuildContext context, Uri url) async {
