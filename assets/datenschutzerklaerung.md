@@ -3,12 +3,13 @@
 ## 1. Verantwortlicher im Sinne der Datenschutzgesetze
 
 **Axiona e.U.**  
+FN 653985v
 Hirma 10
 6841 Mäder
 Österreich  
 
 Vertreten durch: Marc Reutz  
-Kontakt: mailto:kontakt@axiona.at  
+Kontakt: kontakt@axiona.at  
 
 ## 2. Grundlegendes
 
@@ -105,6 +106,6 @@ Hirma 10
 6841 Mäder
 Österreich  
 
-Kontakt: mailto:kontakt@axiona.at  
+Kontakt: kontakt@axiona.at  
 
 Stand: 12. Juni 2025

@@ -197,6 +197,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsReportErrorLabel => 'Hata Bildir';
 
   @override
+  String get settingsReferencesLabel => 'References & Sources';
+
+  @override
   String get settingsPrivacySettings => 'Gizlilik Ayarları';
 
   @override

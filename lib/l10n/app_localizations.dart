@@ -469,6 +469,12 @@ abstract class AppLocalizations {
   /// **'Report Error'**
   String get settingsReportErrorLabel;
 
+  /// No description provided for @settingsReferencesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'References & Sources'**
+  String get settingsReferencesLabel;
+
   /// No description provided for @settingsPrivacySettings.
   ///
   /// In en, this message translates to:

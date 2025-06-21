@@ -1,19 +1,22 @@
 import 'package:calorieai/features/onboarding/presentation/widgets/markdown_viewer_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
 import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
 import 'package:calorieai/core/presentation/widgets/app_banner_version.dart';
 import 'package:calorieai/core/presentation/widgets/disclaimer_dialog.dart';
 import 'package:calorieai/core/utils/app_const.dart';
 import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/core/utils/theme_mode_provider.dart';
-import 'package:calorieai/core/utils/url_const.dart';
+import 'package:calorieai/shared/iap_service.dart';
 import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
 import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
 import 'package:calorieai/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:calorieai/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:calorieai/features/settings/presentation/widgets/export_import_dialog.dart';
+import 'package:calorieai/features/settings/presentation/widgets/references_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -91,6 +94,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () => _showDisclaimerDialog(context),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.menu_book_outlined),
+                  title: Text(S.of(context).settingsReferencesLabel),
+                  onTap: () => _navigateToReferencesScreen(context),
+                ),
+                ListTile(
                   leading: const Icon(Icons.bug_report_outlined),
                   title: Text(S.of(context).settingsReportErrorLabel),
                   onTap: () => _showReportErrorDialog(context),
@@ -106,15 +114,79 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: Text(S.of(context).settingAboutLabel),
                   onTap: () => _showAboutDialog(context),
                 ),
-                const SizedBox(height: 32.0),
+                const SizedBox(height: 16.0),
+                // Debug menu - only visible in debug mode
+                if (kDebugMode) ..._buildDebugMenu(),
                 AppBannerVersion(versionNumber: state.versionNumber)
               ],
             );
           }
-          return const SizedBox();
+          return const Center(child: Text('Error loading settings'));
         },
       ),
     );
+  }
+
+  List<Widget> _buildDebugMenu() {
+    return [
+      const Divider(),
+      ListTile(
+        title: const Text('Debug Menu', style: TextStyle(fontWeight: FontWeight.bold)),
+        leading: const Icon(Icons.bug_report, color: Colors.red),
+      ),
+      ListTile(
+        title: const Text('Reset IAP Status'),
+        subtitle: const Text('Clear the IAP purchase status for testing'),
+        leading: const Icon(Icons.refresh),
+        onTap: () async {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Reset IAP Status'),
+              content: const Text('Are you sure you want to reset the IAP status? This is for testing purposes only.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('CANCEL'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('RESET', style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+          );
+
+          if (confirmed == true) {
+            try {
+              // Initialize the IAP service
+              final iapService = IAPService();
+              await iapService.init();
+              
+              // Clear the IAP status
+              final localDataSource = IAPLocalDataSource();
+              await localDataSource.clearIAPStatus();
+              
+              // Reset the daily analysis count
+              await localDataSource.saveDailyAnalysisCount(0);
+              await localDataSource.saveLastAnalysisDate(DateTime(1970));
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('IAP status and analysis count reset successfully')),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error resetting IAP status: $e')),
+                );
+              }
+            }
+          }
+        },
+      ),
+    ];
   }
 
   void _showUnitsDialog(BuildContext context, bool usesImperialUnits) async {
@@ -391,6 +463,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _launchSourceCodeUrl(BuildContext context) async {
     final sourceCodeUri = Uri.parse(AppConst.sourceCodeUrl);
     _launchUrl(context, sourceCodeUri);
+  }
+
+  void _navigateToReferencesScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ReferencesScreen(),
+      ),
+    );
   }
 
   void _launchPrivacyPolicyUrl(BuildContext context) {

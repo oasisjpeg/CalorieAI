@@ -171,9 +171,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
     try {
       // Record the analysis usage
-      if (!iapState.hasPremiumAccess) {
-        iapBloc.add(const RecordAnalysisPerformed());
-      }
+
 
       final imageUrl = await _uploadImageToImgbb(_imageFile!);
       if (imageUrl == null) {

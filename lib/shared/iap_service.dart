@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:in_app_purchase/in_app_purchase.dart' as iap;
 import 'package:calorieai/core/data/repository/iap_repository_impl.dart';
 import 'package:calorieai/core/domain/entity/iap_product.dart';
+import 'dart:developer' as developer;
+
 import 'package:calorieai/core/domain/entity/purchase_status.dart';
 import 'package:calorieai/core/domain/repository/iap_repository.dart';
 import 'package:calorieai/core/utils/iap_constants.dart';
+import 'package:calorieai/core/utils/logger.dart';
 
 class IAPService {
   static final IAPService _instance = IAPService._internal();
@@ -95,7 +98,47 @@ class IAPService {
   // Get current purchase status
   Future<PurchaseStatus> getPurchaseStatus() async {
     if (!_isInitialized) await init();
-    return _repository.getDetailedPurchaseStatus();
+    final status = await _repository.getDetailedPurchaseStatus();
+    
+    // Log detailed status for debugging
+    _logDebugInfo(status);
+    
+    return status;
+  }
+  
+  // Debug method to print current subscription status
+  Future<void> logSubscriptionStatus() async {
+    try {
+      if (!_isInitialized) await init();
+      final status = await _repository.getDetailedPurchaseStatus();
+      _logDebugInfo(status);
+    } catch (e, stackTrace) {
+      Logger.e('Error getting subscription status', error: e, stackTrace: stackTrace);
+      developer.log('❌ Error getting subscription status: $e', 
+          name: 'IAPService', 
+          error: e,
+          stackTrace: stackTrace);
+    }
+  }
+  
+  void _logDebugInfo(PurchaseStatus status) {
+    final buffer = StringBuffer();
+    buffer.writeln('=== IAP Service Debug Info ===');
+    buffer.writeln('• Is Subscribed: ${status.isSubscribed}');
+    buffer.writeln('• Purchase State: ${status.state}');
+    buffer.writeln('• Remaining Daily Analyses: ${status.remainingDailyAnalyses}');
+    buffer.writeln('• Last Analysis Date: ${status.lastAnalysisDate}');
+    buffer.writeln('• Can Perform Analysis: ${status.canPerformAnalysis}');
+    if (status.error != null) {
+      buffer.writeln('• Error: ${status.error}');
+    }
+    buffer.writeln('==============================');
+    
+    // Log to debug console
+    developer.log(buffer.toString(), name: 'IAPService');
+    
+    // Also print to console for easier debugging
+    print(buffer);
   }
 
   // Load products and update stream

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:calorieai/core/utils/iap_constants.dart';
 import 'package:calorieai/core/utils/secure_app_storage_provider.dart';
@@ -12,18 +13,34 @@ class IAPLocalDataSource {
   IAPLocalDataSource({
     FlutterSecureStorage? secureStorage,
     SecureAppStorageProvider? secureAppStorageProvider,
-  })  : _secureStorage = secureStorage ?? FlutterSecureStorage(
-          aOptions: SecureAppStorageProvider.androidOptions,
-          iOptions: SecureAppStorageProvider.iOSOptions,
-        ),
-        _secureAppStorageProvider = secureAppStorageProvider ?? SecureAppStorageProvider();
+  })  : _secureStorage = secureStorage ??
+            FlutterSecureStorage(
+              aOptions: SecureAppStorageProvider.androidOptions,
+              iOptions: SecureAppStorageProvider.iOSOptions,
+            ),
+        _secureAppStorageProvider =
+            secureAppStorageProvider ?? SecureAppStorageProvider();
 
   // Save purchase status
   Future<void> savePurchaseStatus(bool isSubscribed) async {
-    await _secureStorage.write(
-      key: IAPConstants.iapStatusKey,
-      value: isSubscribed.toString(),
-    );
+    try {
+      await _secureStorage.write(
+        key: IAPConstants.iapStatusKey,
+        value: isSubscribed.toString(),
+      );
+    } on PlatformException catch (e) {
+      if (e.code == 'duplicate' ||
+          e.message?.contains('already exists') == true) {
+        // Try to delete and write again
+        await _secureStorage.delete(key: IAPConstants.iapStatusKey);
+        await _secureStorage.write(
+          key: IAPConstants.iapStatusKey,
+          value: isSubscribed.toString(),
+        );
+      } else {
+        rethrow;
+      }
+    }
   }
 
   // Get purchase status
@@ -42,7 +59,8 @@ class IAPLocalDataSource {
 
   // Get last analysis date
   Future<DateTime?> getLastAnalysisDate() async {
-    final dateString = await _secureStorage.read(key: IAPConstants.lastAnalysisDateKey);
+    final dateString =
+        await _secureStorage.read(key: IAPConstants.lastAnalysisDateKey);
     if (dateString == null) return null;
     return DateTime.tryParse(dateString);
   }
@@ -57,7 +75,8 @@ class IAPLocalDataSource {
 
   // Get daily analysis count
   Future<int> getDailyAnalysisCount() async {
-    final countString = await _secureStorage.read(key: IAPConstants.dailyAnalysisCountKey);
+    final countString =
+        await _secureStorage.read(key: IAPConstants.dailyAnalysisCountKey);
     return int.tryParse(countString ?? '0') ?? 0;
   }
 
@@ -88,13 +107,16 @@ class IAPLocalDataSource {
   // Get all purchase tokens
   Future<Map<String, String>> _getPurchaseTokens() async {
     try {
-      final tokensJson = await _secureStorage.read(key: IAPConstants.purchaseTokensKey);
+      final tokensJson =
+          await _secureStorage.read(key: IAPConstants.purchaseTokensKey);
       if (tokensJson == null) return {};
-      
+
       final Map<String, dynamic> decoded = jsonDecode(tokensJson);
-      return decoded.map((key, dynamic value) => MapEntry(key, value.toString()));
+      return decoded
+          .map((key, dynamic value) => MapEntry(key, value.toString()));
     } catch (e, stackTrace) {
-      Logger.e('Error reading purchase tokens', error: e, stackTrace: stackTrace);
+      Logger.e('Error reading purchase tokens',
+          error: e, stackTrace: stackTrace);
       return {};
     }
   }
@@ -102,5 +124,10 @@ class IAPLocalDataSource {
   // Clear all IAP data (for testing or logout)
   Future<void> clearAllData() async {
     await _secureStorage.deleteAll();
+  }
+
+  // Clear only the IAP status (for testing)
+  Future<void> clearIAPStatus() async {
+    await _secureStorage.delete(key: IAPConstants.iapStatusKey);
   }
 }

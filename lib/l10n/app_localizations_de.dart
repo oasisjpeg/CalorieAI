@@ -197,6 +197,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsReportErrorLabel => 'Fehler melden';
 
   @override
+  String get settingsReferencesLabel => 'Quellen';
+
+  @override
   String get settingsPrivacySettings => 'Datenschutzeinstellungen';
 
   @override

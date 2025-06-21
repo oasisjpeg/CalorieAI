@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:calorieai/core/domain/entity/iap_product.dart';
-import 'package:calorieai/core/domain/entity/purchase_status.dart';
 
 class IAPState extends Equatable {
   final bool isLoading;
@@ -12,6 +11,7 @@ class IAPState extends Equatable {
   final List<IAPProduct> availableProducts;
   final bool isPurchasing;
   final bool isRestoring;
+  final bool showSuccessScreen;
 
   const IAPState({
     this.isLoading = false,
@@ -23,6 +23,7 @@ class IAPState extends Equatable {
     this.availableProducts = const [],
     this.isPurchasing = false,
     this.isRestoring = false,
+    this.showSuccessScreen = false,
   });
 
   IAPState copyWith({
@@ -35,6 +36,7 @@ class IAPState extends Equatable {
     List<IAPProduct>? availableProducts,
     bool? isPurchasing,
     bool? isRestoring,
+    bool? showSuccessScreen,
   }) {
     return IAPState(
       isLoading: isLoading ?? this.isLoading,
@@ -46,6 +48,7 @@ class IAPState extends Equatable {
       availableProducts: availableProducts ?? this.availableProducts,
       isPurchasing: isPurchasing ?? this.isPurchasing,
       isRestoring: isRestoring ?? this.isRestoring,
+      showSuccessScreen: showSuccessScreen ?? this.showSuccessScreen,
     );
   }
 
@@ -60,5 +63,6 @@ class IAPState extends Equatable {
         availableProducts,
         isPurchasing,
         isRestoring,
+        showSuccessScreen,
       ];
 }

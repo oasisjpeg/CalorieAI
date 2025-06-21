@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
 import 'package:calorieai/core/domain/entity/iap_product.dart';
 import 'package:calorieai/core/domain/entity/purchase_status.dart';
@@ -94,24 +95,53 @@ class IAPBloc extends Bloc<IAPEvent, IAPState> {
     PurchaseProduct event,
     Emitter<IAPState> emit,
   ) async {
+    emit(state.copyWith(
+      isPurchasing: true,
+      showSuccessScreen: false,
+      error: null,
+    ));
+    
     try {
-      emit(state.copyWith(isPurchasing: true));
-      
       final success = await _iapService.purchaseProduct(event.productId);
       
-      if (!success) {
+      if (success) {
+        // Update state to reflect successful purchase
         emit(state.copyWith(
           isPurchasing: false,
-          error: 'Failed to complete purchase',
+          showSuccessScreen: true,
+          hasPremiumAccess: true,
+          canAccessRecipeFinder: true,
+          canPerformAnalysis: true,
+        ));
+        
+        // After showing success, reset the flag
+        await Future.delayed(const Duration(milliseconds: 100));
+        emit(state.copyWith(showSuccessScreen: false));
+      } else {
+        emit(state.copyWith(
+          isPurchasing: false,
+          error: 'Purchase was not successful. Please try again.',
+        ));
+      }
+    } on PlatformException catch (e) {
+      if (e.code == 'storekit2_purchase_pending') {
+        // Handle pending purchase - the purchase will complete asynchronously
+        emit(state.copyWith(
+          isPurchasing: false,
+          error: 'Your purchase is being processed. You will be notified when it completes.',
         ));
         return;
       }
-      
-      // Status will be updated via the stream
-    } catch (e) {
+      // Re-throw other platform exceptions with a user-friendly message
       emit(state.copyWith(
         isPurchasing: false,
-        error: 'Purchase error: $e',
+        error: 'Purchase failed: ${e.message}',
+      ));
+    } catch (e) {
+      // Handle any other exceptions
+      emit(state.copyWith(
+        isPurchasing: false,
+        error: 'An unexpected error occurred. Please try again.',
       ));
     }
   }

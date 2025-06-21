@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:calorieai/features/home/presentation/widgets/macro_nutriments_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
+import 'package:calorieai/features/settings/presentation/widgets/references_screen.dart';
+
 typedef S = AppLocalizations;
 
 class DashboardWidget extends StatefulWidget {
@@ -57,12 +59,14 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Calculate macro nutrients values
-    final proteinsLeft = (widget.totalProteinsIntake - widget.totalProteinsGoal).round();
+    final proteinsLeft =
+        (widget.totalProteinsIntake - widget.totalProteinsGoal).round();
     final carbsLeft = (widget.totalCarbsIntake - widget.totalCarbsGoal).round();
     final fatsLeft = (widget.totalFatsIntake - widget.totalFatsGoal).round();
 
     // Check if any nutrients are over limit
-    final proteinsOverLimit = widget.totalProteinsIntake > widget.totalProteinsGoal;
+    final proteinsOverLimit =
+        widget.totalProteinsIntake > widget.totalProteinsGoal;
     final carbsOverLimit = widget.totalCarbsIntake > widget.totalCarbsGoal;
     final fatsOverLimit = widget.totalFatsIntake > widget.totalFatsGoal;
 
@@ -77,7 +81,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final proteinColor = proteinsOverLimit ? Colors.red : Colors.redAccent;
     final proteinBg = proteinsOverLimit
         ? Colors.red.withValues(alpha: 0.25)
-        : (isDarkMode ? Colors.red.shade900.withValues(alpha: 0.25) : Colors.red.shade50);
+        : (isDarkMode
+            ? Colors.red.shade900.withValues(alpha: 0.25)
+            : Colors.red.shade50);
     final carbsColor = carbsOverLimit ? Colors.red : Colors.orangeAccent;
     final carbsBg = carbsOverLimit
         ? Colors.red.withValues(alpha: 0.25)
@@ -95,90 +101,118 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         children: [
-          // Main calories card
-          Container(
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.black.withValues(alpha: 0.25) : Colors.white.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                if (!isDarkMode)
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Calories left section
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AnimatedFlipCounter(
-                      duration: const Duration(milliseconds: 1000),
-                      value: kcalLeftLabel.toInt(),
-                      textStyle: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+          Stack(children: [
+            // Main calories card
+            Container(
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? Colors.black.withValues(alpha: 0.25)
+                    : Colors.white.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  if (!isDarkMode)
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                    const SizedBox(width: 8),
-                    // Show "/ max kcal" next to the number, smaller and lighter
-                    Text(
-                      '/ ${widget.totalKcalDaily.toInt()}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.5),
-                        fontWeight: FontWeight.w600,
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Stack(
+                children: [
+                  // Main content
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Calories left section
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AnimatedFlipCounter(
+                            duration: const Duration(milliseconds: 1000),
+                            value: kcalLeftLabel.toInt(),
+                            textStyle: TextStyle(
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Show "/ max kcal" next to the number, smaller and lighter
+                          Text(
+                            '/ ${widget.totalKcalDaily.toInt()}',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.5),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            S.of(context).kcalLeftLabel,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      S.of(context).kcalLeftLabel,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ],
-                ),
 
-                // Circular progress indicator with flame icon
-                CircularPercentIndicator(
-                  radius: 54,
-                  lineWidth: 10,
-                  animation: true,
-                  percent: gaugeValue,
-                  circularStrokeCap: CircularStrokeCap.round,
-                  progressColor: isDarkMode
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.black87,
-                  backgroundColor: isDarkMode
-                      ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
-                      : Colors.grey.shade300,
-                  center: Text(
-                    '🔥',
-                    style: TextStyle(
-                      fontSize: 36,
-                      color: isDarkMode
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.black54,
-                    ),
+                      // Circular progress indicator with flame icon
+                      CircularPercentIndicator(
+                        radius: 54,
+                        lineWidth: 10,
+                        animation: true,
+                        percent: gaugeValue,
+                        circularStrokeCap: CircularStrokeCap.round,
+                        progressColor: isDarkMode
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.black87,
+                        backgroundColor: isDarkMode
+                            ? Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.2)
+                            : Colors.grey.shade300,
+                        center: Text(
+                          '🔥',
+                          style: TextStyle(
+                            fontSize: 36,
+                            color: isDarkMode
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: Icon(Icons.info_outline, size: 24),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ReferencesScreen(),
+                    ),
+                  );
+                },
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
+              ),
+            ),
+          ]),
 
           const SizedBox(height: 16),
 
@@ -243,7 +277,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       width: 100,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.black.withValues(alpha: 0.25) : Colors.white.withValues(alpha: 0.25),
+        color: isDarkMode
+            ? Colors.black.withValues(alpha: 0.25)
+            : Colors.white.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           if (!isDarkMode)
@@ -269,7 +305,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                       color: color,
                     ),
                   ),
-                    if (hasWarning)
+                  if (hasWarning)
                     Padding(
                       padding: const EdgeInsets.only(left: 4),
                       child: Text(
@@ -289,13 +325,12 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               ),
             ],
           ),
-        
           const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(
               fontSize: 13,
-              color: color ,
+              color: color,
             ),
             textAlign: TextAlign.center,
           ),

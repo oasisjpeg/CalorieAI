@@ -11,7 +11,7 @@ import 'package:calorieai/core/domain/usecase/get_macro_goal_usecase.dart';
 import 'package:calorieai/core/utils/calc/unit_calc.dart';
 import 'package:calorieai/core/utils/id_generator.dart';
 import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
-import 'package:calorieai/core/utils/mock_sentry.dart'; // Mock Sentry for simulator compatibility
+import 'package:sentry_flutter/sentry_flutter.dart'; // Disabled for simulator compatibility
 
 part 'meal_detail_event.dart';
 

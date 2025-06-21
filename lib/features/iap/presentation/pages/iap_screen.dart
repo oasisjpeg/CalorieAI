@@ -28,6 +28,13 @@ class IAPScreen extends StatelessWidget {
               ),
             );
           }
+          
+          // Show success dialog when purchase is complete
+          if (state.showSuccessScreen) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showSuccessDialog(context);
+            });
+          }
         },
         builder: (context, state) {
           if (state.isLoading) {
@@ -185,6 +192,7 @@ class IAPScreen extends StatelessWidget {
             ? null
             : () => context.read<IAPBloc>().add(PurchaseProduct(product.id)),
         style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -201,7 +209,7 @@ class IAPScreen extends StatelessWidget {
               )
             : Text(
                 '${S.of(context).subscribeFor} ${product.price}/month',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16, fontWeight: FontWeight.bold),
               ),
       ),
     );
@@ -287,6 +295,51 @@ class IAPScreen extends StatelessWidget {
               ),
         ),
       ),
+    );
+  }
+  
+  Future<void> _showSuccessDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button to dismiss
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 64,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Purchase Successful!',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Thank you for your purchase! You now have access to all premium features.',
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(); // Close the IAP screen
+                  },
+                  child: const Text('Get Started'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
