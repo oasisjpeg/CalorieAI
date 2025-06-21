@@ -110,7 +110,7 @@ This project is licensed under the GNU General Public License v3.0. See the [LIC
 
 For questions, suggestions, or collaborations, feel free to contact the project maintainer:
 
-**Simon Oppowa**
+**Marc Reutz**
 
 - **GitHub:** [@oasisjpeg](https://github.com/oasisjpeg)
 - **Email:** [kontakt@axiona.at](mailto:kontakt@axiona.at) 
