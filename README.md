@@ -1,10 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# adapt this code so that calorai is a enhanced version of the original opennutritracker
-
-Absolutely! Here’s a revised `README.md` that positions **CalorieAI** as an enhanced, next-generation version of the original **OpenNutriTracker**, while keeping the structure and style consistent. I’ve updated the description, features, and references accordingly.
-
----
 
 <p align="center">
   <img alt="Logo" src="assets/icon/calorieai_logo.png" width="128" />
