@@ -1,11 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# adapt this code so that calorai is a enhanced version of the original opennutritracker
-
-Absolutely! Here’s a revised `README.md` that positions **CalorieAI** as an enhanced, next-generation version of the original **OpenNutriTracker**, while keeping the structure and style consistent. I’ve updated the description, features, and references accordingly.
-
----
-
 <p align="center">
   <img alt="Logo" src="assets/icon/calorieai_logo.png" width="128" />
   <h1 align="center">CalorieAI</h1>
@@ -30,20 +22,23 @@ Absolutely! Here’s a revised `README.md` that positions **CalorieAI** as an en
 
 Whether you’re focused on improving your health, losing weight, or maintaining a balanced diet, CalorieAI offers a sleek interface and advanced tools to help you track and analyze your daily nutrition with unprecedented ease.
 
-[Website](https://simonoppowa.github.io/CalorieAI-Website/) *(Update this link as needed)*
+[Website](https://axiona.at)
 
 ---
 
 ## Screenshots
 
 <p align="center">
-  <img alt="Logo" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_en-US.png" width="20%" />
+  <img alt="Logo" src="assets/screenshots/1.jpg" width="15%" />
   &nbsp;&nbsp;
-  <img alt="Logo" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_en-US.png" width="20%" />
+  <img alt="Logo" src="assets/screenshots/2.jpg" width="15%" />
   &nbsp;&nbsp;
-  <img alt="Logo" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_en-US.png" width="20%" />
+  <img alt="Logo" src="assets/screenshots/3.jpg" width="15%" />
   &nbsp;&nbsp;
-  <img alt="Logo" src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_en-US.png" width="20%" />
+  <img alt="Logo" src="assets/screenshots/4.jpg" width="15%" />
+  &nbsp;&nbsp;
+  <img alt="Logo" src="assets/screenshots/5.jpg" width="15%" />
+  &nbsp;&nbsp;
 </p>
 
 <!-- ---
@@ -117,7 +112,7 @@ This project is licensed under the GNU General Public License v3.0. See the [LIC
 
 For questions, suggestions, or collaborations, feel free to contact the project maintainer:
 
-**Simon Oppowa**
+**Marc Reutz**
 
 - **GitHub:** [@oasisjpeg](https://github.com/oasisjpeg)
 - **Email:** [kontakt@axiona.at](mailto:kontakt@axiona.at) 
