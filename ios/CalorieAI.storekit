@@ -18,58 +18,53 @@
   ],
   "settings" : {
     "_applicationInternalID" : "6745355990",
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
     "_billingIssuesEnabled" : true,
     "_compatibilityTimeRate" : {
       "3" : 6
     },
     "_developerTeamID" : "4NMUX5NN4Y",
+    "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 771949649.01530194,
+    "_lastSynchronizedDate" : 772285970.15413797,
     "_locale" : "de",
+    "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "AUT",
     "_storeKitErrors" : [
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Load Products"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Purchase"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Verification"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Store Sync"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Subscription Status"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Transaction"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Manage Subscriptions Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Refund Request Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
@@ -91,7 +86,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "14.99",
+          "displayPrice" : "5.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "6746932451",

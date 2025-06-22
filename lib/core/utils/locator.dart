@@ -38,7 +38,6 @@ import 'package:calorieai/features/add_activity/presentation/bloc/activities_blo
 import 'package:calorieai/features/add_activity/presentation/bloc/recent_activities_bloc.dart';
 import 'package:calorieai/features/add_meal/data/data_sources/fdc_data_source.dart';
 import 'package:calorieai/features/add_meal/data/data_sources/off_data_source.dart';
-import 'package:calorieai/features/add_meal/data/data_sources/sp_fdc_data_source.dart';
 import 'package:calorieai/features/add_meal/data/repository/products_repository.dart';
 import 'package:calorieai/features/add_meal/domain/usecase/search_products_usecase.dart';
 import 'package:calorieai/features/add_meal/presentation/bloc/add_meal_bloc.dart';
@@ -60,7 +59,6 @@ import 'package:calorieai/features/settings/domain/usecase/export_data_usecase.d
 import 'package:calorieai/features/settings/domain/usecase/import_data_usecase.dart';
 import 'package:calorieai/features/settings/presentation/bloc/export_import_bloc.dart';
 import 'package:calorieai/features/settings/presentation/bloc/settings_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 final locator = GetIt.instance;
 
@@ -71,10 +69,6 @@ Future<void> initLocator() async {
   await hiveDBProvider
       .initHiveDB(await secureAppStorageProvider.getHiveEncryptionKey());
 
-  // Backend
-  await Supabase.initialize(
-      url: Env.supabaseProjectUrl, anonKey: Env.supabaseProjectAnonKey);
-  locator.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
 
   // Cache manager
   locator
@@ -178,7 +172,7 @@ Future<void> initLocator() async {
   locator.registerLazySingleton<IntakeRepository>(
       () => IntakeRepository(locator()));
   locator.registerLazySingleton<ProductsRepository>(
-      () => ProductsRepository(locator(), locator(), locator()));
+      () => ProductsRepository(locator(), locator()));
   locator.registerLazySingleton<UserActivityRepository>(
       () => UserActivityRepository(locator()));
   locator.registerLazySingleton<PhysicalActivityRepository>(
@@ -199,7 +193,6 @@ Future<void> initLocator() async {
       () => PhysicalActivityDataSource());
   locator.registerLazySingleton<OFFDataSource>(() => OFFDataSource());
   locator.registerLazySingleton<FDCDataSource>(() => FDCDataSource());
-  locator.registerLazySingleton<SpFdcDataSource>(() => SpFdcDataSource());
   locator.registerLazySingleton(
       () => TrackedDayDataSource(hiveDBProvider.trackedDayBox));
 

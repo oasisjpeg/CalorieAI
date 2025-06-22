@@ -95,6 +95,24 @@ class IAPService {
     return _repository.hasActiveSubscription();
   }
 
+  /// Check if the user has an active subscription
+  Future<bool> hasActiveSubscription() async {
+    if (!_isInitialized) await init();
+    return _repository.hasActiveSubscription();
+  }
+
+  // Open the platform-specific subscription management page
+  Future<bool> openSubscriptionManagement() async {
+    try {
+      // On iOS, this will open the App Store subscription management page
+      // On Android, this will open the Play Store subscription management page
+      return await _repository.openSubscriptionManagement();
+    } catch (e) {
+      Logger.e('Error opening subscription management', error: e);
+      return false;
+    }
+  }
+
   // Get current purchase status
   Future<PurchaseStatus> getPurchaseStatus() async {
     if (!_isInitialized) await init();

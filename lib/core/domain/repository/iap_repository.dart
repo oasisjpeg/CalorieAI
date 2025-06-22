@@ -67,4 +67,10 @@ abstract class IAPRepository {
   Future<void> resetDailyAnalysisCount();
 
   Future<iap_entity.PurchaseStatus> getDetailedPurchaseStatus();
+
+  /// Opens the platform-specific subscription management page.
+  /// On iOS, this opens the App Store subscription management page.
+  /// On Android, this opens the Play Store subscription management page.
+  /// Returns `true` if the operation was successful, `false` otherwise.
+  Future<bool> openSubscriptionManagement();
 }

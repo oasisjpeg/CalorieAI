@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart' as iap;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
 import 'package:calorieai/core/domain/entity/iap_product.dart';
 import 'package:calorieai/core/domain/entity/purchase_status.dart';
@@ -196,6 +199,54 @@ class IAPRepositoryImpl implements IAPRepository {
   @override
   Future<String?> getPurchaseToken(String productId) async {
     return await _localDataSource.getPurchaseToken(productId);
+  }
+
+  @override
+  Future<bool> openSubscriptionManagement() async {
+    try {
+      // On iOS, try to open the subscription management in the App Store
+      if (Platform.isIOS) {
+        // Try to open the App Store subscription management directly
+        const url = 'https://apps.apple.com/account/subscriptions';
+        if (await canLaunchUrl(Uri.parse(url))) {
+          return await launchUrl(
+            Uri.parse(url),
+            mode: LaunchMode.externalApplication,
+          );
+        }
+      }
+      // On Android, try to open the Play Store subscription management
+      else if (Platform.isAndroid) {
+        // Try to open the Play Store subscription management
+        const url = 'https://play.google.com/store/account/subscriptions';
+        if (await canLaunchUrl(Uri.parse(url))) {
+          return await launchUrl(
+            Uri.parse(url),
+            mode: LaunchMode.externalApplication,
+          );
+        }
+      }
+      
+      // Fallback: Open the app store page where user can manage subscriptions
+      if (_products.isNotEmpty) {
+        // Use the product ID to create a store URL
+        final storeUrl = Platform.isIOS
+            ? 'https://apps.apple.com/account/subscriptions'
+            : 'https://play.google.com/store/account/subscriptions';
+            
+        if (await canLaunchUrl(Uri.parse(storeUrl))) {
+          return await launchUrl(
+            Uri.parse(storeUrl),
+            mode: LaunchMode.externalApplication,
+          );
+        }
+      }
+      
+      return false;
+    } catch (e) {
+      debugPrint('Error opening subscription management: $e');
+      return false;
+    }
   }
 
   @override

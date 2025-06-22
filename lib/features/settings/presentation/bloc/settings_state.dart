@@ -19,11 +19,33 @@ class SettingsLoadedState extends SettingsState {
   final bool sendAnonymousData;
   final AppThemeEntity appTheme;
   final bool usesImperialUnits;
+  final bool isSubscribed;
 
-  const SettingsLoadedState(this.versionNumber, this.sendAnonymousData,
-      this.appTheme, this.usesImperialUnits);
+  const SettingsLoadedState(
+    this.versionNumber,
+    this.sendAnonymousData,
+    this.appTheme,
+    this.usesImperialUnits, {
+    this.isSubscribed = false,
+  });
+
+  SettingsLoadedState copyWith({
+    String? versionNumber,
+    bool? sendAnonymousData,
+    AppThemeEntity? appTheme,
+    bool? usesImperialUnits,
+    bool? isSubscribed,
+  }) {
+    return SettingsLoadedState(
+      versionNumber ?? this.versionNumber,
+      sendAnonymousData ?? this.sendAnonymousData,
+      appTheme ?? this.appTheme,
+      usesImperialUnits ?? this.usesImperialUnits,
+      isSubscribed: isSubscribed ?? this.isSubscribed,
+    );
+  }
 
   @override
   List<Object?> get props =>
-      [versionNumber, sendAnonymousData, appTheme, usesImperialUnits];
+      [versionNumber, sendAnonymousData, appTheme, usesImperialUnits, isSubscribed];
 }

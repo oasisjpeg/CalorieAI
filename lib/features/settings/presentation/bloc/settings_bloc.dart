@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:calorieai/shared/iap_service.dart';
 import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
 import 'package:calorieai/core/domain/usecase/add_config_usecase.dart';
 import 'package:calorieai/core/domain/usecase/add_tracked_day_usecase.dart';
@@ -21,6 +23,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final AddTrackedDayUsecase _addTrackedDayUsecase;
   final GetKcalGoalUsecase _getKcalGoalUsecase;
   final GetMacroGoalUsecase _getMacroGoalUsecase;
+  final IAPService _iapService = IAPService();
 
   SettingsBloc(
       this._getConfigUsecase,
@@ -29,18 +32,25 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       this._getKcalGoalUsecase,
       this._getMacroGoalUsecase)
       : super(SettingsInitial()) {
+    // Initialize IAP service when the bloc is created
+    _iapService.init();
+  
     on<LoadSettingsEvent>((event, emit) async {
       emit(SettingsLoadingState());
 
       final userConfig = await _getConfigUsecase.getConfig();
       final appVersion = await AppConst.getVersionNumber();
       final usesImperialUnits = userConfig.usesImperialUnits;
+      
+      // Get subscription status
+      final isSubscribed = await _iapService.hasActiveSubscription();
 
       emit(SettingsLoadedState(
           appVersion,
           userConfig.hasAcceptedSendAnonymousData,
           userConfig.appTheme,
-          usesImperialUnits));
+          usesImperialUnits,
+          isSubscribed: isSubscribed));
     });
   }
 

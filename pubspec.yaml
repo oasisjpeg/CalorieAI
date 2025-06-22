@@ -68,10 +68,6 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
 
-  # sentry_flutter: ^8.11.2  # Temporarily disabled for simulator compatibility
-
-  supabase_flutter: ^2.8.2
-
   # Gemini AI integration
   google_generative_ai: ^0.4.0
   image_picker: ^1.0.7

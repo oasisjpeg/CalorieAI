@@ -37,8 +37,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late SettingsBloc _settingsBloc;
   late ProfileBloc _profileBloc;
   late HomeBloc _homeBloc;
-  late DiaryBloc _diaryBloc;
-  late CalendarDayBloc _calendarDayBloc;
+  late final DiaryBloc _diaryBloc;
+  late final CalendarDayBloc _calendarDayBloc;
 
   @override
   void initState() {
@@ -103,6 +103,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: Text(S.of(context).settingsReportErrorLabel),
                   onTap: () => _showReportErrorDialog(context),
                 ),
+                // Subscription management
+                if (state.isSubscribed)
+                  ListTile(
+                    leading: const Icon(Icons.subscriptions_outlined),
+                    title: const Text('Manage Subscription'),
+                    onTap: () async {
+                      final iapService = IAPService();
+                      final success = await iapService.openSubscriptionManagement();
+                      if (!success && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Could not open subscription management. Please try again later.'),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ListTile(
                   leading: const Icon(Icons.policy_outlined),
                   title: Text(S.of(context).settingsPrivacySettings),
