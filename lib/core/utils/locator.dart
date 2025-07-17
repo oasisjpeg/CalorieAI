@@ -78,7 +78,7 @@ Future<void> initLocator() async {
   locator.registerLazySingleton<GeminiService>(() => GeminiService());
 
   // ChatbotService
-  locator.registerLazySingleton<RecipeChatbotService>(() => RecipeChatbotService(locator()));
+  //locator.registerLazySingleton<RecipeChatbotService>(() => RecipeChatbotService(locator()));
 
   // BLoCs
   locator.registerLazySingleton<OnboardingBloc>(

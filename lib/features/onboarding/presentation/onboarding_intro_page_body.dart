@@ -4,6 +4,7 @@ import 'package:calorieai/core/presentation/widgets/app_banner_version.dart';
 import 'package:calorieai/core/utils/app_const.dart';
 import 'package:calorieai/features/onboarding/presentation/widgets/markdown_viewer_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
+
 typedef S = AppLocalizations;
 
 class OnboardingIntroPageBody extends StatefulWidget {
@@ -28,9 +29,7 @@ class _OnboardingIntroPageBodyState extends State<OnboardingIntroPageBody> {
         if (snapshot.hasData) {
           return Column(
             children: [
-              AppBannerVersion(
-                versionNumber: snapshot.requireData,
-              ),
+              AppBannerVersion(),
               const SizedBox(height: 32.0),
               Text(S.of(context).appDescription,
                   style: Theme.of(context).textTheme.bodyLarge,

@@ -7,7 +7,6 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
-import 'app_localizations_tr.dart';
 
 // ignore_for_file: type=lint
 
@@ -93,8 +92,7 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
-    Locale('en'),
-    Locale('tr')
+    Locale('en')
   ];
 
   /// No description provided for @appTitle.
@@ -538,7 +536,7 @@ abstract class AppLocalizations {
   /// No description provided for @disclaimerText.
   ///
   /// In en, this message translates to:
-  /// **'CalorieAI is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended.\n\n\nThe application is still under development. Errors, bugs and crashes may occur. Responses from the AI may be incorrect or misleading. Always double-check the information with a professional.'**
+  /// **'CalorieAI is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended.\n\n\nResponses from the AI may be incorrect or misleading. Always double-check the information with a professional.'**
   String get disclaimerText;
 
   /// No description provided for @reportErrorDialogText.
@@ -2766,6 +2764,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save Meal'**
   String get saveMeal;
+
+  /// No description provided for @termsOfUseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get termsOfUseLabel;
+
+  /// No description provided for @kcalOverLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'kcal over'**
+  String get kcalOverLabel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
@@ -2777,7 +2787,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['de', 'en', 'tr'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['de', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -2790,7 +2800,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'de': return AppLocalizationsDe();
     case 'en': return AppLocalizationsEn();
-    case 'tr': return AppLocalizationsTr();
   }
 
   throw FlutterError(

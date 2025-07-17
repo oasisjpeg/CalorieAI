@@ -34,7 +34,12 @@ class IAPRepositoryImpl implements IAPRepository {
       return;
     }
 
-    await _inAppPurchase.restorePurchases();
+    await _inAppPurchase.restorePurchases().timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        throw TimeoutException('Restoring purchases timed out');
+      },
+    );
 
     _subscription = _inAppPurchase.purchaseStream.listen(
       _handlePurchaseUpdate,

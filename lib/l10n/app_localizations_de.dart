@@ -230,7 +230,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsVolumeLabel => 'Volumen';
 
   @override
-  String get disclaimerText => 'CalorieAI ist keine medizinische Anwendung. Alle bereitgestellten Daten sind nicht validiert und sollten mit Vorsicht verwendet werden. Bitte pflegen Sie einen gesunden Lebensstil und konsultieren Sie einen Fachmann, wenn Sie Probleme haben. Die Verwendung während einer Krankheit, Schwangerschaft oder Stillzeit wird nicht empfohlen.\n\n\nDie Anwendung befindet sich noch in der Entwicklung. Fehler, Bugs und Abstürze können auftreten. Antworten der AI können nicht immer korrekt oder verlässlich sein. Stellen Sie die Informationen immer mit einem Fachmann in Einklang. ';
+  String get disclaimerText => 'CalorieAI ist keine medizinische Anwendung. Alle bereitgestellten Daten sind nicht validiert und sollten mit Vorsicht verwendet werden. Bitte pflegen Sie einen gesunden Lebensstil und konsultieren Sie einen Fachmann, wenn Sie Probleme haben. Die Verwendung während einer Krankheit, Schwangerschaft oder Stillzeit wird nicht empfohlen.\n\n\nAntworten der AI können nicht immer korrekt oder verlässlich sein. Stellen Sie die Informationen immer mit einem Fachmann in Einklang. ';
 
   @override
   String get reportErrorDialogText => 'Möchten Sie einen Fehler an den Entwickler melden?';
@@ -1352,4 +1352,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get saveMeal => 'Speichern';
+
+  @override
+  String get termsOfUseLabel => 'Nutzungsbedingungen';
+
+  @override
+  String get kcalOverLabel => 'kcal über';
 }

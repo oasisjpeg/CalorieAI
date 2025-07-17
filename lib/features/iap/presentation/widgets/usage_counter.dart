@@ -58,9 +58,9 @@ class UsageCounter extends StatelessWidget {
         // Add a gesture detector for debug functionality
         return GestureDetector(
           onLongPress: () {
-            // if (kDebugMode) {
+             if (kDebugMode) {
               _resetCounter(context);
-            // }
+            }
           },
           child: _buildCounterContent(context, state),
         );

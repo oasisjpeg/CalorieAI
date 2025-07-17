@@ -23,18 +23,13 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
   final _getMacroGoalUsecase = locator<GetMacroGoalUsecase>();
   final _getIntakeUseCase = locator<GetIntakeUsecase>();
   final Map<String, dynamic> _filters = {
-    'LANGUAGE': 'German',
-    'RECIPE_TYPE': 'Main Course',
-    'COOKING_METHOD': 'Air Fryer',
-    'MAX_COOKING_TIME': 60,
-    'PRICING': 'Normal',
-    'NUMBER': 2,
-    'PREFERRED_MEATS': <String>[],
-    'PREFERRED_VEGETABLES': <String>[],
+    'LANGUAGE': 'English',
+    'RECIPE_TYPE': 'Any',
     'DIETARY_RESTRICTIONS': <String>[],
-    'DISLIKED_INGREDIENTS': <String>[],
-    'PREFERRED_FLAVORS': '',
+    'CONTEXT': '',
   };
+  
+  final TextEditingController _contextController = TextEditingController();
 
   bool _filtersCollapsed = false;
 
@@ -50,8 +45,17 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Initialize with device locale
+    final locale = Localizations.localeOf(context);
+    _filters['LANGUAGE'] = locale.languageCode == 'de' ? 'German' : 'English';
+  }
+
+  @override
   void dispose() {
     _bloc.close();
+    _contextController.dispose();
     super.dispose();
   }
 
@@ -131,13 +135,22 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                               ),
                               const SizedBox(height: 16),
 
+                              Text(
+                                "${recipe?['calories'] ?? ''} kcal",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+
                               // Nutrition Info as Chips
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   _nutritionChip(
                                     context,
-                                    Icons.fitness_center,
+                                    "💪",
                                     "Protein",
                                     "${recipe?['protein'] ?? 0}",
                                     isDark
@@ -150,7 +163,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                   const SizedBox(width: 8),
                                   _nutritionChip(
                                     context,
-                                    Icons.bubble_chart,
+                                    "🌾",
                                     "Carbs",
                                     "${recipe?['carbs'] ?? 0}",
                                     isDark
@@ -163,7 +176,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                   const SizedBox(width: 8),
                                   _nutritionChip(
                                     context,
-                                    Icons.opacity,
+                                    "🥑",
                                     "Fat",
                                     "${recipe?['fat'] ?? 0}",
                                     isDark
@@ -184,10 +197,20 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.timer,
-                                          color:
-                                              Theme.of(context).iconTheme.color,
-                                          size: 20),
+                                      Text("🔥", style: Theme.of(context).textTheme.bodyMedium),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        "${recipe?['calories']} kcal",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("🕓", style: Theme.of(context).textTheme.bodyMedium),
                                       const SizedBox(width: 4),
                                       Text(
                                         "Prep: ${recipe?['prep_time']} min",
@@ -201,10 +224,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.restaurant,
-                                          color:
-                                              Theme.of(context).iconTheme.color,
-                                          size: 20),
+                                      Text("🍳", style: Theme.of(context).textTheme.bodyMedium),
                                       const SizedBox(width: 4),
                                       Text(
                                         "Cook: ${recipe?['cook_time']} min",
@@ -222,10 +242,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                               // Ingredients
                               Row(
                                 children: [
-                                  Icon(Icons.shopping_basket,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
+                                  Text("🍃", style: Theme.of(context).textTheme.bodyMedium),
                                   const SizedBox(width: 8),
                                   Text(
                                     'Ingredients',
@@ -254,10 +271,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                               // Instructions
                               Row(
                                 children: [
-                                  Icon(Icons.list_alt,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
+                                  Text("📜", style: Theme.of(context).textTheme.bodyMedium),
                                   const SizedBox(width: 8),
                                   Text(
                                     'Instructions',
@@ -287,10 +301,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                 Divider(),
                                 Row(
                                   children: [
-                                    Icon(Icons.emoji_food_beverage,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary),
+                                    Text("🍽️", style: Theme.of(context).textTheme.bodyMedium),
                                     const SizedBox(width: 8),
                                     Text(
                                       'Serving Suggestion',
@@ -338,12 +349,17 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      ExpansionTile(
-                        title: const Text('Filters'),
-                        key: GlobalKey(),
-                        initiallyExpanded: !_filtersCollapsed,
-                        onExpansionChanged: (expanded) {
-                          setState(() {
+                      Card(
+                        child: ExpansionTile(
+                          title: const Text('Filters'),
+                          key: GlobalKey(),
+                          tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                          shape: const RoundedRectangleBorder(
+                            side: BorderSide.none,
+                          ),
+                          initiallyExpanded: !_filtersCollapsed,
+                          onExpansionChanged: (expanded) {
+                            setState(() {
                             _filtersCollapsed = !expanded;
                           });
                         },
@@ -351,20 +367,23 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                           _buildFilterSection(context),
                         ],
                       ),
+                      ),
                       const SizedBox(height: 24),
                       _buildRecipeList(state),
                     ],
                   ),
                 ),
               ),
-              floatingActionButton: FloatingActionButton(
+              floatingActionButton: FloatingActionButton.extended(
                 onPressed: () {
                   setState(() {
                     _filtersCollapsed = true;
+                    _filters['CONTEXT'] = _contextController.text;
                   });
                   _bloc.add(FetchRecipes(_filters));
                 },
-                child: const Icon(Icons.search),
+                icon: const Icon(Icons.search),
+                label: const Text('Find Recipes'),
               ),
             );
           },
@@ -375,94 +394,66 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSliderFilter(
-          'Number of Recipes 🔢',
-          1,
-          5,
-          _filters['NUMBER'],
-          (value) => setState(() => _filters['NUMBER'] = value),
+        // Recipe Context Input
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Describe what you\'re looking for 🍳',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _contextController,
+                decoration: InputDecoration(
+                  hintText: 'e.g., Quick dinner with chicken and vegetables',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 12.0,
+                  ),
+                ),
+                maxLines: 3,
+                onChanged: (value) {
+                  _filters['CONTEXT'] = value;
+                },
+                onSubmitted: (value) {
+                  _filters['CONTEXT'] = value;
+                },
+              ),
+            ],
+          ),
         ),
+        
+        // Language is now auto-detected from device settings
+        // Removed manual language selection
+        
+        // Recipe Type
         _buildSingleSelectFilter(
           context,
-          'Language 🌍',
-          ['English', 'German'],
-          _filters['LANGUAGE'],
-          (value) => setState(() => _filters['LANGUAGE'] = value),
-        ),
-        _buildSingleSelectFilter(
-          context,
-          'Recipe Type 🍽️',
-          ['Main Course', 'Side Dish', 'Snack', 'Dessert', 'Breakfast'],
+          'Meal Type 🍽️',
+          ['Any', 'Main Course', 'Side Dish', 'Snack', 'Dessert', 'Breakfast'],
           _filters['RECIPE_TYPE'],
           (value) => setState(() => _filters['RECIPE_TYPE'] = value),
         ),
-        _buildSingleSelectFilter(
-          context,
-          'Cooking Method 🔥',
-          ['Air Fryer', 'Baked', 'Grilled', 'Stovetop'],
-          _filters['COOKING_METHOD'],
-          (value) => setState(() => _filters['COOKING_METHOD'] = value),
-        ),
-        _buildSliderFilter(
-          'Max Cooking Time ⏳',
-          30,
-          120,
-          _filters['MAX_COOKING_TIME'],
-          (value) => setState(() => _filters['MAX_COOKING_TIME'] = value),
-        ),
-        _buildSingleSelectFilter(
-          context,
-          'Pricing 💰',
-          ['Budget-Friendly', 'Normal', 'Pricier'],
-          _filters['PRICING'],
-          (value) => setState(() => _filters['PRICING'] = value),
-        ),
+        
+        // Dietary Restrictions
         _buildMultiSelectFilter(
-          'Preferred Meats 🐔',
-          ['Chicken', 'Beef', 'Fish', 'Pork', 'No Meat'],
-          _filters['PREFERRED_MEATS'] as List<String>,
-          (values) => setState(() => _filters['PREFERRED_MEATS'] = values),
-        ),
-        _buildMultiSelectFilter(
-          'Preferred Vegetables 🥦',
-          ['Broccoli', 'Carrots', 'Bell Peppers', 'Zucchini'],
-          _filters['PREFERRED_VEGETABLES'] as List<String>,
-          (values) => setState(() => _filters['PREFERRED_VEGETABLES'] = values),
-        ),
-        _buildMultiSelectFilter(
-          'Dietary Restrictions 🍎',
+          'Dietary Needs 🍎',
           [
-            'Gluten-Free',
-            'Dairy-Free',
             'Vegetarian',
             'Vegan',
-            'Low-Carb',
-            'Keto'
+            'Gluten-Free',
+            'Dairy-Free',
+            'Keto',
+            'Low-Carb'
           ],
           _filters['DIETARY_RESTRICTIONS'] as List<String>,
           (values) => setState(() => _filters['DIETARY_RESTRICTIONS'] = values),
-        ),
-        _buildMultiSelectFilter(
-          'Disliked Ingredients 🙅‍♂️',
-          ['Onions', 'Mushrooms', 'Cilantro'],
-          _filters['DISLIKED_INGREDIENTS'] as List<String>,
-          (values) => setState(() => _filters['DISLIKED_INGREDIENTS'] = values),
-        ),
-        _buildSingleSelectFilter(
-          context,
-          'Preferred Flavors 🌈',
-          [
-            'Spicy',
-            'Italian',
-            'Asian',
-            'Mexican',
-            'Mediterranean',
-            'BBQ',
-            'Savory',
-            'Sweet'
-          ],
-          _filters['PREFERRED_FLAVORS'],
-          (value) => setState(() => _filters['PREFERRED_FLAVORS'] = value),
         ),
       ],
     );
@@ -498,7 +489,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                   ))
               .toList(),
         ),
-        const Divider(),
+        const SizedBox(height: 8),
       ],
     );
   }
@@ -536,51 +527,48 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                   ))
               .toList(),
         ),
-        const Divider(),
+        const SizedBox(height: 8),
       ],
     );
   }
 
-  Widget _buildSliderFilter(
-    String label,
-    int min,
-    int max,
-    int value,
-    Function(int) onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: Slider(
-                value: value.toDouble(),
-                min: min.toDouble(),
-                max: max.toDouble(),
-                divisions: (max - min).toInt(),
-                label: value.toString(),
-                onChanged: (double newValue) {
-                  onChanged(newValue.toInt());
-                },
-              ),
-            ),
-            Text('$value'),
-          ],
-        ),
-        const Divider(),
-      ],
-    );
-  }
+
 
   Widget _buildRecipeList(RecipeChatbotState state) {
     if (state is RecipeChatbotLoading) {
       return const Center(child: CircularProgressIndicator());
+    } else if (state is RecipeChatbotError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
+              const SizedBox(height: 16),
+              Text(
+                'Oops! Something went wrong',
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'We couldn\'t fetch your recipes right now. Please check your connection and try again.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  _bloc.add(FetchRecipes(_filters));
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Try Again'),
+              ),
+            ],
+          ),
+        ),
+      );
     } else if (state is RecipeChatbotSuccess) {
       if (state.recipes.isEmpty) {
         return const Center(child: Text('No recipes found'));
@@ -648,6 +636,12 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 10),
+                          Text(
+                            "${recipe['calories'] ?? 0} kcal",
+                            style: theme.textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 10),
                           // Nutrition Row
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -656,7 +650,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                               children: [
                                 _nutritionChip(
                                   context,
-                                  Icons.fitness_center,
+                                  "💪",
                                   "Protein",
                                   "${recipe['protein'] ?? 0}",
                                   isDark
@@ -669,7 +663,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                 const SizedBox(width: 8),
                                 _nutritionChip(
                                   context,
-                                  Icons.bubble_chart,
+                                  "🌾",
                                   "Carbs",
                                   "${recipe['carbs'] ?? 0}",
                                   isDark
@@ -682,7 +676,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                 const SizedBox(width: 8),
                                 _nutritionChip(
                                   context,
-                                  Icons.opacity,
+                                  "🥑",
                                   "Fat",
                                   "${recipe['fat'] ?? 0}",
                                   isDark
@@ -703,8 +697,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.timer,
-                                      color: theme.iconTheme.color, size: 20),
+                                  Text("🔥", style: theme.textTheme.bodyMedium),
                                   const SizedBox(width: 6),
                                   Text(
                                     "Prep: ${recipe['prep_time']} min",
@@ -716,8 +709,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.restaurant,
-                                      color: theme.iconTheme.color, size: 20),
+                                  Text("🍳", style: theme.textTheme.bodyMedium),
                                   const SizedBox(width: 6),
                                   Text(
                                     "Cook: ${recipe['cook_time']} min",
@@ -822,7 +814,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
 
   Widget _nutritionChip(
     BuildContext context,
-    IconData icon,
+    String icon,
     String label,
     String value,
     Color bgColor,
@@ -838,7 +830,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: iconColor, size: 18),
+          Text(icon, style: theme.textTheme.bodyMedium),
           const SizedBox(width: 4),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,

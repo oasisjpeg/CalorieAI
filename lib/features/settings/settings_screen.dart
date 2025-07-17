@@ -135,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 16.0),
                 // Debug menu - only visible in debug mode
                 if (kDebugMode) ..._buildDebugMenu(),
-                AppBannerVersion(versionNumber: state.versionNumber)
+                AppBannerVersion()
               ],
             );
           }
@@ -152,6 +152,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Debug Menu', style: TextStyle(fontWeight: FontWeight.bold)),
         leading: const Icon(Icons.bug_report, color: Colors.red),
       ),
+      ListTile(
+        title: const Text('Activate Premium (Debug)'),
+        subtitle: const Text('Enable premium features for testing'),
+        leading: const Icon(Icons.star, color: Colors.amber),
+        onTap: () async {
+          try {
+            final iapService = IAPService();
+            await iapService.init();
+            
+            // Set premium status to true
+            final localDataSource = IAPLocalDataSource();
+            await localDataSource.savePurchaseStatus(true);
+            
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Premium features activated for testing')),
+              );
+              
+              // Refresh the UI
+              _settingsBloc.add(LoadSettingsEvent());
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error activating premium: $e')),
+              );
+            }
+          }
+        },
+      ),
+      const Divider(),
       ListTile(
         title: const Text('Reset IAP Status'),
         subtitle: const Text('Clear the IAP purchase status for testing'),
@@ -473,7 +504,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(width: 8.0),
                     Text(S.of(context).privacyPolicyLabel),
                   ],
-                ))
+                )),
+            TextButton(
+                onPressed: () {
+                  _launchTermsOfUseUrl(context);
+                },
+                child: Row(
+                  children: [
+                    const Icon(Icons.policy_outlined),
+                    const SizedBox(width: 8.0),
+                    Text(S.of(context).termsOfUseLabel),
+                  ],
+                )),
           ]);
     }
   }
@@ -500,6 +542,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  void _launchTermsOfUseUrl(BuildContext context) {
+   final sourceCodeUri = Uri.parse(AppConst.termsOfUseUrl);
+    _launchUrl(context, sourceCodeUri);
   }
 
   void _launchUrl(BuildContext context, Uri url) async {

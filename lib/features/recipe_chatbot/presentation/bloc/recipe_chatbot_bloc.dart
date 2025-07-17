@@ -58,22 +58,30 @@ class RecipeChatbotBloc extends Bloc<RecipeChatbotEvent, RecipeChatbotState> {
       final todayLunch = await _getIntakeUseCase.getTodayLunchIntake();
       final todayDinner = await _getIntakeUseCase.getTodayDinnerIntake();
       final todaySnack = await _getIntakeUseCase.getTodaySnackIntake();
-      
+
       // Calculate total consumed nutrients
-      final totalConsumed = todayBreakfast + todayLunch + todayDinner + todaySnack;
-      final totalCaloriesConsumed = totalConsumed.fold(0.0, (sum, intake) => sum + intake.totalKcal);
-      final totalProteinConsumed = totalConsumed.fold(0.0, (sum, intake) => sum + intake.totalProteinsGram);
-      final totalCarbsConsumed = totalConsumed.fold(0.0, (sum, intake) => sum + intake.totalCarbsGram);
-      final totalFatConsumed = totalConsumed.fold(0.0, (sum, intake) => sum + intake.totalFatsGram);
-      
+      final totalConsumed =
+          todayBreakfast + todayLunch + todayDinner + todaySnack;
+      final totalCaloriesConsumed =
+          totalConsumed.fold(0.0, (sum, intake) => sum + intake.totalKcal);
+      final totalProteinConsumed = totalConsumed.fold(
+          0.0, (sum, intake) => sum + intake.totalProteinsGram);
+      final totalCarbsConsumed =
+          totalConsumed.fold(0.0, (sum, intake) => sum + intake.totalCarbsGram);
+      final totalFatConsumed =
+          totalConsumed.fold(0.0, (sum, intake) => sum + intake.totalFatsGram);
+
       // Get total calorie goal for today
       final totalKcalGoal = await _getKcalGoalUsecase.getKcalGoal();
-      
+
       // Get macro goals based on total calories
-      final totalCarbsGoal = await _getMacroGoalUsecase.getCarbsGoal(totalKcalGoal);
-      final totalFatGoal = await _getMacroGoalUsecase.getFatsGoal(totalKcalGoal);
-      final totalProteinGoal = await _getMacroGoalUsecase.getProteinsGoal(totalKcalGoal);
-      
+      final totalCarbsGoal =
+          await _getMacroGoalUsecase.getCarbsGoal(totalKcalGoal);
+      final totalFatGoal =
+          await _getMacroGoalUsecase.getFatsGoal(totalKcalGoal);
+      final totalProteinGoal =
+          await _getMacroGoalUsecase.getProteinsGoal(totalKcalGoal);
+
       // Calculate remaining macros
       final remainingNutrients = {
         'calories': totalKcalGoal - totalCaloriesConsumed,
@@ -84,15 +92,17 @@ class RecipeChatbotBloc extends Bloc<RecipeChatbotEvent, RecipeChatbotState> {
 
       // Update filters with remaining nutrients
       final updatedFilters = Map<String, dynamic>.from(event.filters);
-      updatedFilters['TARGET_CALORIES'] = (remainingNutrients['calories'] ?? 0).round();
-      updatedFilters['MINIMUM_PROTEIN'] = (remainingNutrients['protein'] ?? 0).round();
-      updatedFilters['MAXIMUM_CARBS'] = (remainingNutrients['carbs'] ?? 0).round();
+      updatedFilters['TARGET_CALORIES'] =
+          (remainingNutrients['calories'] ?? 0).round();
+      updatedFilters['MINIMUM_PROTEIN'] =
+          (remainingNutrients['protein'] ?? 0).round();
+      updatedFilters['MAXIMUM_CARBS'] =
+          (remainingNutrients['carbs'] ?? 0).round();
       updatedFilters['MAXIMUM_FAT'] = (remainingNutrients['fat'] ?? 0).round();
 
       final prompt = _buildPrompt(updatedFilters);
       final response = await _geminiService.generate(prompt);
-      
-      
+
       final recipes = _parseRecipes(response);
       emit(RecipeChatbotSuccess(recipes: recipes));
     } catch (e, stackTrace) {
@@ -102,45 +112,70 @@ class RecipeChatbotBloc extends Bloc<RecipeChatbotEvent, RecipeChatbotState> {
   }
 
   String _buildPrompt(Map<String, dynamic> filters) {
+    final userContext = filters['CONTEXT']?.toString().isNotEmpty == true
+        ? '\n    *   **User Context:** ${filters['CONTEXT']}\n'
+        : '';
+
     return """
-    I need ${filters['NUMBER']} recipes in JSON format, designed to fit specific macronutrient goals. Please consider the following user preferences:
+    I need 5 recipes in JSON format, designed to fit specific macronutrient goals. ${filters['CONTEXT']?.isNotEmpty == true ? 'Here\'s what the user is looking for: ${filters['CONTEXT']}' : ''}
+Please consider the following user preferences: $userContext
 
-    *   **Language:** ${filters['LANGUAGE']} (Choose ONE: English, Spanish, French, German, etc. - The recipe should be written in this language.)
-    *   **Recipe Type:** ${filters['RECIPE_TYPE']} (Choose ONE: main course, side dish, snack, dessert, breakfast)
-    *   **Cooking Method:** ${filters['COOKING_METHOD']} (Prioritize air fryer. Can include other cooking methods *only if necessary* as a minor step. Options: air fryer, baked, grilled, stovetop)
-    *   **Maximum Cooking Time:** ${filters['MAX_COOKING_TIME']} minutes (Target is total cooking time. Be realistic.)
-    *   **Pricing:** ${filters['PRICING']} (Choose ONE: budget-friendly, normal, pricier. This reflects the cost of the ingredients per serving.)
-    *   **Preferred Meats:** ${filters['PREFERRED_MEATS'].join(', ')} (List preferred meats, separated by commas. Use 'any' if there are no meat preferences.)
-    *   **Preferred Vegetables:** ${filters['PREFERRED_VEGETABLES'].join(', ')} (List preferred vegetables, separated by commas. Use 'any' if there are no vegetable preferences.)
-    *   **Dietary Restrictions:** ${filters['DIETARY_RESTRICTIONS'].join(', ')} (List any restrictions. Use 'none' if there are no restrictions. Examples: gluten-free, dairy-free, vegetarian, vegan, low-carb, keto)
-    *   **Disliked Ingredients:** ${filters['DISLIKED_INGREDIENTS'].join(', ')} (List any ingredients to avoid, separated by commas. Use 'none' if there are no disliked ingredients. Examples: onions, mushrooms, cilantro)
-    *   **Preferred Flavors/Cuisines:** ${filters['PREFERRED_FLAVORS']} (Describe desired flavors or cuisines. Examples: spicy, Italian, Asian, Mexican, Mediterranean, BBQ. Use 'any' if there are no specific flavor preferences.)
+Language: ${filters['LANGUAGE']} (The recipe should be written in this language.)
 
-    *   **Macronutrient Targets (Per Serving):**
-        *   Calories: Approximately ${filters['TARGET_CALORIES']} (Prioritize staying close to this value. A tolerance of +/- 50 calories is acceptable, but aim to be as close as possible.)
-        *   Protein: At least ${filters['MINIMUM_PROTEIN']} grams (Protein target is important for satiety. Prioritize meeting or exceeding this target.)
-        *   Carbs: Up to ${filters['MAXIMUM_CARBS']} grams (Keep carbs *below* this maximum.)
-        *   Fat: Up to ${filters['MAXIMUM_FAT']} grams (Keep fat *below* this maximum.)
+Recipe Type: ${filters['RECIPE_TYPE']} (Choose ONE: main course, side dish, snack, dessert, breakfast)
 
-    Instructions for Recipe Generation:
+Dietary Restrictions: ${filters['DIETARY_RESTRICTIONS'].join(', ')} (List any restrictions. Use 'none' if there are no restrictions. Examples: gluten-free, dairy-free, vegetarian, vegan, low-carb, keto)
 
-    1.  Prioritize recipes that can be realistically cooked primarily in an air fryer within the specified time limit. Only include other cooking methods as very minor steps if absolutely necessary.
-    2.  Generate the recipe in the specified language. The instructions and ingredient names should be in the selected language.
-    3.  Create a recipe that aligns with the chosen pricing category (budget-friendly, normal, pricier). Budget-friendly recipes should use inexpensive ingredients.
-    4.  Use the preferred meats and vegetables as much as possible.
-    5.  Strictly adhere to any dietary restrictions.
-    6.  Ensure the disliked ingredients are completely absent from the recipes.
-    7.  Aim for flavor profiles that match the preferred flavors/cuisines.
-    8.  **Crucially**, focus on hitting the protein target first, then calories, then staying under the maximum carb and fat targets.
-    9.  All quantities in the ingredient list MUST be in metric units (grams, milliliters, etc.).
-    10. Nutritional values (calories, protein, carbs, fat) are ESTIMATES. They should be clearly stated for each recipe. If precise nutritional data is unavailable, provide a reasonable estimate.
-    11. Include detailed ingredient lists with quantities and units.
-    12. Provide clear and easy-to-follow cooking instructions.
+Macronutrient & Calorie Targets (Per Serving):
 
-    Please provide the response in JSON format with a `recipes` array. Each recipe object in the array MUST include the following fields: `name`, `description`, `prep_time`, `cook_time`, `calories`, `protein`, `carbs`, `fat`, `ingredients`, `instructions`, and `serving_suggestion`.
-    From the Nutritional estimates, give only the numbers and not any text to them
-    
-    {
+If Recipe Type is "main course":
+
+Calories: Approximately ${filters['TARGET_CALORIES']} (Aim to be as close as possible, better to go under than over, but try to approach the target closely.)
+
+Protein: At least ${filters['MINIMUM_PROTEIN']} grams (Prioritize meeting/exceeding this target.)
+
+Carbs: Up to ${filters['MAXIMUM_CARBS']} grams (Do not exceed.)
+
+Fat: Up to ${filters['MAXIMUM_FAT']} grams (Do not exceed.)
+
+If Recipe Type is NOT "main course" (e.g., dessert, snack, side dish, breakfast):
+
+Calories: Always create a healthy, low-calorie recipe (ideally between 100–250 kcal per serving, never using the full available calorie budget, regardless of daily calories left).
+
+Protein, carbs, fat: Make healthy, balanced choices, no need to hit main-course macronutrient targets.
+
+Instructions for Recipe Generation:
+
+For main courses: strictly try to hit the protein target first, then approach the calorie target, then ensure carbs and fat are under maximums.
+
+For all other recipe types: do not use the full daily or main course calorie target. Always create a healthy, simple, low-calorie, but high-protein recipe (100–250 kcal per serving unless otherwise specified), and focus on reasonable and balanced macros, not main-course targets.
+
+Recipes must be realistically cookable, with normal prep and cook times.
+
+Write all recipe text (ingredient names, steps) in the selected language.
+
+Recipes should be budget-friendly.
+
+Strictly follow all listed dietary restrictions.
+
+Exclude any disliked ingredients.
+
+Ingredient quantities MUST be in metric units (grams, milliliters, etc.).
+
+Nutritional values (calories, protein, carbs, fat) should be estimated and only the numbers (no units or extra text).
+
+Include a detailed ingredients array with quantity and metric unit in object notation.
+
+Give clear, step-by-step instructions.
+
+Include a serving suggestion for each recipe.
+
+Output JSON Format:
+
+Only return a JSON object with a recipes array, with each recipe containing:
+the instructions must be in the selected language
+json
+{
   "recipes": [
     {
       "name": "Recipe Name",
@@ -165,7 +200,9 @@ class RecipeChatbotBloc extends Bloc<RecipeChatbotEvent, RecipeChatbotState> {
     }
   ]
 }
-    
+Recipes must never assign a high calorie value to dessert, snack, side dish, or breakfast types, regardless of remaining calories for the day, but still try to use high protein.
+
+Only main courses should use the full available calorie and macro targets.
     
     """;
   }
@@ -178,9 +215,17 @@ class RecipeChatbotBloc extends Bloc<RecipeChatbotEvent, RecipeChatbotState> {
         // Validate required fields in each recipe
         for (var recipe in recipes) {
           final requiredFields = [
-            'name', 'description', 'prep_time', 'cook_time',
-            'calories', 'protein', 'carbs', 'fat',
-            'ingredients', 'instructions', 'serving_suggestion'
+            'name',
+            'description',
+            'prep_time',
+            'cook_time',
+            'calories',
+            'protein',
+            'carbs',
+            'fat',
+            'ingredients',
+            'instructions',
+            'serving_suggestion'
           ];
           for (var field in requiredFields) {
             if (!recipe.containsKey(field)) {

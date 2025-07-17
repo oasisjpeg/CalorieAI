@@ -37,14 +37,16 @@ class IAPService {
   Future<void> init() async {
     if (_isInitialized) return;
 
-    await _repository.init();
-
-    // Get the full status object
-    final status = await _repository.getDetailedPurchaseStatus();
-    _purchaseStatusController.add(status);
-
-    _loadProducts();
-    _isInitialized = true;
+    try {
+      await _repository.init();
+      final status = await _repository.getDetailedPurchaseStatus();
+      _purchaseStatusController.add(status);
+      await _loadProducts();
+      _isInitialized = true;
+    } catch (e) {
+      _purchaseStatusController.addError(e);
+      rethrow;
+    }
   }
 
   // Dispose resources
@@ -117,13 +119,13 @@ class IAPService {
   Future<PurchaseStatus> getPurchaseStatus() async {
     if (!_isInitialized) await init();
     final status = await _repository.getDetailedPurchaseStatus();
-    
+
     // Log detailed status for debugging
     _logDebugInfo(status);
-    
+
     return status;
   }
-  
+
   // Debug method to print current subscription status
   Future<void> logSubscriptionStatus() async {
     try {
@@ -131,30 +133,30 @@ class IAPService {
       final status = await _repository.getDetailedPurchaseStatus();
       _logDebugInfo(status);
     } catch (e, stackTrace) {
-      Logger.e('Error getting subscription status', error: e, stackTrace: stackTrace);
-      developer.log('❌ Error getting subscription status: $e', 
-          name: 'IAPService', 
-          error: e,
-          stackTrace: stackTrace);
+      Logger.e('Error getting subscription status',
+          error: e, stackTrace: stackTrace);
+      developer.log('❌ Error getting subscription status: $e',
+          name: 'IAPService', error: e, stackTrace: stackTrace);
     }
   }
-  
+
   void _logDebugInfo(PurchaseStatus status) {
     final buffer = StringBuffer();
     buffer.writeln('=== IAP Service Debug Info ===');
     buffer.writeln('• Is Subscribed: ${status.isSubscribed}');
     buffer.writeln('• Purchase State: ${status.state}');
-    buffer.writeln('• Remaining Daily Analyses: ${status.remainingDailyAnalyses}');
+    buffer.writeln(
+        '• Remaining Daily Analyses: ${status.remainingDailyAnalyses}');
     buffer.writeln('• Last Analysis Date: ${status.lastAnalysisDate}');
     buffer.writeln('• Can Perform Analysis: ${status.canPerformAnalysis}');
     if (status.error != null) {
       buffer.writeln('• Error: ${status.error}');
     }
     buffer.writeln('==============================');
-    
+
     // Log to debug console
     developer.log(buffer.toString(), name: 'IAPService');
-    
+
     // Also print to console for easier debugging
     print(buffer);
   }
@@ -162,10 +164,16 @@ class IAPService {
   // Load products and update stream
   Future<void> _loadProducts() async {
     try {
-      final products = await _repository.getProducts();
+      final products = await _repository.getProducts().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Loading products timed out');
+        },
+      );
       _productsController.add(products);
     } catch (e) {
       _productsController.addError(e);
+      rethrow;
     }
   }
 

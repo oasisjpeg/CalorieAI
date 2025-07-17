@@ -5,9 +5,11 @@ class AppConst {
   static const userAgentAppName = "CalorieAI";
   static const platformNameAndroid = "Android";
   static const platformNameIOS = "iOS";
-  static const reportErrorEmail = "kontaktœaxiona.at";
+  static const reportErrorEmail = "kontakt@axiona.at";
   static const sourceCodeUrl =
       "https://github.com/oasisjpeg/CalorieAI";
+  static const termsOfUseUrl =
+      "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/";
 
   static Future<String> getVersionNumber() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();

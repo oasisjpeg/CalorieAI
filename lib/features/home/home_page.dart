@@ -1,3 +1,4 @@
+import 'package:calorieai/features/home/presentation/widgets/dashboard_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
@@ -11,9 +12,7 @@ import 'package:calorieai/core/presentation/widgets/edit_dialog.dart';
 import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/features/add_meal/presentation/add_meal_type.dart';
 import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
-import 'package:calorieai/features/home/presentation/widgets/dashboard_widget.dart';
 import 'package:calorieai/features/home/presentation/widgets/intake_vertical_list.dart';
-import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
 import 'package:calorieai/core/utils/navigation_options.dart';
 import 'package:calorieai/features/meal_view/presentation/meal_view_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
@@ -121,6 +120,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     return Stack(children: [
       ListView(children: [
+        // Using test widget instead of the real one
+        // DashboardTestWidget(),
         DashboardWidget(
           totalKcalDaily: totalKcalDaily,
           totalKcalLeft: totalKcalLeft,

@@ -1,63 +1,97 @@
 import 'dart:convert';
+import 'package:logging/logging.dart';
 
 import 'package:calorieai/core/services/gemini_service.dart';
 import 'package:calorieai/features/recipe_chatbot/domain/recipe_entity.dart';
 
 class RecipeChatbotService {
+    final log = Logger('RecipeChatbotService');
+
   final GeminiService geminiService;
 
   RecipeChatbotService(this.geminiService);
 
   // Moved the template outside the method to be a class member
-  static const String _recipePromptTemplate = """I need [NUMBER] recipes in JSON format, designed to fit specific macronutrient goals. Please consider the following user preferences:
+  static const String _recipePromptTemplate =
+      """I need [NUMBER] recipes in JSON format, designed to fit specific macronutrient goals. Please consider the following user preferences:
 
-*   Language: [LANGUAGE] (Choose ONE: English, Spanish, French, German, etc. - The recipe should be written in this language.)
-*   Recipe Type: [RECIPE_TYPE] (Choose ONE: main course, side dish, snack, dessert, breakfast)
-*   Cooking Method: [COOKING_METHOD] (Prioritize air fryer. Can include other cooking methods only if necessary as a minor step. Options: air fryer, baked, grilled, stovetop)
-*   Maximum Cooking Time: [MAX_COOKING_TIME] minutes (Target is total cooking time. Be realistic.)
-*   Pricing: [PRICING] (Choose ONE: budget-friendly, normal, pricier. This reflects the cost of the ingredients per serving.)
-*   Preferred Meats: [PREFERRED_MEATS] (List preferred meats, separated by commas. Use 'any' if there are no meat preferences.)
-*   Preferred Vegetables: [PREFERRED_VEGETABLES] (List preferred vegetables, separated by commas. Use 'any' if there are no vegetable preferences.)
-*   Dietary Restrictions: [DIETARY_RESTRICTIONS] (List any restrictions. Use 'none' if there are no restrictions. Examples: gluten-free, dairy-free, vegetarian, vegan, low-carb, keto)
-*   Disliked Ingredients: [DISLIKED_INGREDIENTS] (List any ingredients to avoid, separated by commas. Use 'none' if there are no disliked ingredients. Examples: onions, mushrooms, cilantro)
-*   Preferred Flavors/Cuisines: [PREFERRED_FLAVORS] (Describe desired flavors or cuisines. Examples: spicy, Italian, Asian, Mexican, Mediterranean, BBQ. Use 'any' if there are no specific flavor preferences.)
+Language: [LANGUAGE] (Choose ONE: English, Spanish, French, German, etc. The recipe should be written in this language.)
+Recipe Type: [RECIPE_TYPE] (Choose ONE: main course, side dish, snack, dessert, breakfast)
+Cooking Method: [COOKING_METHOD] (Prioritize air fryer. Can include other methods only if absolutely necessary as a minor step. Options: air fryer, baked, grilled, stovetop)
+Maximum Cooking Time: [MAX_COOKING_TIME] minutes (This is the total cooking time. Be realistic about what’s possible.)
+Pricing: [PRICING] (Choose ONE: budget-friendly, normal, pricier. This reflects the cost of ingredients per serving.)
+Preferred Meats: [PREFERRED_MEATS] (List preferred meats, separated by commas. Use 'any' if there are no preferences.)
+Preferred Vegetables: [PREFERRED_VEGETABLES] (List preferred vegetables, separated by commas. Use 'any' if there are no preferences.)
+Dietary Restrictions: [DIETARY_RESTRICTIONS] (List any restrictions. Use 'none' if there are none. Examples: gluten-free, dairy-free, vegetarian, vegan, low-carb, keto.)
+Disliked Ingredients: [DISLIKED_INGREDIENTS] (List any ingredients to avoid, separated by commas. Use 'none' if there are none.)
+Preferred Flavors/Cuisines: [PREFERRED_FLAVORS] (Describe desired flavors/cuisines. Examples: spicy, Italian, Asian, Mexican, Mediterranean, BBQ. Use 'any' if there are no preferences.)
 
-*   Macronutrient Targets (Per Serving):
-    *   Calories: Approximately [TARGET_CALORIES] (Prioritize staying close to this value. A tolerance of +/- 50 calories is acceptable, but aim to be as close as possible.)
-    *   Protein: At least [MINIMUM_PROTEIN] grams (Protein target is important for satiety. Prioritize meeting or exceeding this target.)
-    *   Carbs: Up to [MAXIMUM_CARBS] grams (Keep carbs below this maximum.)
-    *   Fat: Up to [MAXIMUM_FAT] grams (Keep fat below this maximum.)
+Macronutrient & Calorie Targets (Per Serving):
+If RECIPE_TYPE is "main course":
+Calories: Approximately [TARGET_CALORIES] (aim for this value, ±50 kcal tolerance)
+Protein: At least [MINIMUM_PROTEIN] grams
+Carbs: Up to [MAXIMUM_CARBS] grams
+Fat: Up to [MAXIMUM_FAT] grams
+
+If RECIPE_TYPE is NOT "main course" (e.g., dessert, snack, side dish, breakfast):
+Calories: Always generate a healthy, low-calorie recipe (ideally between 100–250 kcal per serving). Never use the full available calories for these types, regardless of remaining daily calorie budget.
+Protein, carbs, fat: Make healthy, balanced choices, but do not attempt to hit main-course macronutrient targets.
 
 Instructions for Recipe Generation:
+Main Courses:
+Strictly match [TARGET_CALORIES], [MINIMUM_PROTEIN], [MAXIMUM_CARBS], and [MAXIMUM_FAT]. Protein is the highest priority, followed by calories, carbs, and fat.
+Non-Main Courses (desserts, snacks, side dishes, breakfast):
+Never use the full daily calorie budget. Always generate a healthy, low-calorie recipe (100–250 kcal per serving, unless otherwise specified).
+Do not try to meet the [TARGET_CALORIES] or other strict macronutrient targets for these recipes. Simplicity and healthiness are the top priorities.
+Prioritize recipes that can be realistically cooked using the air fryer within the specified time. Other methods should be minor steps only if required.
+Use the chosen language for all recipe instructions and ingredient names.
+Make sure the recipe aligns with the specified pricing. Budget-friendly recipes must use inexpensive ingredients.
+Use preferred meats and vegetables as much as possible.
+Strictly follow any dietary restrictions.
+Exclude all disliked ingredients.
+Match the preferred flavors or cuisines.
+All ingredient quantities must be in metric units (grams, milliliters, etc.).
+Nutritional values (calories, protein, carbs, fat) should be estimated and clearly stated for every recipe. If exact numbers cannot be given, give reasonable estimates.
 
-1.  Prioritize recipes that can be realistically cooked primarily in an air fryer within the specified time limit. Only include other cooking methods as very minor steps if absolutely necessary.
-2.  Generate the recipe in the specified language. The instructions and ingredient names should be in the selected language.
-3.  Create a recipe that aligns with the chosen pricing category (budget-friendly, normal, pricier). Budget-friendly recipes should use inexpensive ingredients.
-4.  Use the preferred meats and vegetables as much as possible.
-5.  Strictly adhere to any dietary restrictions.
-6.  Ensure the disliked ingredients are completely absent from the recipes.
-7.  Aim for flavor profiles that match the preferred flavors/cuisines.
-8.  Crucially, focus on hitting the protein target first, then calories, then staying under the maximum carb and fat targets.
-9.  All quantities in the ingredient list MUST be in metric units (grams, milliliters, etc.).
-10. Nutritional values (calories, protein, carbs, fat) are ESTIMATES. They should be clearly stated for each recipe. If precise nutritional data is unavailable, provide a reasonable estimate.
-11. For ingredients, provide a list of strings. For nutriments, provide a nested object.
-12. Provide clear and easy-to-follow cooking instructions.
+For each recipe, provide:
+an ingredients list (as an array of strings)
+a nutriments object (nested, with keys for calories, protein, carbs, fat, salt, sugar, fiber, saturated_fat)
+clear, concise cooking instructions
+an optional serving suggestion
 
-Please provide the response strictly in the following JSON format. Do not include any other text before or after the JSON array. The response should be a valid JSON array of recipe objects:
-```json
+Important:
+For main courses: calorie and macronutrient targets are crucial—do not deviate.
+For all other recipe types: focus only on keeping the recipe healthy and low in calories, without using up the full calorie target.
+Never generate a non-main-course recipe that matches or exceeds the full daily or main course calorie target.
+]
+
+Response Format
+Please provide the response strictly in the following JSON format. Do not include any additional text before or after the JSON array. The response must be a valid JSON array of recipe objects:
+
+json
 [
   {
     "title": "recipe title (in [LANGUAGE])",
     "description": "recipe description (in [LANGUAGE])",
     "prep_time": "X minutes",
     "cook_time": "Y minutes",
-    "ingredients": ["ingredient1 (in [LANGUAGE])", "ingredient2 (in [LANGUAGE]) with quantity and metric unit", "ingredient3 (in [LANGUAGE]) with quantity and metric unit"],
-    "instructions": ["step 1 (in [LANGUAGE])", "step 2 (in [LANGUAGE])", "step 3 (in [LANGUAGE])"],
+    "ingredients": [
+      "ingredient1 (in [LANGUAGE]) with quantity and metric unit",
+      "ingredient2 (in [LANGUAGE]) with quantity and metric unit"
+    ],
+    "instructions": [
+      "step 1 (in [LANGUAGE])",
+      "step 2 (in [LANGUAGE])"
+    ],
     "nutriments": {
       "calories": 500,
       "protein": 40,
       "carbs": 50,
-      "fat": 20
+      "fat": 20,
+      "salt": 20,
+      "sugar": 20,
+      "fiber": 20,
+      "saturated_fat": 20
     },
     "serving_suggestion": "serving suggestion (in [LANGUAGE], optional)"
   }
@@ -88,17 +122,26 @@ Please provide the response strictly in the following JSON format. Do not includ
     filledPrompt = filledPrompt.replaceAll('[LANGUAGE]', language);
     filledPrompt = filledPrompt.replaceAll('[RECIPE_TYPE]', recipeType);
     filledPrompt = filledPrompt.replaceAll('[COOKING_METHOD]', cookingMethod);
-    filledPrompt = filledPrompt.replaceAll('[MAX_COOKING_TIME]', maxCookingTime.toString());
+    filledPrompt = filledPrompt.replaceAll(
+        '[MAX_COOKING_TIME]', maxCookingTime.toString());
     filledPrompt = filledPrompt.replaceAll('[PRICING]', pricing);
     filledPrompt = filledPrompt.replaceAll('[PREFERRED_MEATS]', preferredMeats);
-    filledPrompt = filledPrompt.replaceAll('[PREFERRED_VEGETABLES]', preferredVegetables);
-    filledPrompt = filledPrompt.replaceAll('[DIETARY_RESTRICTIONS]', dietaryRestrictions);
-    filledPrompt = filledPrompt.replaceAll('[DISLIKED_INGREDIENTS]', dislikedIngredients);
-    filledPrompt = filledPrompt.replaceAll('[PREFERRED_FLAVORS]', preferredFlavors);
-    filledPrompt = filledPrompt.replaceAll('[TARGET_CALORIES]', targetCalories.toString());
-    filledPrompt = filledPrompt.replaceAll('[MINIMUM_PROTEIN]', minimumProtein.toString());
-    filledPrompt = filledPrompt.replaceAll('[MAXIMUM_CARBS]', maximumCarbs.toString());
-    filledPrompt = filledPrompt.replaceAll('[MAXIMUM_FAT]', maximumFat.toString());
+    filledPrompt =
+        filledPrompt.replaceAll('[PREFERRED_VEGETABLES]', preferredVegetables);
+    filledPrompt =
+        filledPrompt.replaceAll('[DIETARY_RESTRICTIONS]', dietaryRestrictions);
+    filledPrompt =
+        filledPrompt.replaceAll('[DISLIKED_INGREDIENTS]', dislikedIngredients);
+    filledPrompt =
+        filledPrompt.replaceAll('[PREFERRED_FLAVORS]', preferredFlavors);
+    filledPrompt =
+        filledPrompt.replaceAll('[TARGET_CALORIES]', targetCalories.toString());
+    filledPrompt =
+        filledPrompt.replaceAll('[MINIMUM_PROTEIN]', minimumProtein.toString());
+    filledPrompt =
+        filledPrompt.replaceAll('[MAXIMUM_CARBS]', maximumCarbs.toString());
+    filledPrompt =
+        filledPrompt.replaceAll('[MAXIMUM_FAT]', maximumFat.toString());
 
     // The part where you were appending dynamic values like "LANGUAGE: $language"
     // is already handled by the replaceAll calls above. The template itself
@@ -106,17 +149,17 @@ Please provide the response strictly in the following JSON format. Do not includ
     // The original code was trying to define the template and then append to it,
     // which is not the correct way to use string templates with placeholders.
 
-    print('--- Sending Prompt to Gemini ---');
-    print(filledPrompt);
-    print('--- End of Prompt ---');
+    log.fine('--- Sending Prompt to Gemini ---');
+    log.fine(filledPrompt);
+    log.fine('--- End of Prompt ---');
 
     final response = await geminiService.sendMessage(message: filledPrompt);
 
-    print('--- Gemini Raw Response ---');
-    print(response);
-    print('--- End of Gemini Raw Response ---');
+    log.fine('--- Gemini Raw Response ---');
+    log.fine(response);
+    log.fine('--- End of Gemini Raw Response ---');
 
-    String responseString = response ;
+    String responseString = response;
 
     if (responseString.startsWith("```json")) {
       responseString = responseString.substring(7);
