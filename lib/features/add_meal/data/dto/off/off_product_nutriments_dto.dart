@@ -54,6 +54,9 @@ class OFFProductNutrimentsDTO {
   // @JsonKey(name: 'saturated-fat_unit')
   // final String? saturated_fat_unit;
 
+  @JsonKey(name: 'nutrition_grades')
+  final String? nutritionGrade;
+
   final dynamic fiber_100g; // can be String, int, double or null
   // final double? fiber;
   // final double? fiber_serving;
@@ -96,6 +99,7 @@ class OFFProductNutrimentsDTO {
     // required this.fiber_serving,
     // required this.fiber_value,
     // required this.fiber_unit,
+    required this.nutritionGrade,
   });
 
   factory OFFProductNutrimentsDTO.fromJson(Map<String, dynamic> json) =>

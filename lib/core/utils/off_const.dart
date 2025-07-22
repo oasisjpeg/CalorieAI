@@ -32,6 +32,7 @@ class OFFConst {
   static const _offServingQuantityTag = "serving_quantity";
   static const _offServingSizeTag = "serving_size";
   static const _offNutrimentsTag = "nutriments";
+  static const _offNutritionGradeTag = "nutrition_grades";
 
   static const _returnFields = [
     _offCodeTag,
@@ -48,6 +49,7 @@ class OFFConst {
     _offQuantityTag,
     _offServingQuantityTag,
     _offServingSizeTag,
+    _offNutritionGradeTag,
     _offNutrimentsTag
   ];
 

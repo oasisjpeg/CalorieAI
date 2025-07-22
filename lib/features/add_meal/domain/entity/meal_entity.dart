@@ -44,25 +44,33 @@ class MealEntity extends Equatable {
 
   final MealNutrimentsEntity nutriments;
 
+  final String? nutritionGrade; // Nutri-Score (A, B, C, D, E)
+  final double? score;
+  final String? scoreText;
+
   bool get isLiquid => liquidUnits.contains(mealUnit);
 
   bool get isSolid => solidUnits.contains(mealUnit);
 
-  const MealEntity(
-      {required this.code,
-      required this.name,
-      this.brands,
-      this.thumbnailImageUrl,
-      this.mainImageUrl,
-      this.foodItems,
-      required this.url,
-      required this.mealQuantity,
-      required this.mealUnit,
-      required this.servingQuantity,
-      required this.servingUnit,
-      required this.servingSize,
-      required this.nutriments,
-      required this.source});
+  const MealEntity({
+    required this.code,
+    required this.name,
+    this.brands,
+    this.thumbnailImageUrl,
+    this.mainImageUrl,
+    this.foodItems,
+    required this.url,
+    required this.mealQuantity,
+    required this.mealUnit,
+    required this.servingQuantity,
+    required this.servingUnit,
+    required this.servingSize,
+    required this.nutriments,
+    required this.source,
+    this.nutritionGrade,
+    this.score,
+    this.scoreText,
+  });
 
   factory MealEntity.empty() => MealEntity(
       code: IdGenerator.getUniqueID(),
@@ -74,7 +82,10 @@ class MealEntity extends Equatable {
       servingUnit: 'gml',
       servingSize: '',
       nutriments: MealNutrimentsEntity.empty(),
-      source: MealSourceEntity.custom);
+      source: MealSourceEntity.custom,
+      nutritionGrade: null,
+      score: null,
+      scoreText: null);
 
   factory MealEntity.fromMealDBO(MealDBO mealDBO) => MealEntity(
       code: mealDBO.code,
@@ -91,7 +102,10 @@ class MealEntity extends Equatable {
       nutriments:
           MealNutrimentsEntity.fromMealNutrimentsDBO(mealDBO.nutriments),
       source: MealSourceEntity.fromMealSourceDBO(mealDBO.source),
-      foodItems: mealDBO.foodItems);
+      foodItems: mealDBO.foodItems,
+      nutritionGrade: mealDBO.nutritionGrade,
+      score: mealDBO.score,
+      scoreText: mealDBO.scoreText);
 
   factory MealEntity.fromOFFProduct(OFFProductDTO offProduct) {
     return MealEntity(
@@ -107,9 +121,9 @@ class MealEntity extends Equatable {
         servingQuantity: _tryQuantityCast(offProduct.serving_quantity),
         servingUnit: _tryGetUnit(offProduct.quantity),
         servingSize: offProduct.serving_size,
-        nutriments:
-            MealNutrimentsEntity.fromOffNutriments(offProduct.nutriments),
-        source: MealSourceEntity.off);
+        nutriments: MealNutrimentsEntity.fromOffNutriments(offProduct.nutriments),
+        source: MealSourceEntity.off,
+        nutritionGrade: offProduct.nutritionGrade);
   }
 
   factory MealEntity.fromFDCFood(FDCFoodDTO fdcFood) {

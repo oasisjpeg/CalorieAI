@@ -453,5 +453,7 @@
   "addPromptForGeminiHintDescription": "e.g., \"I ate rice with...\"",
   "saveMeal": "Save Meal",
   "termsOfUseLabel": "Terms of Use",
-  "kcalOverLabel": "kcal over"
+  "kcalOverLabel": "kcal over",
+  "nutriScore": "Nutri-Score",
+  "geminiAnalysis": "Analysis"
 }

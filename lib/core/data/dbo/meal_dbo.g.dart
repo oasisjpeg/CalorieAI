@@ -33,13 +33,16 @@ class MealDBOAdapter extends TypeAdapter<MealDBO> {
       foodItems: (fields[13] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
           ?.toList(),
+      nutritionGrade: fields[14] as String?,
+      score: fields[15] as double?,
+      scoreText: fields[16] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, MealDBO obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.code)
       ..writeByte(1)
@@ -67,7 +70,13 @@ class MealDBOAdapter extends TypeAdapter<MealDBO> {
       ..writeByte(12)
       ..write(obj.source)
       ..writeByte(13)
-      ..write(obj.foodItems);
+      ..write(obj.foodItems)
+      ..writeByte(14)
+      ..write(obj.nutritionGrade)
+      ..writeByte(15)
+      ..write(obj.score)
+      ..writeByte(16)
+      ..write(obj.scoreText);
   }
 
   @override
@@ -152,6 +161,9 @@ MealDBO _$MealDBOFromJson(Map<String, dynamic> json) => MealDBO(
       foodItems: (json['foodItems'] as List<dynamic>?)
           ?.map((e) => e as Map<String, dynamic>)
           .toList(),
+      nutritionGrade: json['nutritionGrade'] as String?,
+      score: (json['score'] as num?)?.toDouble(),
+      scoreText: json['scoreText'] as String?,
     );
 
 Map<String, dynamic> _$MealDBOToJson(MealDBO instance) => <String, dynamic>{
@@ -169,6 +181,9 @@ Map<String, dynamic> _$MealDBOToJson(MealDBO instance) => <String, dynamic>{
       'servingSize': instance.servingSize,
       'source': _$MealSourceDBOEnumMap[instance.source]!,
       'foodItems': instance.foodItems,
+      'nutritionGrade': instance.nutritionGrade,
+      'score': instance.score,
+      'scoreText': instance.scoreText,
     };
 
 const _$MealSourceDBOEnumMap = {

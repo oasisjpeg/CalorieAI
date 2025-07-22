@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:calorieai/core/widgets/gemini_analysis_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -18,7 +19,9 @@ import 'package:calorieai/features/meal_detail/presentation/widgets/meal_info_bu
 import 'package:calorieai/features/meal_detail/presentation/widgets/meal_placeholder.dart';
 import 'package:calorieai/features/meal_detail/presentation/widgets/meal_title_expanded.dart';
 import 'package:calorieai/features/meal_detail/presentation/widgets/off_disclaimer.dart';
+import 'package:calorieai/core/widgets/nutri_score_widget.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
+
 typedef S = AppLocalizations;
 
 class MealDetailScreen extends StatefulWidget {
@@ -217,6 +220,20 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                   }),
             ),
           ),
+          if (meal.nutritionGrade != null &&
+              meal.nutritionGrade!.isNotEmpty) ...[
+            const SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('${S.of(context).nutriScore}: ',
+                    style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(width: 8.0),
+                NutriScoreWidget(score: meal.nutritionGrade, size: 32.0),
+              ],
+            ),
+          ],
+          const SizedBox(height: 8.0),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -254,11 +271,16 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                 ),
                 const Divider(),
                 const SizedBox(height: 16.0),
+                if (meal.source == MealSourceEntity.custom &&
+                    meal.score != null &&
+                    meal.scoreText != null)
+                  GeminiScoreCard(score: meal.score!, scoreText: meal.scoreText!),
                 MealDetailNutrimentsTable(
-                    product: meal,
-                    usesImperialUnits: _usesImperialUnits,
-                    servingQuantity: meal.servingQuantity,
-                    servingUnit: meal.servingUnit),
+                  product: meal,
+                  usesImperialUnits: _usesImperialUnits,
+                  servingQuantity: meal.servingQuantity,
+                  servingUnit: meal.servingUnit,
+                ),
                 const SizedBox(height: 24.0),
                 if (meal.foodItems != null) ...[
                   Padding(
@@ -463,8 +485,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       ),
     );
   }
-}
 
+}
 class MealDetailScreenArguments {
   final MealEntity mealEntity;
   final IntakeTypeEntity intakeTypeEntity;

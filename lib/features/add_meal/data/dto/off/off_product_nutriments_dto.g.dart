@@ -16,6 +16,7 @@ OFFProductNutrimentsDTO _$OFFProductNutrimentsDTOFromJson(
       sugars_100g: json['sugars_100g'],
       saturated_fat_100g: json['saturated-fat_100g'],
       fiber_100g: json['fiber_100g'],
+      nutritionGrade: json['nutrition_grades'] as String?,
     );
 
 Map<String, dynamic> _$OFFProductNutrimentsDTOToJson(
@@ -27,5 +28,6 @@ Map<String, dynamic> _$OFFProductNutrimentsDTOToJson(
       'proteins_100g': instance.proteins_100g,
       'sugars_100g': instance.sugars_100g,
       'saturated-fat_100g': instance.saturated_fat_100g,
+      'nutrition_grades': instance.nutritionGrade,
       'fiber_100g': instance.fiber_100g,
     };

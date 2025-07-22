@@ -2776,6 +2776,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'kcal over'**
   String get kcalOverLabel;
+
+  /// No description provided for @nutriScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutri-Score'**
+  String get nutriScore;
+
+  /// No description provided for @geminiAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis'**
+  String get geminiAnalysis;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

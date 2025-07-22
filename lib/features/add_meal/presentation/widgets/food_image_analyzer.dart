@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calorieai/core/services/imgbb_service.dart';
 
@@ -14,8 +14,7 @@ import 'package:calorieai/core/utils/id_generator.dart';
 import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/core/utils/navigation_options.dart';
 import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
-import 'package:calorieai/features/iap/presentation/pages/iap_screen.dart';
-import 'package:calorieai/features/meal_view/presentation/meal_view_screen.dart';
+// Removed unused imports
 import 'package:calorieai/features/add_meal/domain/entity/meal_nutriments_entity.dart';
 import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
 import 'package:calorieai/features/add_meal/presentation/widgets/food_items_adjustable_list.dart';
@@ -140,30 +139,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
       // Show upgrade dialog
       if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(S.of(context)!.upgradeToPremium),
-            content: Text(S.of(context)!.getUnlimitedAccessToAllFeatures),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(S.of(context).dialogCancelLabel),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // Navigate to IAP screen
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const IAPScreen()),
-                  );
-                },
-                child: Text(S.of(context)!.upgradeToPremium),
-              ),
-            ],
-          ),
-        );
+        _showUpgradeDialog(context);
       }
       setState(() => _isAnalyzing = false);
       return;
@@ -240,6 +216,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
     setState(() {
       _isAnalyzing = true;
+      _isAnalyzingDescription = true;
       _analysisResult = '';
       _foodData = null;
     });
@@ -249,32 +226,75 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     final iapState = iapBloc.state;
 
     if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
-      // Show upgrade dialog
       if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(S.of(context)!.upgradeToPremium),
-            content: Text(S.of(context)!.getUnlimitedAccessToAllFeatures),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(S.of(context).dialogCancelLabel),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // Navigate to IAP screen
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const IAPScreen()),
-                  );
-                },
-                child: Text(S.of(context)!.upgradeToPremium),
-              ),
-            ],
+        setState(() {
+          _isAnalyzing = false;
+          _isAnalyzingDescription = false;
+        });
+        _showUpgradeDialog(context);
+      }
+      return;
+    }
+
+    try {
+      // Add timeout to the Gemini API call
+      final dynamic jsonResponse = await _geminiService.analyzeFoodDescription(
+        context: context,
+        prompt: _promptController.text,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException('The request timed out. Please try again.'),
+      );
+ String cleanedResponse = jsonResponse;
+        if (jsonResponse.contains('```json')) {
+          cleanedResponse = jsonResponse
+              .replaceAll('```json', '')
+              .replaceAll('```', '')
+              .trim();
+        }
+
+        // Try to parse the JSON response
+        final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
+
+        setState(() {
+          _foodData = parsedData;
+          _analysisResult = 'Successfully analyzed food image';
+          _isAnalyzingDescription = false;
+          // Show remaining uses if not premium
+        });
+        _isAnalyzing = false;
+    } on TimeoutException catch (e) {
+      log.warning('Request timed out: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('The request timed out. Please try again.'),
+            backgroundColor: Colors.orange,
           ),
         );
+      }
+    } catch (e) {
+      log.severe('Error analyzing food description: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error analyzing food: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAnalyzing = false;
+          _isAnalyzingDescription = false;
+        });
+      }
+    }
+
+    if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
+      if (mounted) {
+        _showUpgradeDialog(context);
       }
       setState(() => _isAnalyzing = false);
       return;
@@ -469,6 +489,9 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
           nutriments: nutrimentsPerTotal,
           source: MealSourceEntity.custom,
           foodItems: foodItems,
+          nutritionGrade: _foodData?['nutrition_grade'],
+          score: _foodData?['score'],
+          scoreText: _foodData?['score_text']
         );
       }
       final imageUrl = await _uploadImageToImgbb(_imageFile!);
@@ -489,11 +512,37 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         thumbnailImageUrl: imageUrl,
         mainImageUrl: imageUrl,
         foodItems: foodItems,
+        nutritionGrade: _foodData?['nutrition_grade'],
+        score: _foodData?['score'] as double?,
+        scoreText: _foodData?['score_text'],
       );
     } catch (e) {
       log.severe('Error creating meal entity: $e');
       return MealEntity.empty();
     }
+  }
+
+  void _showUpgradeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade to Premium'),
+        content: const Text('Get unlimited access to all features'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Maybe Later'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, 'premium');
+            },
+            child: const Text('Upgrade Now'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

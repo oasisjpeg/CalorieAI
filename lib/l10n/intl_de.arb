@@ -440,5 +440,7 @@
   "addPromptForGeminiHintDescription": "z. B. \"Ich habe folgendes Gericht mit ...\"",
   "saveMeal": "Speichern",
   "termsOfUseLabel": "Nutzungsbedingungen",
-  "kcalOverLabel": "kcal über"
+  "kcalOverLabel": "kcal über",
+  "nutriScore": "Nutri-Score",
+  "geminiAnalysis": "Analyse"
 }

@@ -1358,4 +1358,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get kcalOverLabel => 'kcal über';
+
+  @override
+  String get nutriScore => 'Nutri-Score';
+
+  @override
+  String get geminiAnalysis => 'Analyse';
 }

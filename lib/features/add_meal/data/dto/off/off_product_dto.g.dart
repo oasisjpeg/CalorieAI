@@ -26,6 +26,7 @@ OFFProductDTO _$OFFProductDTOFromJson(Map<String, dynamic> json) =>
       serving_size: json['serving_size'] as String?,
       nutriments: OFFProductNutrimentsDTO.fromJson(
           json['nutriments'] as Map<String, dynamic>),
+      nutritionGrade: json['nutritionGrade'] as String?,
     );
 
 Map<String, dynamic> _$OFFProductDTOToJson(OFFProductDTO instance) =>
@@ -46,5 +47,6 @@ Map<String, dynamic> _$OFFProductDTOToJson(OFFProductDTO instance) =>
       'product_quantity': instance.product_quantity,
       'serving_quantity': instance.serving_quantity,
       'serving_size': instance.serving_size,
+      'nutritionGrade': instance.nutritionGrade,
       'nutriments': instance.nutriments,
     };

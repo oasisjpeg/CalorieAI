@@ -13,7 +13,7 @@ class GeminiService {
 
   GeminiService() {
     _model = GenerativeModel(
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.0-flash-lite',
       apiKey: Env.geminiApiKey,
     );
   }
@@ -88,8 +88,8 @@ class GeminiService {
   - Return the total grams in the totals section
 
   5. is_liquid is only true if you only see liquids (only can of red-bull and nothing else), not if meals contain liquids (e.g. pasta with red-bull)
-  6. give me a score for the whole meal (0-10) based on the nutritional values (10 for a balanced healthy meal, 5 for a meal but has too much sugar or salt or too much fat etc, 0 for a unhealthy meal)
-  7. give me a score_text for the whole meal (0-10) based on the nutritional values (10 for a balanced healthy meal, 5 for a meal but has too much sugar or salt or too much fat etc, 0 for a unhealthy meal). the text should be maximum 1-2 sentences long
+  6. for the score and score_text don't be harsh and give higher ratings, but for unhealthy food stay strict, make the user feel good and use a higher scoring for healthy snacks, fruits or high protein meals. so give a score of 8 for a healthy meal and 5 for a meal but has too much sugar or salt or too much fat etc and 2 for a unhealthy meal
+  7. the score_text should be maximum 1-2 sentences long
 IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backticks, or any formatting. Output raw JSON only by using this structure:
 {
   "valid_food_image": boolean,
@@ -187,8 +187,8 @@ Calculate nutritional values per 100g and scale to the provided or assumed porti
 Sum totals for the entire drink
 Return the total grams in the totals section
 is_liquid is only true if you only describe liquids (only can of red-bull and nothing else), not if meals contain liquids (e.g. pasta with red-bull)
-give me a score for the whole meal (0-10) based on the nutritional values (10 for a balanced healthy meal, 5 for a meal but has too much sugar or salt or too much fat etc, 0 for a unhealthy meal)
-give me a score_text for the whole meal (0-10) based on the nutritional values (10 for a balanced healthy meal, 5 for a meal but has too much sugar or salt or too much fat etc, 0 for a unhealthy meal). the text should be maximum 1-2 sentences long
+for the score and score_text don't be harsh and give higher ratings, but for unhealthy food stay strict, make the user feel good if and use a higher scoring for healthy snacks, fruits or high protein meals. so give a score of 8 for a healthy meal and 5 for a meal but has too much sugar or salt or too much fat etc and 2 for a unhealthy meal
+the score_text should be maximum 1-2 sentences long
 IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backticks, or any formatting. Output raw JSON only by using this structure:
 {
 "valid_food_image": boolean,

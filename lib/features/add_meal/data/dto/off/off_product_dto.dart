@@ -28,6 +28,8 @@ class OFFProductDTO {
   final dynamic product_quantity; // Can either be int or String
   final dynamic serving_quantity; // Can either be int or String
   final String? serving_size;  // E.g. 2 Tbsp (32 g)
+  
+  final String? nutritionGrade; // Nutri-Score (A, B, C, D, E)
 
   final OFFProductNutrimentsDTO nutriments;
 
@@ -67,7 +69,8 @@ class OFFProductDTO {
       required this.product_quantity,
       required this.serving_quantity,
       required this.serving_size,
-      required this.nutriments});
+      required this.nutriments,
+      this.nutritionGrade});
 
   factory OFFProductDTO.fromJson(Map<String, dynamic> json) =>
       _$OFFProductDTOFromJson(json);

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:calorieai/core/widgets/gemini_analysis_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
@@ -18,7 +19,9 @@ import 'package:calorieai/features/meal_detail/presentation/widgets/meal_info_bu
 import 'package:calorieai/features/meal_detail/presentation/widgets/meal_placeholder.dart';
 import 'package:calorieai/features/meal_detail/presentation/widgets/meal_title_expanded.dart';
 import 'package:calorieai/features/meal_detail/presentation/widgets/off_disclaimer.dart';
+import 'package:calorieai/core/widgets/nutri_score_widget.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
+
 typedef S = AppLocalizations;
 
 class MealViewScreen extends StatefulWidget {
@@ -266,8 +269,19 @@ class _MealViewScreenState extends State<MealViewScreen> {
                       ),
                     ],
                   ),
+                  if (meal.nutritionGrade != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: NutriScoreWidget(
+                        score: meal.nutritionGrade!,
+                      ),
+                    ),
                   const Divider(),
                   const SizedBox(height: 16.0),
+                  if (meal.source == MealSourceEntity.custom &&
+                      meal.score != null &&
+                      meal.scoreText != null)
+                    GeminiScoreCard(score: meal.score!, scoreText: meal.scoreText!),
                   MealDetailNutrimentsTable(
                     product: meal,
                     usesImperialUnits: _usesImperialUnits,
@@ -331,8 +345,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                           .withAlpha(30)
                                       : Theme.of(context)
                                           .colorScheme
-                                          .primaryContainer
-                                          ,
+                                          .primaryContainer,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
