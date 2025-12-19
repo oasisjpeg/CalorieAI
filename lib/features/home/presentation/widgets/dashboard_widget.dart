@@ -400,14 +400,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                       color: color,
                     ),
                   ),
-                  if (hasWarning)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: Text(
-                        emoji,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
                 ],
               ),
               const SizedBox(height: 4),

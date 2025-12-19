@@ -17,6 +17,7 @@ import 'package:calorieai/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:calorieai/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:calorieai/features/settings/presentation/widgets/export_import_dialog.dart';
 import 'package:calorieai/features/settings/presentation/widgets/references_screen.dart';
+import 'package:calorieai/features/debug/device_id_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -180,6 +181,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
             }
           }
+        },
+      ),
+      ListTile(
+        title: const Text('Get Device ID for Whitelist'),
+        subtitle: const Text('Copy device ID to enable premium in production'),
+        leading: const Icon(Icons.phone_android, color: Colors.blue),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const DeviceIdScreen()),
+          );
         },
       ),
       const Divider(),

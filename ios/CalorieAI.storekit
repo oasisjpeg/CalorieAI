@@ -27,44 +27,53 @@
     "_developerTeamID" : "4NMUX5NN4Y",
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 772285970.15413797,
+    "_lastSynchronizedDate" : 774357366.91154003,
     "_locale" : "de",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "AUT",
     "_storeKitErrors" : [
       {
+        "current" : null,
         "enabled" : false,
         "name" : "Load Products"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "Purchase"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "Verification"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "App Store Sync"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "Subscription Status"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "App Transaction"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "Manage Subscriptions Sheet"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "Refund Request Sheet"
       },
       {
+        "current" : null,
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
@@ -84,7 +93,19 @@
 
           ],
           "codeOffers" : [
-
+            {
+              "eligibility" : [
+                "existing",
+                "expired",
+                "new"
+              ],
+              "internalID" : "4A0D86DA",
+              "isStackable" : true,
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "referenceName" : "FreundeGratisAbo",
+              "subscriptionPeriod" : "P1Y"
+            }
           ],
           "displayPrice" : "5.99",
           "familyShareable" : false,

@@ -17,7 +17,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get appDescription => 'CalorieAI is a free and open-source calorie and nutrient tracker that respects your privacy.';
+  String get appDescription =>
+      'CalorieAI is a free and open-source calorie and nutrient tracker that respects your privacy.';
 
   @override
   String get alphaVersionName => '[Alpha]';
@@ -32,7 +33,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createCustomDialogTitle => 'Create custom meal item?';
 
   @override
-  String get createCustomDialogContent => 'Do you want create a custom meal item?';
+  String get createCustomDialogContent =>
+      'Do you want create a custom meal item?';
 
   @override
   String get settingsLabel => 'Settings';
@@ -110,7 +112,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingKcalPerDayLabel => 'kcal per day';
 
   @override
-  String get onboardingIntroDescription => 'To start, the app needs some information about you to calculate your daily calorie goal.\nAll information about you is stored securely on your device.';
+  String get onboardingIntroDescription =>
+      'To start, the app needs some information about you to calculate your daily calorie goal.\nAll information about you is stored securely on your device.';
 
   @override
   String get onboardingGenderQuestionSubtitle => 'What\'s your gender?';
@@ -149,10 +152,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingHeightExampleHintFt => 'e.g. 5.8';
 
   @override
-  String get onboardingActivityQuestionSubtitle => 'How active are you? (without workouts)';
+  String get onboardingActivityQuestionSubtitle =>
+      'How active are you? (without workouts)';
 
   @override
-  String get onboardingGoalQuestionSubtitle => 'What\'s your current weight goal?';
+  String get onboardingGoalQuestionSubtitle =>
+      'What\'s your current weight goal?';
 
   @override
   String get onboardingSaveUserError => 'Wrong input, please try again';
@@ -161,7 +166,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsUnitsLabel => 'Units';
 
   @override
-  String get stepsPermissionDenied => 'Please grant access to Apple Health to track your steps';
+  String get stepsPermissionDenied =>
+      'Please grant access to Apple Health to track your steps';
 
   @override
   String get stepsGrantAccess => 'Grant Access';
@@ -230,10 +236,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsVolumeLabel => 'Volume';
 
   @override
-  String get disclaimerText => 'CalorieAI is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended.\n\n\nResponses from the AI may be incorrect or misleading. Always double-check the information with a professional.';
+  String get disclaimerText =>
+      'CalorieAI is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended.\n\n\nResponses from the AI may be incorrect or misleading. Always double-check the information with a professional.';
 
   @override
-  String get reportErrorDialogText => 'Do you want to report an error to the developer?';
+  String get reportErrorDialogText =>
+      'Do you want to report an error to the developer?';
 
   @override
   String get sendAnonymousUserData => 'Send anonymous usage data';
@@ -251,10 +259,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calculationsRecommendedLabel => '(recommended)';
 
   @override
-  String get calculationsMacronutrientsDistributionLabel => 'Macros distribution';
+  String get calculationsMacronutrientsDistributionLabel =>
+      'Macros distribution';
 
   @override
-  String calculationsMacrosDistribution(Object pctCarbs, Object pctFats, Object pctProteins) {
+  String calculationsMacrosDistribution(
+      Object pctCarbs, Object pctFats, Object pctProteins) {
     return '$pctCarbs% carbs, $pctFats% fats, $pctProteins% proteins';
   }
 
@@ -268,7 +278,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportImportLabel => 'Export / Import data';
 
   @override
-  String get exportImportDescription => 'You can export the app data to a zip file and import it later. This is useful if you want to backup your data or transfer it to another device.\n\nThe app does not use any cloud service to store your data.';
+  String get exportImportDescription =>
+      'You can export the app data to a zip file and import it later. This is useful if you want to backup your data or transfer it to another device.\n\nThe app does not use any cloud service to store your data.';
 
   @override
   String get exportImportSuccessLabel => 'Export / Import successful';
@@ -337,7 +348,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copyOrDeleteTimeDialogTitle => 'What do you want to do?';
 
   @override
-  String get copyOrDeleteTimeDialogContent => 'With \"Copy to today\" you can copy the meal to today. With \"Delete\" you can delete the meal.';
+  String get copyOrDeleteTimeDialogContent =>
+      'With \"Copy to today\" you can copy the meal to today. With \"Delete\" you can delete the meal.';
 
   @override
   String get dialogCopyLabel => 'COPY TO TODAY';
@@ -391,7 +403,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get additionalInfoLabelOFF => 'More Information at\nOpenFoodFacts';
 
   @override
-  String get offDisclaimer => 'The data provided to you by this app are retrieved from the Open Food Facts database. No guarantees can be made for the accuracy, completeness, or reliability of the information provided. The data are provided “as is” and the originating source for the data (Open Food Facts) is not liable for any damages arising out of the use of the data.';
+  String get offDisclaimer =>
+      'The data provided to you by this app are retrieved from the Open Food Facts database. No guarantees can be made for the accuracy, completeness, or reliability of the information provided. The data are provided “as is” and the originating source for the data (Open Food Facts) is not liable for any damages arising out of the use of the data.';
 
   @override
   String get additionalInfoLabelFDC => 'More Information at\nFoodData Central';
@@ -403,7 +416,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get additionalInfoLabelCustom => 'Custom Meal Item';
 
   @override
-  String get additionalInfoLabelCompendium2011 => 'Information provided\n by the \n\'2011 Compendium\n of Physical Activities\'';
+  String get additionalInfoLabelCompendium2011 =>
+      'Information provided\n by the \n\'2011 Compendium\n of Physical Activities\'';
 
   @override
   String get quantityLabel => 'Quantity';
@@ -436,7 +450,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notAvailableLabel => 'N/A';
 
   @override
-  String get missingProductInfo => 'Product missing required kcal or macronutrients information';
+  String get missingProductInfo =>
+      'Product missing required kcal or macronutrients information';
 
   @override
   String get infoAddedIntakeLabel => 'Added new intake';
@@ -487,13 +502,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealProteinLabel => 'protein per 100 g/ml';
 
   @override
-  String get errorMealSave => 'Error while saving meal. Did you input the correct meal information?';
+  String get errorMealSave =>
+      'Error while saving meal. Did you input the correct meal information?';
 
   @override
   String get bmiLabel => 'BMI';
 
   @override
-  String get bmiInfo => 'Body Mass Index (BMI) is a index to classify overweight and obesity in adults. It is defined as weight in kilograms divided by the square of height in meters (kg/m²).\n\nBMI does not differentiate between fat and muscle mass and can be misleading for some individuals.';
+  String get bmiInfo =>
+      'Body Mass Index (BMI) is a index to classify overweight and obesity in adults. It is defined as weight in kilograms divided by the square of height in meters (kg/m²).\n\nBMI does not differentiate between fat and muscle mass and can be misleading for some individuals.';
 
   @override
   String get readLabel => 'I have read and accept the privacy policy.';
@@ -502,31 +519,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyPolicyLabel => 'Privacy policy';
 
   @override
-  String get dataCollectionLabel => 'Support development by providing anonymous usage data';
+  String get dataCollectionLabel =>
+      'Support development by providing anonymous usage data';
 
   @override
   String get palSedentaryLabel => 'Sedentary';
 
   @override
-  String get palSedentaryDescriptionLabel => 'e.g. office job and mostly sitting free time activities';
+  String get palSedentaryDescriptionLabel =>
+      'e.g. office job and mostly sitting free time activities';
 
   @override
   String get palLowLActiveLabel => 'Low Active';
 
   @override
-  String get palLowActiveDescriptionLabel => 'e.g. sitting or standing in job and light free time activities';
+  String get palLowActiveDescriptionLabel =>
+      'e.g. sitting or standing in job and light free time activities';
 
   @override
   String get palActiveLabel => 'Active';
 
   @override
-  String get palActiveDescriptionLabel => 'Mostly standing or walking in job and active free time activities';
+  String get palActiveDescriptionLabel =>
+      'Mostly standing or walking in job and active free time activities';
 
   @override
   String get palVeryActiveLabel => 'Very Active';
 
   @override
-  String get palVeryActiveDescriptionLabel => 'Mostly walking, running or carrying weight in job and active free time activities';
+  String get palVeryActiveDescriptionLabel =>
+      'Mostly walking, running or carrying weight in job and active free time activities';
 
   @override
   String get selectPalCategoryLabel => 'Select Activity Level';
@@ -617,7 +639,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get nutritionalStatusRiskLow => 'Low \n(but risk of other \nclinical problems increased)';
+  String get nutritionalStatusRiskLow =>
+      'Low \n(but risk of other \nclinical problems increased)';
 
   @override
   String get nutritionalStatusRiskAverage => 'Average';
@@ -710,13 +733,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paCalisthenicsGeneral => 'calisthenics';
 
   @override
-  String get paCalisthenicsGeneralDesc => 'light or moderate effort, general (e.g., back exercises)';
+  String get paCalisthenicsGeneralDesc =>
+      'light or moderate effort, general (e.g., back exercises)';
 
   @override
   String get paResistanceTraining => 'resistance training';
 
   @override
-  String get paResistanceTrainingDesc => 'weight lifting, free weight, nautilus or universal';
+  String get paResistanceTrainingDesc =>
+      'weight lifting, free weight, nautilus or universal';
 
   @override
   String get paRopeSkippingGeneral => 'rope skipping';
@@ -740,7 +765,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paDancingGeneral => 'general dancing';
 
   @override
-  String get paDancingGeneralDesc => 'e.g. disco, folk, Irish step dancing, line dancing, polka, contra, country';
+  String get paDancingGeneralDesc =>
+      'e.g. disco, folk, Irish step dancing, line dancing, polka, contra, country';
 
   @override
   String get paJoggingGeneral => 'jogging';
@@ -806,7 +832,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paChildrenGame => 'children’s games';
 
   @override
-  String get paChildrenGameDesc => '(e.g., hopscotch, 4-square, dodgeball, playground apparatus, t-ball, tetherball, marbles, arcade games), moderate effort';
+  String get paChildrenGameDesc =>
+      '(e.g., hopscotch, 4-square, dodgeball, playground apparatus, t-ball, tetherball, marbles, arcade games), moderate effort';
 
   @override
   String get paCheerleading => 'cheerleading';
@@ -926,13 +953,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paMartialArtsSlower => 'martial arts';
 
   @override
-  String get paMartialArtsSlowerDesc => 'different types, slower pace, novice performers, practice';
+  String get paMartialArtsSlowerDesc =>
+      'different types, slower pace, novice performers, practice';
 
   @override
   String get paMartialArtsModerate => 'martial arts';
 
   @override
-  String get paMartialArtsModerateDesc => 'different types, moderate pace (e.g., judo, jujitsu, karate, kick boxing, tae kwan do, tai-bo, Muay Thai boxing)';
+  String get paMartialArtsModerateDesc =>
+      'different types, moderate pace (e.g., judo, jujitsu, karate, kick boxing, tae kwan do, tai-bo, Muay Thai boxing)';
 
   @override
   String get paJuggling => 'juggling';
@@ -962,7 +991,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paMotoCross => 'moto-cross';
 
   @override
-  String get paMotoCrossDesc => 'off-road motor sports, all-terrain vehicle, general';
+  String get paMotoCrossDesc =>
+      'off-road motor sports, all-terrain vehicle, general';
 
   @override
   String get paOrienteering => 'orienteering';
@@ -1004,7 +1034,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paRopeJumpingGeneral => 'rope jumping';
 
   @override
-  String get paRopeJumpingGeneralDesc => 'moderate pace, 100-120 skips/min, general, 2 foot skip, plain bounce';
+  String get paRopeJumpingGeneralDesc =>
+      'moderate pace, 100-120 skips/min, general, 2 foot skip, plain bounce';
 
   @override
   String get paRugbyCompetitive => 'rugby';
@@ -1094,7 +1125,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paVolleyballGeneral => 'volleyball';
 
   @override
-  String get paVolleyballGeneralDesc => 'non-competitive, 6 - 9 member team, general';
+  String get paVolleyballGeneralDesc =>
+      'non-competitive, 6 - 9 member team, general';
 
   @override
   String get paWrestling => 'wrestling';
@@ -1115,7 +1147,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paTrackField1Desc => '(e.g. shot, discus, hammer throw)';
 
   @override
-  String get paTrackField2Desc => '(e.g. high jump, long jump, triple jump, javelin, pole vault)';
+  String get paTrackField2Desc =>
+      '(e.g. high jump, long jump, triple jump, javelin, pole vault)';
 
   @override
   String get paTrackField3Desc => '(e.g. steeplechase, hurdles)';
@@ -1178,7 +1211,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paSailingGeneral => 'sailing';
 
   @override
-  String get paSailingGeneralDesc => 'boat and board sailing, windsurfing, ice sailing, general';
+  String get paSailingGeneralDesc =>
+      'boat and board sailing, windsurfing, ice sailing, general';
 
   @override
   String get paSkiingWaterWakeboarding => 'water skiing';
@@ -1214,13 +1248,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paSwimmingGeneral => 'swimming';
 
   @override
-  String get paSwimmingGeneralDesc => 'treading water, moderate effort, general';
+  String get paSwimmingGeneralDesc =>
+      'treading water, moderate effort, general';
 
   @override
   String get paWateraerobicsCalisthenics => 'water aerobics';
 
   @override
-  String get paWateraerobicsCalisthenicsDesc => 'water aerobics, water calisthenics';
+  String get paWateraerobicsCalisthenicsDesc =>
+      'water aerobics, water calisthenics';
 
   @override
   String get paWaterPolo => 'water polo';
@@ -1256,7 +1292,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyLimitReachedTitle => 'Daily Limit Reached';
 
   @override
-  String get upgradeForUnlimitedAccess => 'Upgrade for unlimited access to all features.';
+  String get upgradeForUnlimitedAccess =>
+      'Upgrade for unlimited access to all features.';
 
   @override
   String get maybeLater => 'Maybe Later';
@@ -1282,7 +1319,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unlockPremiumFeatures => 'Unlock Premium Features';
 
   @override
-  String get getUnlimitedAccessToAllFeatures => 'Get unlimited access to all features and remove daily limits.';
+  String get getUnlimitedAccessToAllFeatures =>
+      'Get unlimited access to all features and remove daily limits.';
 
   @override
   String get premiumFeatures => 'Premium Features';
@@ -1312,7 +1350,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumActive => 'Premium Active';
 
   @override
-  String get subscriptionTerms => 'Subscription will be charged to your payment method. Auto-renews unless canceled 24 hours before the end of the current period. Manage in your account settings.';
+  String get subscriptionTerms =>
+      'Subscription will be charged to your payment method. Auto-renews unless canceled 24 hours before the end of the current period. Manage in your account settings.';
 
   @override
   String get remainingAnalyses => 'Remaining Analyses';
@@ -1321,7 +1360,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addPromptForGemini => 'Add prompt for Gemini (recommended)';
 
   @override
-  String get addPromptForGeminiHint => 'e.g., \"This is a close-up of a salad with tomatoes and cucumbers\"';
+  String get addPromptForGeminiHint =>
+      'e.g., \"This is a close-up of a salad with tomatoes and cucumbers\"';
 
   @override
   String get analyzeWithGemini => 'Analyze with Gemini';
@@ -1348,7 +1388,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addPromptForGeminiDescription => 'Describe your dish here';
 
   @override
-  String get addPromptForGeminiHintDescription => 'e.g., \"I ate rice with...\"';
+  String get addPromptForGeminiHintDescription =>
+      'e.g., \"I ate rice with...\"';
 
   @override
   String get saveMeal => 'Save Meal';

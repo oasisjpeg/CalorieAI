@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart' as iap;
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
 import 'package:calorieai/core/domain/entity/iap_product.dart';
 import 'package:calorieai/core/domain/entity/purchase_status.dart';
@@ -20,6 +22,7 @@ class IAPRepositoryImpl implements IAPRepository {
   final Map<String, iap.ProductDetails> _products = {};
   final StreamController<PurchaseStatus> _purchaseStatusController =
       StreamController<PurchaseStatus>.broadcast();
+  String? _deviceId;
 
   IAPRepositoryImpl({
     IAPLocalDataSource? localDataSource,
@@ -58,7 +61,59 @@ class IAPRepositoryImpl implements IAPRepository {
 
   @override
   Future<bool> hasActiveSubscription() async {
-    return await _localDataSource.getPurchaseStatus();
+    // Check if device is in developer whitelist (works in all modes)
+    if (await _isDeviceWhitelisted()) {
+      print('✅ Premium granted: Device whitelisted');
+      return true;
+    }
+    
+    // Debug override: Always return true in debug mode for development
+    if (kDebugMode) {
+      print('✅ Premium granted: Debug mode');
+      return true;
+    }
+    
+    final purchaseStatus = await _localDataSource.getPurchaseStatus();
+    print('🔍 Purchase status from storage: $purchaseStatus');
+    return purchaseStatus;
+  }
+  
+  Future<bool> _isDeviceWhitelisted() async {
+    if (IAPConstants.developerDeviceWhitelist.isEmpty) {
+      print('❌ Whitelist is empty');
+      return false;
+    }
+    
+    try {
+      final deviceId = await _getDeviceId();
+      print('🔍 Checking whitelist...');
+      print('🔍 Device ID: $deviceId');
+      print('🔍 Whitelist: ${IAPConstants.developerDeviceWhitelist}');
+      final isWhitelisted = IAPConstants.developerDeviceWhitelist.contains(deviceId);
+      print('🔍 Is whitelisted: $isWhitelisted');
+      return isWhitelisted;
+    } catch (e) {
+      print('❌ Error checking device whitelist: $e');
+      return false;
+    }
+  }
+  
+  Future<String> _getDeviceId() async {
+    if (_deviceId != null) return _deviceId!;
+    
+    final deviceInfo = DeviceInfoPlugin();
+    
+    if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      _deviceId = iosInfo.identifierForVendor ?? 'unknown';
+    } else if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      _deviceId = androidInfo.id;
+    } else {
+      _deviceId = 'unknown';
+    }
+    
+    return _deviceId!;
   }
 
   @override
@@ -250,6 +305,29 @@ class IAPRepositoryImpl implements IAPRepository {
       return false;
     } catch (e) {
       debugPrint('Error opening subscription management: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> presentOfferCodeRedemption() async {
+    try {
+      // Offer codes are only supported on iOS
+      if (Platform.isIOS) {
+        // Get the StoreKit-specific instance
+        final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
+            _inAppPurchase
+                .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+        
+        // Present the offer code redemption sheet
+        await iosPlatformAddition.presentCodeRedemptionSheet();
+        return true;
+      } else {
+        debugPrint('Offer codes are only supported on iOS');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error presenting offer code redemption: $e');
       return false;
     }
   }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +31,7 @@ class IAPBloc extends Bloc<IAPEvent, IAPState> {
     on<RecordAnalysisPerformed>(_onRecordAnalysisPerformed);
     on<CheckRecipeFinderAccess>(_onCheckRecipeFinderAccess);
     on<ResetAnalysisCounter>(_onResetAnalysisCounter);
+    on<RedeemOfferCode>(_onRedeemOfferCode);
     
     // Initialize the service
     _initialize();
@@ -239,6 +239,26 @@ emit(state.copyWith(error: e.toString()));
       // Log the error but don't crash
       emit(state.copyWith(error: 'Error resetting analysis counter: $e'));
       rethrow;
+    }
+  }
+
+  Future<void> _onRedeemOfferCode(
+    RedeemOfferCode event,
+    Emitter<IAPState> emit,
+  ) async {
+    try {
+      final success = await _iapService.presentOfferCodeRedemption();
+      
+      if (!success) {
+        emit(state.copyWith(
+          error: 'Unable to open offer code redemption. This feature is only available on iOS.',
+        ));
+      }
+      // If successful, the purchase status will be updated via the stream
+    } catch (e) {
+      emit(state.copyWith(
+        error: 'Error opening offer code redemption: $e',
+      ));
     }
   }
 

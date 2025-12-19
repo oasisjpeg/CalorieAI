@@ -151,10 +151,12 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
       final imageUrl = await _uploadImageToImgbb(_imageFile!);
       if (imageUrl == null) {
-        setState(() {
-          _isAnalyzing = false;
-          _analysisResult = 'Failed to upload image';
-        });
+        if (mounted) {
+          setState(() {
+            _isAnalyzing = false;
+            _analysisResult = 'Failed to upload image';
+          });
+        }
         return;
       }
 
@@ -179,23 +181,25 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         // Try to parse the JSON response
         final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
 
-        setState(() {
-          _foodData = parsedData;
-          _analysisResult = 'Successfully analyzed food image';
-          // Show remaining uses if not premium
-          if (!iapState.hasPremiumAccess) {
-            final remaining = iapState.remainingDailyAnalyses - 1;
-            if (remaining >= 0) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('${S.of(context).remainingAnalyses}: $remaining'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
+        if (mounted) {
+          setState(() {
+            _foodData = parsedData;
+            _analysisResult = 'Successfully analyzed food image';
+            // Show remaining uses if not premium
+            if (!iapState.hasPremiumAccess) {
+              final remaining = iapState.remainingDailyAnalyses - 1;
+              if (remaining >= 0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                        Text('${S.of(context).remainingAnalyses}: $remaining'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
             }
-          }
-        });
+          });
+        }
         _isAnalyzing = false;
 
         // Do not navigate here! Instead, show the adjustable ingredient list and "Save Meal" button.
@@ -204,10 +208,12 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       }
     } catch (e) {
       log.severe('Error analyzing image: $e');
-      setState(() {
-        _analysisResult = 'Error analyzing image: $e';
-        _isAnalyzing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _analysisResult = 'Error analyzing image: $e';
+          _isAnalyzing = false;
+        });
+      }
     }
   }
 
@@ -256,12 +262,14 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         // Try to parse the JSON response
         final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
 
-        setState(() {
-          _foodData = parsedData;
-          _analysisResult = 'Successfully analyzed food image';
-          _isAnalyzingDescription = false;
-          // Show remaining uses if not premium
-        });
+        if (mounted) {
+          setState(() {
+            _foodData = parsedData;
+            _analysisResult = 'Successfully analyzed food image';
+            _isAnalyzingDescription = false;
+            // Show remaining uses if not premium
+          });
+        }
         _isAnalyzing = false;
     } on TimeoutException catch (e) {
       log.warning('Request timed out: $e');
@@ -295,8 +303,8 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
       if (mounted) {
         _showUpgradeDialog(context);
+        setState(() => _isAnalyzing = false);
       }
-      setState(() => _isAnalyzing = false);
       return;
     }
 
@@ -323,12 +331,14 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         // Try to parse the JSON response
         final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
 
-        setState(() {
-          _foodData = parsedData;
-          _analysisResult = 'Successfully analyzed food image';
-          _isAnalyzingDescription = false;
-          // Show remaining uses if not premium
-        });
+        if (mounted) {
+          setState(() {
+            _foodData = parsedData;
+            _analysisResult = 'Successfully analyzed food image';
+            _isAnalyzingDescription = false;
+            // Show remaining uses if not premium
+          });
+        }
         _isAnalyzing = false;
 
         // Do not navigate here! Instead, show the adjustable ingredient list and "Save Meal" button.
@@ -337,10 +347,12 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       }
     } catch (e) {
       log.severe('Error analyzing image: $e');
-      setState(() {
-        _analysisResult = 'Error analyzing image: $e';
-        _isAnalyzing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _analysisResult = 'Error analyzing image: $e';
+          _isAnalyzing = false;
+        });
+      }
     }
   }
 
@@ -383,61 +395,39 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
           totalSaturatedFat,
           totalFiber;
       if (adjustedItems != null) {
-        totalGrams = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum + (item['estimated_grams'] as num? ?? 0).toDouble());
-        totalCalories = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum +
-                ((item['calories'] as num? ?? 0) *
-                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
-        totalCarbs = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum +
-                ((item['carbs_g'] as num? ?? 0) *
-                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
-        totalFat = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum +
-                ((item['fat_g'] as num? ?? 0) *
-                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
-        totalProtein = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum +
-                ((item['protein_g'] as num? ?? 0) *
-                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
-        totalSugars = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum +
-                ((item['sugar_g'] as num? ?? 0) *
-                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
-        totalSaturatedFat = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum +
-                ((item['saturated_fat_g'] as num? ?? 0) *
-                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
-        totalFiber = foodItems.fold<double>(
-            0,
-            (sum, item) =>
-                sum +
-                ((item['fiber_g'] as num? ?? 0) *
-                    ((item['estimated_grams'] as num? ?? 0).toDouble() / 100)));
+        totalGrams = 0;
+        totalCalories = 0;
+        totalCarbs = 0;
+        totalFat = 0;
+        totalProtein = 0;
+        totalSugars = 0;
+        totalSaturatedFat = 0;
+        totalFiber = 0;
+        
+        // Calculate totals using the same logic as FoodItemsAdjustableList
+        for (final item in foodItems) {
+          final double grams = (item['estimated_grams'] as num? ?? 0).toDouble();
+          final double originalGrams = (item['original_grams'] as num? ?? grams).toDouble();
+          final double ratio = originalGrams > 0 ? grams / originalGrams : 1.0;
+          
+          totalGrams += grams;
+          totalCalories += ((item['calories'] as num? ?? 0).toDouble()) * ratio;
+          totalProtein += ((item['protein_g'] as num? ?? 0).toDouble()) * ratio;
+          totalCarbs += ((item['carbs_g'] as num? ?? 0).toDouble()) * ratio;
+          totalFat += ((item['fat_g'] as num? ?? 0).toDouble()) * ratio;
+          totalSugars += ((item['sugar_g'] as num? ?? 0).toDouble()) * ratio;
+          totalSaturatedFat += ((item['saturated_fat_g'] as num? ?? 0).toDouble()) * ratio;
+          totalFiber += ((item['fiber_g'] as num? ?? 0).toDouble()) * ratio;
+        }
       } else {
-        totalGrams = totals['total_grams'] as double;
-        totalCalories = totals['calories'] as double;
-        totalCarbs = totals['carbs_g'] as double;
-        totalFat = totals['fat_g'] as double;
-        totalProtein = totals['protein_g'] as double;
-        totalSugars = totals['sugar_g'] as double;
-        totalSaturatedFat = totals['saturated_fat_g'] as double;
-        totalFiber = totals['fiber_g'] as double;
+        totalGrams = (totals['total_grams'] as num).toDouble();
+        totalCalories = (totals['calories'] as num).toDouble();
+        totalCarbs = (totals['carbs_g'] as num).toDouble();
+        totalFat = (totals['fat_g'] as num).toDouble();
+        totalProtein = (totals['protein_g'] as num).toDouble();
+        totalSugars = (totals['sugar_g'] as num).toDouble();
+        totalSaturatedFat = (totals['saturated_fat_g'] as num).toDouble();
+        totalFiber = (totals['fiber_g'] as num).toDouble();
       }
 
       // Calculate per 100g values

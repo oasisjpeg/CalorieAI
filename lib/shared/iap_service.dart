@@ -39,6 +39,11 @@ class IAPService {
 
     try {
       await _repository.init();
+      
+      // Log subscription status immediately on init
+      final hasSubscription = await _repository.hasActiveSubscription();
+      Logger.d('🔥 IAP INIT - Has subscription: $hasSubscription');
+      
       final status = await _repository.getDetailedPurchaseStatus();
       _purchaseStatusController.add(status);
       await _loadProducts();
@@ -111,6 +116,17 @@ class IAPService {
       return await _repository.openSubscriptionManagement();
     } catch (e) {
       Logger.e('Error opening subscription management', error: e);
+      return false;
+    }
+  }
+
+  // Present the offer code redemption sheet (iOS only)
+  Future<bool> presentOfferCodeRedemption() async {
+    try {
+      if (!_isInitialized) await init();
+      return await _repository.presentOfferCodeRedemption();
+    } catch (e) {
+      Logger.e('Error presenting offer code redemption', error: e);
       return false;
     }
   }

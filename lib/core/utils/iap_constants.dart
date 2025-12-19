@@ -13,4 +13,12 @@ class IAPConstants {
   // Limits
   static const int dailyFreeAnalysisLimit = 3;
   
+  // Developer device whitelist - Add device identifiers here to always have premium
+  // To get your device ID, run the app once and check the debug logs
+  static const List<String> developerDeviceWhitelist = [
+    'D91C8299-9016-4D3E-9307-5DC14E39190A', // Development build
+    '6971DE43-7034-4DE6-B09C-3178E7B6402F', // TestFlight build
+    // Add your TestFlight device ID here after checking logs
+  ];
+  
 }

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.opennutritracker.ont.opennutritracker">
+    package="com.axiona.calorieai">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

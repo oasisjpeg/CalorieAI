@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calorieai/core/domain/entity/iap_product.dart';
@@ -53,6 +54,8 @@ class IAPScreen extends StatelessWidget {
                 _buildSubscriptionCard(context, state),
                 const SizedBox(height: 24),
                 _buildRestoreButton(context),
+                const SizedBox(height: 8),
+                _buildOfferCodeButton(context),
                 const SizedBox(height: 16),
                 _buildTermsText(),
               ],
@@ -274,6 +277,31 @@ class IAPScreen extends StatelessWidget {
         onPressed: () => context.read<IAPBloc>().add(const RestorePurchases()),
         child: Text(
           S.of(context).restorePurchases,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOfferCodeButton(BuildContext context) {
+    // Only show offer code button on iOS
+    if (!Platform.isIOS) {
+      return const SizedBox.shrink();
+    }
+    
+    return Center(
+      child: TextButton.icon(
+        onPressed: () => context.read<IAPBloc>().add(const RedeemOfferCode()),
+        icon: Icon(
+          Icons.card_giftcard,
+          size: 20,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        label: Text(
+          'Redeem Offer Code',
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w500,

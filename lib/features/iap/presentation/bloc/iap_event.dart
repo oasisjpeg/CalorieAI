@@ -39,3 +39,7 @@ class CheckRecipeFinderAccess extends IAPEvent {
 class ResetAnalysisCounter extends IAPEvent {
   const ResetAnalysisCounter();
 }
+
+class RedeemOfferCode extends IAPEvent {
+  const RedeemOfferCode();
+}

@@ -29,7 +29,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.opennutritracker.ont.opennutritracker"
+    namespace "com.axiona.calorieai"
     compileSdkVersion 35
     ndkVersion flutter.ndkVersion
 
@@ -47,8 +47,8 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.opennutritracker.ont.opennutritracker"
-        minSdkVersion 21
+        applicationId "com.axiona.calorieai"
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

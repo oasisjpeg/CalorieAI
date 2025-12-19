@@ -73,4 +73,10 @@ abstract class IAPRepository {
   /// On Android, this opens the Play Store subscription management page.
   /// Returns `true` if the operation was successful, `false` otherwise.
   Future<bool> openSubscriptionManagement();
+  
+  /// Presents the offer code redemption sheet (iOS only).
+  /// On iOS, this opens the native offer code redemption UI.
+  /// On Android, this does nothing as offer codes are not supported.
+  /// Returns `true` if the operation was successful, `false` otherwise.
+  Future<bool> presentOfferCodeRedemption();
 }

@@ -112,13 +112,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
           controller: cameraController,
           onDetect: (capture) {
             final List<Barcode> barcodes = capture.barcodes;
+            log.fine('Detected ${barcodes.length} barcodes');
             for (final barcode in barcodes) {
-              if (barcode.rawValue != null &&
-                  barcode.type == BarcodeType.product) {
+              log.fine('Barcode type: ${barcode.type}, value: ${barcode.rawValue}');
+              if (barcode.rawValue != null) {
                 final barcodeResult = barcode.rawValue;
-                if (barcodeResult != null) {
+                if (barcodeResult != null && _scannedBarcode != barcodeResult) {
                   _scannedBarcode = barcodeResult;
-                  log.fine('Barcode found: $barcodeResult');
+                  log.fine('Barcode found: $barcodeResult (type: ${barcode.type})');
                   _scannerBloc
                       .add(ScannerLoadProductEvent(barcode: barcodeResult));
                 }

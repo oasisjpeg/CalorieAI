@@ -13,7 +13,7 @@ class GeminiService {
 
   GeminiService() {
     _model = GenerativeModel(
-      model: 'gemini-2.0-flash-lite',
+      model: 'gemini-2.5-flash-lite',
       apiKey: Env.geminiApiKey,
     );
   }
@@ -89,7 +89,8 @@ class GeminiService {
 
   5. is_liquid is only true if you only see liquids (only can of red-bull and nothing else), not if meals contain liquids (e.g. pasta with red-bull)
   6. for the score and score_text don't be harsh and give higher ratings, but for unhealthy food stay strict, make the user feel good and use a higher scoring for healthy snacks, fruits or high protein meals. so give a score of 8 for a healthy meal and 5 for a meal but has too much sugar or salt or too much fat etc and 2 for a unhealthy meal
-  7. the score_text should be maximum 1-2 sentences long
+  7. the score_text should be maximum 1-2 sentences long that explain why the meal has the score it has
+  8. the score should be a compliment to the user and encourage him if he takes healthy food and the nutritional values are good
 IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backticks, or any formatting. Output raw JSON only by using this structure:
 {
   "valid_food_image": boolean,
@@ -188,7 +189,8 @@ Sum totals for the entire drink
 Return the total grams in the totals section
 is_liquid is only true if you only describe liquids (only can of red-bull and nothing else), not if meals contain liquids (e.g. pasta with red-bull)
 for the score and score_text don't be harsh and give higher ratings, but for unhealthy food stay strict, make the user feel good if and use a higher scoring for healthy snacks, fruits or high protein meals. so give a score of 8 for a healthy meal and 5 for a meal but has too much sugar or salt or too much fat etc and 2 for a unhealthy meal
-the score_text should be maximum 1-2 sentences long
+the score should be a compliment to the user and encourage him if he takes healthy food and the nutritional values are good
+the score_text should be maximum 1-2 sentences long that explain why the meal has the score it has
 IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backticks, or any formatting. Output raw JSON only by using this structure:
 {
 "valid_food_image": boolean,

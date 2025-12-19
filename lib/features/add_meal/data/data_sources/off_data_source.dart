@@ -11,7 +11,7 @@ import 'package:calorieai/features/scanner/data/product_not_found_exception.dart
 import 'package:sentry_flutter/sentry_flutter.dart'; // Mock Sentry for simulator compatibility
 
 class OFFDataSource {
-  static const _timeoutDuration = Duration(seconds: 20); // TODO lower timeout
+  static const _timeoutDuration = Duration(seconds: 30); // TODO lower timeout
   final log = Logger('OFFDataSource');
 
   Future<OFFWordResponseDTO> fetchSearchWordResults(String searchString) async {

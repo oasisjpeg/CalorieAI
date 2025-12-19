@@ -17,7 +17,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get appDescription => 'CalorieAI ist ein kostenloser und  quelloffener Kalorien- und Nährstofftracker, der Ihre Privatsphäre respektiert.';
+  String get appDescription =>
+      'CalorieAI ist ein kostenloser und  quelloffener Kalorien- und Nährstofftracker, der Ihre Privatsphäre respektiert.';
 
   @override
   String get alphaVersionName => '[Alpha]';
@@ -29,10 +30,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get addLabel => 'Hinzufügen';
 
   @override
-  String get createCustomDialogTitle => 'Benutzerdefinierte Mahlzeit erstellen?';
+  String get createCustomDialogTitle =>
+      'Benutzerdefinierte Mahlzeit erstellen?';
 
   @override
-  String get createCustomDialogContent => 'Möchten Sie einen benutzerdefinierte Mahlzeit erstellen?';
+  String get createCustomDialogContent =>
+      'Möchten Sie einen benutzerdefinierte Mahlzeit erstellen?';
 
   @override
   String get settingsLabel => 'Einstellungen';
@@ -68,10 +71,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get recentlyAddedLabel => 'Kürzlich';
 
   @override
-  String get noMealsRecentlyAddedLabel => 'Keine kürzlich hinzugefügten Mahlzeiten';
+  String get noMealsRecentlyAddedLabel =>
+      'Keine kürzlich hinzugefügten Mahlzeiten';
 
   @override
-  String get noActivityRecentlyAddedLabel => 'Keine kürzlich hinzugefügten Aktivitäten';
+  String get noActivityRecentlyAddedLabel =>
+      'Keine kürzlich hinzugefügten Aktivitäten';
 
   @override
   String get dialogOKLabel => 'OK';
@@ -110,7 +115,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingKcalPerDayLabel => 'kcal pro Tag';
 
   @override
-  String get onboardingIntroDescription => 'Um loszulegen, benötigt die App einige Informationen über Sie, um Ihr tägliches Kalorienziel zu berechnen. Alle Informationen über Sie werden sicher auf Ihrem Gerät gespeichert.';
+  String get onboardingIntroDescription =>
+      'Um loszulegen, benötigt die App einige Informationen über Sie, um Ihr tägliches Kalorienziel zu berechnen. Alle Informationen über Sie werden sicher auf Ihrem Gerät gespeichert.';
 
   @override
   String get onboardingGenderQuestionSubtitle => 'Was ist Ihr Geschlecht?';
@@ -149,19 +155,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingHeightExampleHintFt => 'e.g. 5.8';
 
   @override
-  String get onboardingActivityQuestionSubtitle => 'Wie aktiv sind Sie? (Ohne Trainingseinheiten)';
+  String get onboardingActivityQuestionSubtitle =>
+      'Wie aktiv sind Sie? (Ohne Trainingseinheiten)';
 
   @override
-  String get onboardingGoalQuestionSubtitle => 'Was ist Ihr aktuelles Gewichtsziel?';
+  String get onboardingGoalQuestionSubtitle =>
+      'Was ist Ihr aktuelles Gewichtsziel?';
 
   @override
-  String get onboardingSaveUserError => 'Falsche Eingabe, bitte versuchen Sie es erneut';
+  String get onboardingSaveUserError =>
+      'Falsche Eingabe, bitte versuchen Sie es erneut';
 
   @override
   String get settingsUnitsLabel => 'Einheiten';
 
   @override
-  String get stepsPermissionDenied => 'Please grant access to Apple Health to track your steps';
+  String get stepsPermissionDenied =>
+      'Please grant access to Apple Health to track your steps';
 
   @override
   String get stepsGrantAccess => 'Grant Access';
@@ -230,10 +240,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsVolumeLabel => 'Volumen';
 
   @override
-  String get disclaimerText => 'CalorieAI ist keine medizinische Anwendung. Alle bereitgestellten Daten sind nicht validiert und sollten mit Vorsicht verwendet werden. Bitte pflegen Sie einen gesunden Lebensstil und konsultieren Sie einen Fachmann, wenn Sie Probleme haben. Die Verwendung während einer Krankheit, Schwangerschaft oder Stillzeit wird nicht empfohlen.\n\n\nAntworten der AI können nicht immer korrekt oder verlässlich sein. Stellen Sie die Informationen immer mit einem Fachmann in Einklang. ';
+  String get disclaimerText =>
+      'CalorieAI ist keine medizinische Anwendung. Alle bereitgestellten Daten sind nicht validiert und sollten mit Vorsicht verwendet werden. Bitte pflegen Sie einen gesunden Lebensstil und konsultieren Sie einen Fachmann, wenn Sie Probleme haben. Die Verwendung während einer Krankheit, Schwangerschaft oder Stillzeit wird nicht empfohlen.\n\n\nAntworten der AI können nicht immer korrekt oder verlässlich sein. Stellen Sie die Informationen immer mit einem Fachmann in Einklang. ';
 
   @override
-  String get reportErrorDialogText => 'Möchten Sie einen Fehler an den Entwickler melden?';
+  String get reportErrorDialogText =>
+      'Möchten Sie einen Fehler an den Entwickler melden?';
 
   @override
   String get sendAnonymousUserData => 'Anonyme Nutzungsdaten senden?';
@@ -251,10 +263,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get calculationsRecommendedLabel => '(empfohlen)';
 
   @override
-  String get calculationsMacronutrientsDistributionLabel => 'Verteilung der Makronährstoffe';
+  String get calculationsMacronutrientsDistributionLabel =>
+      'Verteilung der Makronährstoffe';
 
   @override
-  String calculationsMacrosDistribution(Object pctCarbs, Object pctFats, Object pctProteins) {
+  String calculationsMacrosDistribution(
+      Object pctCarbs, Object pctFats, Object pctProteins) {
     return '$pctCarbs% Kohlenhydrate, $pctFats% Fette, $pctProteins% Proteine';
   }
 
@@ -268,7 +282,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get exportImportLabel => 'Daten Exportieren / Importieren';
 
   @override
-  String get exportImportDescription => 'Sie können die App-Daten in eine Zip-Datei exportieren und später importieren. Dies ist nützlich, wenn Sie Ihre Daten sichern oder auf ein anderes Gerät übertragen möchten.\n\nDie App nutzt keinen Cloud-Dienst, um Ihre Daten zu speichern.';
+  String get exportImportDescription =>
+      'Sie können die App-Daten in eine Zip-Datei exportieren und später importieren. Dies ist nützlich, wenn Sie Ihre Daten sichern oder auf ein anderes Gerät übertragen möchten.\n\nDie App nutzt keinen Cloud-Dienst, um Ihre Daten zu speichern.';
 
   @override
   String get exportImportSuccessLabel => 'Export / Import erfolgreich';
@@ -325,7 +340,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deleteTimeDialogTitle => 'Eintrag löschen?';
 
   @override
-  String get deleteTimeDialogContent => 'Möchten Sie den ausgewählten Eintrag löschen?';
+  String get deleteTimeDialogContent =>
+      'Möchten Sie den ausgewählten Eintrag löschen?';
 
   @override
   String get itemDeletedSnackbar => 'Eintrag gelöscht';
@@ -337,7 +353,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get copyOrDeleteTimeDialogTitle => 'Was soll getan werden?';
 
   @override
-  String get copyOrDeleteTimeDialogContent => 'Auf \"Nach heute kopieren\" klicken, um die Mahlzeit nach heute zu kopieren. Mit \"Löschen\" kann die Mahlzeit entfernt werden';
+  String get copyOrDeleteTimeDialogContent =>
+      'Auf \"Nach heute kopieren\" klicken, um die Mahlzeit nach heute zu kopieren. Mit \"Löschen\" kann die Mahlzeit entfernt werden';
 
   @override
   String get dialogCopyLabel => 'NACH HEUTE KOPIEREN';
@@ -388,13 +405,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get per100gmlLabel => 'Pro 100 g/ml';
 
   @override
-  String get additionalInfoLabelOFF => 'Weitere Informationen unter\nOpenFoodFacts';
+  String get additionalInfoLabelOFF =>
+      'Weitere Informationen unter\nOpenFoodFacts';
 
   @override
-  String get offDisclaimer => 'Die Daten, die Ihnen mit dieser App zur Verfügung gestellt werden, stammen aus der Open Food Facts-Datenbank. Es kann keine Garantie für die Richtigkeit, Vollständigkeit oder Zuverlässigkeit der bereitgestellten Informationen übernommen werden. Die Daten werden ohne Mängelgewähr zur Verfügung gestellt, und die Ursprungsquelle der Daten (Open Food Facts) haftet nicht für Schäden, die aus der Verwendung der Daten entstehen.';
+  String get offDisclaimer =>
+      'Die Daten, die Ihnen mit dieser App zur Verfügung gestellt werden, stammen aus der Open Food Facts-Datenbank. Es kann keine Garantie für die Richtigkeit, Vollständigkeit oder Zuverlässigkeit der bereitgestellten Informationen übernommen werden. Die Daten werden ohne Mängelgewähr zur Verfügung gestellt, und die Ursprungsquelle der Daten (Open Food Facts) haftet nicht für Schäden, die aus der Verwendung der Daten entstehen.';
 
   @override
-  String get additionalInfoLabelFDC => 'Weitere Informationen unter\nFoodData Central';
+  String get additionalInfoLabelFDC =>
+      'Weitere Informationen unter\nFoodData Central';
 
   @override
   String get additionalInfoLabelUnknown => 'Unbekannte Mahlzeit';
@@ -403,7 +423,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get additionalInfoLabelCustom => 'Benutzerdefinierte Mahlzeit';
 
   @override
-  String get additionalInfoLabelCompendium2011 => 'Informationen bereitgestellt von\n\'2011 Compendium\n of Physical Activities\'';
+  String get additionalInfoLabelCompendium2011 =>
+      'Informationen bereitgestellt von\n\'2011 Compendium\n of Physical Activities\'';
 
   @override
   String get quantityLabel => 'Menge';
@@ -436,7 +457,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notAvailableLabel => 'N/A';
 
   @override
-  String get missingProductInfo => 'Produkt fehlen die erforderlichen Angaben zu Kalorien oder Makronährstoffen';
+  String get missingProductInfo =>
+      'Produkt fehlen die erforderlichen Angaben zu Kalorien oder Makronährstoffen';
 
   @override
   String get infoAddedIntakeLabel => 'Neue Aufnahme hinzugefügt';
@@ -487,46 +509,54 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mealProteinLabel => 'Protein pro 100 g/ml';
 
   @override
-  String get errorMealSave => 'Fehler beim Speichern der Mahlzeit. Haben Sie die korrekten Mahlzeiteninformationen eingegeben?';
+  String get errorMealSave =>
+      'Fehler beim Speichern der Mahlzeit. Haben Sie die korrekten Mahlzeiteninformationen eingegeben?';
 
   @override
   String get bmiLabel => 'BMI';
 
   @override
-  String get bmiInfo => 'Der Body-Mass-Index (BMI) ist ein Index zur Klassifizierung von Übergewicht und Fettleibigkeit bei Erwachsenen. Er wird berechnet, indem das Gewicht in Kilogramm durch das Quadrat der Körpergröße in Metern (kg/m²) geteilt wird.\n\nDer BMI unterscheidet nicht zwischen Fett- und Muskelmasse und kann für einige Personen irreführend sein.';
+  String get bmiInfo =>
+      'Der Body-Mass-Index (BMI) ist ein Index zur Klassifizierung von Übergewicht und Fettleibigkeit bei Erwachsenen. Er wird berechnet, indem das Gewicht in Kilogramm durch das Quadrat der Körpergröße in Metern (kg/m²) geteilt wird.\n\nDer BMI unterscheidet nicht zwischen Fett- und Muskelmasse und kann für einige Personen irreführend sein.';
 
   @override
-  String get readLabel => 'Ich habe die Datenschutzbestimmungen gelesen und akzeptiere sie.';
+  String get readLabel =>
+      'Ich habe die Datenschutzbestimmungen gelesen und akzeptiere sie.';
 
   @override
   String get privacyPolicyLabel => 'Datenschutzrichtlinie';
 
   @override
-  String get dataCollectionLabel => 'Unterstützen der Entwicklung durch Bereitstellung anonymer Nutzungsdaten';
+  String get dataCollectionLabel =>
+      'Unterstützen der Entwicklung durch Bereitstellung anonymer Nutzungsdaten';
 
   @override
   String get palSedentaryLabel => 'Sitzend';
 
   @override
-  String get palSedentaryDescriptionLabel => 'z. B. Büroarbeit und hauptsächlich sitzende Freizeitaktivitäten';
+  String get palSedentaryDescriptionLabel =>
+      'z. B. Büroarbeit und hauptsächlich sitzende Freizeitaktivitäten';
 
   @override
   String get palLowLActiveLabel => 'Leicht aktiv';
 
   @override
-  String get palLowActiveDescriptionLabel => 'z. B. Sitzen oder Stehen bei der Arbeit und leichte Freizeitaktivitäten';
+  String get palLowActiveDescriptionLabel =>
+      'z. B. Sitzen oder Stehen bei der Arbeit und leichte Freizeitaktivitäten';
 
   @override
   String get palActiveLabel => 'Aktiv';
 
   @override
-  String get palActiveDescriptionLabel => 'Überwiegend Stehen oder Gehen bei der Arbeit und aktive Freizeitaktivitäten';
+  String get palActiveDescriptionLabel =>
+      'Überwiegend Stehen oder Gehen bei der Arbeit und aktive Freizeitaktivitäten';
 
   @override
   String get palVeryActiveLabel => 'Sehr aktiv';
 
   @override
-  String get palVeryActiveDescriptionLabel => 'Überwiegend Gehen, Laufen oder Gewichte tragen bei der Arbeit und aktive Freizeitaktivitäten';
+  String get palVeryActiveDescriptionLabel =>
+      'Überwiegend Gehen, Laufen oder Gewichte tragen bei der Arbeit und aktive Freizeitaktivitäten';
 
   @override
   String get selectPalCategoryLabel => 'Aktivitätslevel auswählen';
@@ -617,7 +647,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get nutritionalStatusRiskLow => 'Niedrig \n(aber erhöhtes Risiko für andere \nklinische Probleme)';
+  String get nutritionalStatusRiskLow =>
+      'Niedrig \n(aber erhöhtes Risiko für andere \nklinische Probleme)';
 
   @override
   String get nutritionalStatusRiskAverage => 'Durchschnittlich';
@@ -641,7 +672,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorOpeningBrowser => 'Fehler beim Öffnen der Browser-Anwendung';
 
   @override
-  String get errorFetchingProductData => 'Fehler beim Abrufen von Produktinformationen';
+  String get errorFetchingProductData =>
+      'Fehler beim Abrufen von Produktinformationen';
 
   @override
   String get errorProductNotFound => 'Produkt nicht gefunden';
@@ -710,13 +742,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paCalisthenicsGeneral => 'Calisthenics';
 
   @override
-  String get paCalisthenicsGeneralDesc => 'leichte oder mäßige Anstrengung, allgemein (z.B. Rückenübungen)';
+  String get paCalisthenicsGeneralDesc =>
+      'leichte oder mäßige Anstrengung, allgemein (z.B. Rückenübungen)';
 
   @override
   String get paResistanceTraining => 'Krafttraining';
 
   @override
-  String get paResistanceTrainingDesc => 'Gewichtheben, Freigewichte, Nautilus oder Universal';
+  String get paResistanceTrainingDesc =>
+      'Gewichtheben, Freigewichte, Nautilus oder Universal';
 
   @override
   String get paRopeSkippingGeneral => 'Seilspringen';
@@ -740,7 +774,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paDancingGeneral => 'allgemeines Tanzen';
 
   @override
-  String get paDancingGeneralDesc => 'z.B. Disco, Folk, irischer Stepptanz, Line Dance, Polka, Contra, Country';
+  String get paDancingGeneralDesc =>
+      'z.B. Disco, Folk, irischer Stepptanz, Line Dance, Polka, Contra, Country';
 
   @override
   String get paJoggingGeneral => 'Joggen';
@@ -764,7 +799,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paBadmintonGeneral => 'Badminton';
 
   @override
-  String get paBadmintonGeneralDesc => 'gesellige Einzel- und Doppelspiele, allgemein';
+  String get paBadmintonGeneralDesc =>
+      'gesellige Einzel- und Doppelspiele, allgemein';
 
   @override
   String get paBasketballGeneral => 'Basketball';
@@ -806,7 +842,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paChildrenGame => 'Kinderspiele';
 
   @override
-  String get paChildrenGameDesc => '(z.B. Himmel und Hölle, Vier gewinnt, Völkerball, Spielplatzgeräte, T-Ball, Leitball, Murmeln, Arcade-Spiele), mäßige Anstrengung';
+  String get paChildrenGameDesc =>
+      '(z.B. Himmel und Hölle, Vier gewinnt, Völkerball, Spielplatzgeräte, T-Ball, Leitball, Murmeln, Arcade-Spiele), mäßige Anstrengung';
 
   @override
   String get paCheerleading => 'Cheerleading';
@@ -926,13 +963,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paMartialArtsSlower => 'Kampfsport';
 
   @override
-  String get paMartialArtsSlowerDesc => 'verschiedene Arten, langsames Tempo, Anfänger, Übung';
+  String get paMartialArtsSlowerDesc =>
+      'verschiedene Arten, langsames Tempo, Anfänger, Übung';
 
   @override
   String get paMartialArtsModerate => 'Kampfsport';
 
   @override
-  String get paMartialArtsModerateDesc => 'verschiedene Arten, moderates Tempo (z.B. Judo, Jujitsu, Karate, Kickboxen, Taekwondo, Tai-Bo, Muay Thai Boxen)';
+  String get paMartialArtsModerateDesc =>
+      'verschiedene Arten, moderates Tempo (z.B. Judo, Jujitsu, Karate, Kickboxen, Taekwondo, Tai-Bo, Muay Thai Boxen)';
 
   @override
   String get paJuggling => 'Jonglieren';
@@ -1004,19 +1043,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paRopeJumpingGeneral => 'Seilspringen';
 
   @override
-  String get paRopeJumpingGeneralDesc => 'mittleres Tempo, 100-120 Sprünge/Min., allgemein, beidfüßiges Springen, einfacher Sprung';
+  String get paRopeJumpingGeneralDesc =>
+      'mittleres Tempo, 100-120 Sprünge/Min., allgemein, beidfüßiges Springen, einfacher Sprung';
 
   @override
   String get paRugbyCompetitive => 'Rugby';
 
   @override
-  String get paRugbyCompetitiveDesc => 'Union, Mannschaft, wettbewerbsorientiert';
+  String get paRugbyCompetitiveDesc =>
+      'Union, Mannschaft, wettbewerbsorientiert';
 
   @override
   String get paRugbyNonCompetitive => 'Rugby';
 
   @override
-  String get paRugbyNonCompetitiveDesc => 'Berührung, nicht wettbewerbsorientiert';
+  String get paRugbyNonCompetitiveDesc =>
+      'Berührung, nicht wettbewerbsorientiert';
 
   @override
   String get paShuffleboard => 'Shuffleboard';
@@ -1046,7 +1088,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paSkydiving => 'skydiving';
 
   @override
-  String get paSkydivingDesc => 'Fallschirmspringen, Base-Jumping, Bungee-Jumping';
+  String get paSkydivingDesc =>
+      'Fallschirmspringen, Base-Jumping, Bungee-Jumping';
 
   @override
   String get paSoccerGeneral => 'Fußball';
@@ -1058,7 +1101,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paSoftballBaseballGeneral => 'Softball / Baseball';
 
   @override
-  String get paSoftballBaseballGeneralDesc => 'Schnell- oder Langstreckenpitching, allgemein';
+  String get paSoftballBaseballGeneralDesc =>
+      'Schnell- oder Langstreckenpitching, allgemein';
 
   @override
   String get paSquashGeneral => 'Squash';
@@ -1094,7 +1138,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paVolleyballGeneral => 'Volleyball';
 
   @override
-  String get paVolleyballGeneralDesc => 'nicht-wettkampforientiert, 6-9 Spieler, allgemein';
+  String get paVolleyballGeneralDesc =>
+      'nicht-wettkampforientiert, 6-9 Spieler, allgemein';
 
   @override
   String get paWrestling => 'Ringen';
@@ -1115,7 +1160,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paTrackField1Desc => '(z. B. Kugelstoßen, Diskuswurf, Hammerwurf)';
 
   @override
-  String get paTrackField2Desc => '(z. B. Hochsprung, Weitsprung, Dreisprung, Speerwurf, Stabhochsprung)';
+  String get paTrackField2Desc =>
+      '(z. B. Hochsprung, Weitsprung, Dreisprung, Speerwurf, Stabhochsprung)';
 
   @override
   String get paTrackField3Desc => '(z. B. Hindernislauf, Hürdenlauf)';
@@ -1214,13 +1260,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paSwimmingGeneral => 'Schwimmen';
 
   @override
-  String get paSwimmingGeneralDesc => 'Wassertreten, mäßige Anstrengung, allgemein';
+  String get paSwimmingGeneralDesc =>
+      'Wassertreten, mäßige Anstrengung, allgemein';
 
   @override
   String get paWateraerobicsCalisthenics => 'Wassergymnastik';
 
   @override
-  String get paWateraerobicsCalisthenicsDesc => 'Wassergymnastik, Wasser-Kalorienverbrennungsgymnastik';
+  String get paWateraerobicsCalisthenicsDesc =>
+      'Wassergymnastik, Wasser-Kalorienverbrennungsgymnastik';
 
   @override
   String get paWaterPolo => 'Wasserball';
@@ -1256,7 +1304,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dailyLimitReachedTitle => 'Tageslimit erreicht';
 
   @override
-  String get upgradeForUnlimitedAccess => 'Upgrade für unbegrenzten Zugang zu allen Funktionen.';
+  String get upgradeForUnlimitedAccess =>
+      'Upgrade für unbegrenzten Zugang zu allen Funktionen.';
 
   @override
   String get maybeLater => 'Vielleicht später';
@@ -1270,7 +1319,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get upgradeToPremium => 'Auf Premium upgraden';
 
   @override
-  String get purchaseError => 'Fehler beim Verarbeiten des Kaufs. Bitte versuchen Sie es erneut.';
+  String get purchaseError =>
+      'Fehler beim Verarbeiten des Kaufs. Bitte versuchen Sie es erneut.';
 
   @override
   String get restorePurchases => 'Käufe wiederherstellen';
@@ -1282,7 +1332,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get unlockPremiumFeatures => 'Premium-Funktionen freischalten';
 
   @override
-  String get getUnlimitedAccessToAllFeatures => 'Erhalten Sie unbegrenzten Zugang zu allen Funktionen und entfernen Sie tägliche Limits.';
+  String get getUnlimitedAccessToAllFeatures =>
+      'Erhalten Sie unbegrenzten Zugang zu allen Funktionen und entfernen Sie tägliche Limits.';
 
   @override
   String get premiumFeatures => 'Premium-Funktionen';
@@ -1312,13 +1363,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get premiumActive => 'Premium aktiv';
 
   @override
-  String get subscriptionTerms => 'Das Abonnement wird über Ihre Zahlungsmethode abgerechnet. Verlängert sich automatisch, es sei denn, es wird 24 Stunden vor Ende der aktuellen Periode gekündigt. Verwalten Sie es in Ihren Kontoeinstellungen.';
+  String get subscriptionTerms =>
+      'Das Abonnement wird über Ihre Zahlungsmethode abgerechnet. Verlängert sich automatisch, es sei denn, es wird 24 Stunden vor Ende der aktuellen Periode gekündigt. Verwalten Sie es in Ihren Kontoeinstellungen.';
 
   @override
   String get remainingAnalyses => 'Verbleibende Analysen';
 
   @override
-  String get addPromptForGemini => 'Fügen Sie ein Prompt für Gemini hinzu (empfohlen)';
+  String get addPromptForGemini =>
+      'Fügen Sie ein Prompt für Gemini hinzu (empfohlen)';
 
   @override
   String get addPromptForGeminiHint => 'z. B. \"Dies ist ein Gericht mit ...\"';
@@ -1345,10 +1398,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get addDescription => 'Beschreibung hinzufügen';
 
   @override
-  String get addPromptForGeminiDescription => 'Beschreiben Sie hier Ihr Gericht';
+  String get addPromptForGeminiDescription =>
+      'Beschreiben Sie hier Ihr Gericht';
 
   @override
-  String get addPromptForGeminiHintDescription => 'z. B. \"Ich habe folgendes Gericht mit ...\"';
+  String get addPromptForGeminiHintDescription =>
+      'z. B. \"Ich habe folgendes Gericht mit ...\"';
 
   @override
   String get saveMeal => 'Speichern';
