@@ -1405,4 +1405,134 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get geminiAnalysis => 'Analysis';
+
+  @override
+  String get recipeFinderTitle => 'Recipe Finder';
+
+  @override
+  String get savedRecipesTitle => 'Saved Recipes';
+
+  @override
+  String get recipeDetailsTitle => 'Recipe Details';
+
+  @override
+  String get savedRecipesButton => 'Saved Recipes';
+
+  @override
+  String get filtersLabel => 'Filters';
+
+  @override
+  String get describeRecipeHint => 'Describe what you\'re looking for 🍳';
+
+  @override
+  String get recipeContextExample =>
+      'e.g., Quick dinner with chicken and vegetables';
+
+  @override
+  String get mealTypeLabel => 'Meal Type 🍽️';
+
+  @override
+  String get dietaryNeedsLabel => 'Dietary Needs 🍎';
+
+  @override
+  String get recipeErrorTitle => 'Oops! Something went wrong';
+
+  @override
+  String get recipeErrorMessage =>
+      'We couldn\'t fetch your recipes right now. Please check your connection and try again.';
+
+  @override
+  String get tryAgainLabel => 'Try Again';
+
+  @override
+  String get noRecipesFound => 'No recipes found';
+
+  @override
+  String get findRecipesLabel => 'Find Recipes';
+
+  @override
+  String get findMoreRecipesLabel => 'Find More Recipes';
+
+  @override
+  String get untitledRecipe => 'Untitled Recipe';
+
+  @override
+  String get saveRecipeTooltip => 'Save Recipe';
+
+  @override
+  String get unsaveRecipeTooltip => 'Unsave Recipe';
+
+  @override
+  String get ingredientsLabel => 'Ingredients';
+
+  @override
+  String get instructionsLabel => 'Instructions';
+
+  @override
+  String get servingSuggestionLabel => 'Serving Suggestion';
+
+  @override
+  String get descriptionLabel => 'Description';
+
+  @override
+  String get seeDetailsLabel => 'See Details';
+
+  @override
+  String get prepTimeLabel => 'Prep';
+
+  @override
+  String get cookTimeLabel => 'Cook';
+
+  @override
+  String andMoreIngredients(int count) {
+    return '...and $count more';
+  }
+
+  @override
+  String get mealTypeAny => 'Any';
+
+  @override
+  String get mealTypeMainCourse => 'Main Course';
+
+  @override
+  String get mealTypeSideDish => 'Side Dish';
+
+  @override
+  String get mealTypeSnack => 'Snack';
+
+  @override
+  String get mealTypeDessert => 'Dessert';
+
+  @override
+  String get mealTypeBreakfast => 'Breakfast';
+
+  @override
+  String get dietaryVegetarian => 'Vegetarian';
+
+  @override
+  String get dietaryVegan => 'Vegan';
+
+  @override
+  String get dietaryGlutenFree => 'Gluten-Free';
+
+  @override
+  String get dietaryDairyFree => 'Dairy-Free';
+
+  @override
+  String get dietaryKeto => 'Keto';
+
+  @override
+  String get dietaryLowCarb => 'Low-Carb';
+
+  @override
+  String get noSavedRecipesYet => 'No saved recipes yet';
+
+  @override
+  String get tapHeartToSave => 'Tap the heart icon on recipes you like!';
+
+  @override
+  String get deleteRecipeTooltip => 'Delete Recipe';
+
+  @override
+  String get unsaveLabel => 'Unsave';
 }

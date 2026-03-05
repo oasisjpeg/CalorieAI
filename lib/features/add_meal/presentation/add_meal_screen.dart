@@ -98,6 +98,7 @@ class _AddMealScreenState extends State<AddMealScreen>
               MealSearchBar(
                 searchStringListener: _searchStringListener,
                 onSearchSubmit: _onSearchSubmit,
+                onSearchChanged: _onSearchChanged,
                 onBarcodePressed: _onBarcodeIconPressed,
               ),
               const SizedBox(height: 16.0),
@@ -233,6 +234,13 @@ class _AddMealScreenState extends State<AddMealScreen>
     _recentMealBloc.add(const LoadRecentMealEvent(searchString: ""));
   }
 
+  void _onSearchChanged(String inputText) {
+    // Live preview search for Recently tab
+    if (_tabController.index == 2) {
+      _recentMealBloc.add(LoadRecentMealEvent(searchString: inputText));
+    }
+  }
+
   void _onSearchSubmit(String inputText) {
     switch (_tabController.index) {
       case 1:  // Products tab
@@ -240,9 +248,11 @@ class _AddMealScreenState extends State<AddMealScreen>
           _productsBloc.add(LoadProductsEvent(searchString: inputText));
         }
         break;
-      case 0:  // AI tab
       case 2:  // Recent tab
-        // AI and Recent tabs don't handle search directly
+        _recentMealBloc.add(LoadRecentMealEvent(searchString: inputText));
+        break;
+      case 0:  // AI tab
+        // AI tab doesn't handle search directly
         break;
       default:
         break;

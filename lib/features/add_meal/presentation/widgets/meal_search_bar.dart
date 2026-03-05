@@ -6,6 +6,7 @@ typedef S = AppLocalizations;
 class MealSearchBar extends StatelessWidget {
   final ValueNotifier<String> searchStringListener;
   final Function(String) onSearchSubmit;
+  final Function(String)? onSearchChanged;
   final Function() onBarcodePressed;
 
   final _searchTextController = TextEditingController();
@@ -14,6 +15,7 @@ class MealSearchBar extends StatelessWidget {
       {super.key,
       required this.searchStringListener,
       required this.onSearchSubmit,
+      this.onSearchChanged,
       required this.onBarcodePressed});
 
   @override
@@ -27,6 +29,7 @@ class MealSearchBar extends StatelessWidget {
               textInputAction: TextInputAction.search,
               onChanged: (input) {
                 searchStringListener.value = input;
+                onSearchChanged?.call(input);
               },
               onSubmitted: onSearchSubmit,
               decoration: InputDecoration(

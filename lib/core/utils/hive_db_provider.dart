@@ -10,6 +10,7 @@ import 'package:calorieai/core/data/dbo/intake_type_dbo.dart';
 import 'package:calorieai/core/data/dbo/physical_activity_dbo.dart';
 import 'package:calorieai/core/data/dbo/meal_dbo.dart';
 import 'package:calorieai/core/data/dbo/meal_nutriments_dbo.dart';
+import 'package:calorieai/core/data/dbo/saved_recipe_dbo.dart';
 import 'package:calorieai/core/data/dbo/tracked_day_dbo.dart';
 import 'package:calorieai/core/data/dbo/user_dbo.dart';
 import 'package:calorieai/core/data/dbo/user_gender_dbo.dart';
@@ -47,6 +48,7 @@ class HiveDBProvider extends ChangeNotifier {
     Hive.registerAdapter(PhysicalActivityDBOAdapter());
     Hive.registerAdapter(PhysicalActivityTypeDBOAdapter());
     Hive.registerAdapter(AppThemeDBOAdapter());
+    Hive.registerAdapter(SavedRecipeDBOAdapter());
 
     configBox =
         await Hive.openBox(configBoxName, encryptionCipher: encryptionCypher);

@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/core/data/datasource/local/saved_recipe_local_data_source.dart';
 import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_event.dart';
 import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_state.dart';
+import 'package:calorieai/features/recipe_chatbot/presentation/saved_recipes_screen.dart';
 import 'package:calorieai/core/services/gemini_service.dart';
 import 'package:calorieai/core/domain/usecase/get_macro_goal_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_intake_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_kcal_goal_usecase.dart';
+import 'package:calorieai/l10n/app_localizations.dart';
+
+typedef S = AppLocalizations;
 
 class RecipeChatbotScreen extends StatefulWidget {
   const RecipeChatbotScreen({super.key});
@@ -41,7 +46,9 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
       _getKcalGoalUsecase,
       _getMacroGoalUsecase,
       _getIntakeUseCase,
+      locator<SavedRecipeLocalDataSource>(),
     );
+    _bloc.add(LoadSavedRecipes());
   }
 
   @override
@@ -71,7 +78,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
               final recipe = state.selectedRecipe;
               return Scaffold(
                 appBar: AppBar(
-                  title: const Text('Recipe Details'),
+                  title: Text(S.of(context).recipeDetailsTitle),
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
@@ -213,7 +220,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                       Text("🕓", style: Theme.of(context).textTheme.bodyMedium),
                                       const SizedBox(width: 4),
                                       Text(
-                                        "Prep: ${recipe?['prep_time']} min",
+                                        "${S.of(context).prepTimeLabel}: ${recipe?['prep_time']} min",
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium,
@@ -227,7 +234,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                       Text("🍳", style: Theme.of(context).textTheme.bodyMedium),
                                       const SizedBox(width: 4),
                                       Text(
-                                        "Cook: ${recipe?['cook_time']} min",
+                                        "${S.of(context).cookTimeLabel}: ${recipe?['cook_time']} min",
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium,
@@ -245,7 +252,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                   Text("🍃", style: Theme.of(context).textTheme.bodyMedium),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Ingredients',
+                                    S.of(context).ingredientsLabel,
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium
@@ -274,7 +281,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                   Text("📜", style: Theme.of(context).textTheme.bodyMedium),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Instructions',
+                                    S.of(context).instructionsLabel,
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium
@@ -304,7 +311,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                                     Text("🍽️", style: Theme.of(context).textTheme.bodyMedium),
                                     const SizedBox(width: 8),
                                     Text(
-                                      'Serving Suggestion',
+                                      S.of(context).servingSuggestionLabel,
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium
@@ -341,17 +348,26 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Recipe Finder',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      // Saved Recipes Button
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SavedRecipesScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.favorite, color: Colors.red),
+                        label: Text(S.of(context).savedRecipesButton),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.primary,
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 8),
                       Card(
                         child: ExpansionTile(
-                          title: const Text('Filters'),
+                          title: Text(S.of(context).filtersLabel),
                           key: GlobalKey(),
                           tilePadding: const EdgeInsets.symmetric(horizontal: 16),
                           shape: const RoundedRectangleBorder(
@@ -383,7 +399,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                   _bloc.add(FetchRecipes(_filters));
                 },
                 icon: const Icon(Icons.search),
-                label: const Text('Find Recipes'),
+                label: Text(S.of(context).findRecipesLabel),
               ),
             );
           },
@@ -401,14 +417,14 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Describe what you\'re looking for 🍳',
+                S.of(context).describeRecipeHint,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: _contextController,
                 decoration: InputDecoration(
-                  hintText: 'e.g., Quick dinner with chicken and vegetables',
+                  hintText: S.of(context).recipeContextExample,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
@@ -435,7 +451,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
         // Recipe Type
         _buildSingleSelectFilter(
           context,
-          'Meal Type 🍽️',
+          S.of(context).mealTypeLabel,
           ['Any', 'Main Course', 'Side Dish', 'Snack', 'Dessert', 'Breakfast'],
           _filters['RECIPE_TYPE'],
           (value) => setState(() => _filters['RECIPE_TYPE'] = value),
@@ -443,7 +459,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
         
         // Dietary Restrictions
         _buildMultiSelectFilter(
-          'Dietary Needs 🍎',
+          S.of(context).dietaryNeedsLabel,
           [
             'Vegetarian',
             'Vegan',
@@ -535,7 +551,7 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
 
 
   Widget _buildRecipeList(RecipeChatbotState state) {
-    if (state is RecipeChatbotLoading) {
+    if (state is RecipeChatbotLoading && !state.isLoadingMore) {
       return const Center(child: CircularProgressIndicator());
     } else if (state is RecipeChatbotError) {
       return Center(
@@ -547,13 +563,13 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
               Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
               const SizedBox(height: 16),
               Text(
-                'Oops! Something went wrong',
+                S.of(context).recipeErrorTitle,
                 style: Theme.of(context).textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                'We couldn\'t fetch your recipes right now. Please check your connection and try again.',
+                S.of(context).recipeErrorMessage,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
@@ -563,251 +579,360 @@ class _RecipeChatbotScreenState extends State<RecipeChatbotScreen> {
                   _bloc.add(FetchRecipes(_filters));
                 },
                 icon: const Icon(Icons.refresh),
-                label: const Text('Try Again'),
+                label: Text(S.of(context).tryAgainLabel),
               ),
             ],
           ),
         ),
       );
-    } else if (state is RecipeChatbotSuccess) {
-      if (state.recipes.isEmpty) {
-        return const Center(child: Text('No recipes found'));
+    } else if (state is RecipeChatbotSuccess || (state is RecipeChatbotLoading && state.isLoadingMore)) {
+      final recipes = state is RecipeChatbotSuccess ? state.recipes : (state as RecipeChatbotLoading).existingRecipes ?? [];
+      final isLoadingMore = state is RecipeChatbotLoading && state.isLoadingMore;
+      final savedIds = state is RecipeChatbotSuccess ? state.savedRecipeIds : <String>{};
+      
+      if (recipes.isEmpty && !isLoadingMore) {
+        return Center(child: Text(S.of(context).noRecipesFound));
       }
+      
       final theme = Theme.of(context);
       final isDark = theme.brightness == Brightness.dark;
 
-      return ListView.builder(
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: state.recipes.length,
-        itemBuilder: (context, idx) {
-          final recipe = state.recipes[idx];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Card(
-                  elevation: 8,
-                  color: Theme.of(context).colorScheme.onPrimary.withAlpha(150),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24)),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(24),
-                    onTap: () {
-                      context
-                          .read<RecipeChatbotBloc>()
-                          .add(RecipeSelected(recipe));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Recipe Image (placeholder if not available)
-                          // ClipRRect(
-                          //   borderRadius: BorderRadius.circular(16),
-                          //   child: recipe['imageUrl'] != null
-                          //       ? Image.network(
-                          //           recipe['imageUrl'],
-                          //           height: 180,
-                          //           width: double.infinity,
-                          //           fit: BoxFit.cover,
-                          //         )
-                          //       : Container(
-                          //           height: 180,
-                          //           width: double.infinity,
-                          //           color: isDark
-                          //               ? Colors.grey[900]
-                          //               : Colors.grey[200],
-                          //           child: Icon(Icons.restaurant_menu,
-                          //               size: 64,
-                          //               color: isDark
-                          //                   ? Colors.grey[700]
-                          //                   : Colors.grey),
-                          //         ),
-                          // ),
-                          const SizedBox(height: 16),
-                          Text(
-                            recipe['name'],
-                            style: theme.textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "${recipe['calories'] ?? 0} kcal",
-                            style: theme.textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 10),
-                          // Nutrition Row
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _nutritionChip(
-                                  context,
-                                  "💪",
-                                  "Protein",
-                                  "${recipe['protein'] ?? 0}",
-                                  isDark
-                                      ? Colors.green[900]!
-                                      : Colors.green[100]!,
-                                  isDark
-                                      ? Colors.green[200]!
-                                      : Colors.green[700]!,
-                                ),
-                                const SizedBox(width: 8),
-                                _nutritionChip(
-                                  context,
-                                  "🌾",
-                                  "Carbs",
-                                  "${recipe['carbs'] ?? 0}",
-                                  isDark
-                                      ? Colors.blue[900]!
-                                      : Colors.blue[100]!,
-                                  isDark
-                                      ? Colors.blue[200]!
-                                      : Colors.blue[700]!,
-                                ),
-                                const SizedBox(width: 8),
-                                _nutritionChip(
-                                  context,
-                                  "🥑",
-                                  "Fat",
-                                  "${recipe['fat'] ?? 0}",
-                                  isDark
-                                      ? Colors.orange[900]!
-                                      : Colors.orange[100]!,
-                                  isDark
-                                      ? Colors.orange[200]!
-                                      : Colors.orange[700]!,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Prep/Cook time
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("🔥", style: theme.textTheme.bodyMedium),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    "Prep: ${recipe['prep_time']} min",
-                                    style: theme.textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("🍳", style: theme.textTheme.bodyMedium),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    "Cook: ${recipe['cook_time']} min",
-                                    style: theme.textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 12),
-                          // Ingredients preview
-                          if (recipe['ingredients'] != null)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 10),
-                                Text(
-                                  "Ingredients",
-                                  style: theme.textTheme.titleMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 4),
-                                ...List.generate(
-                                  (recipe['ingredients'] as List).length > 3
-                                      ? 3
-                                      : (recipe['ingredients'] as List).length,
-                                  (i) {
-                                    final ing = recipe['ingredients'][i];
-                                    return Text(
-                                      "- ${ing['quantity']} ${ing['unit']} ${ing['name']}",
-                                      style: theme.textTheme.bodyMedium,
-                                    );
-                                  },
-                                ),
-                                if ((recipe['ingredients'] as List).length > 3)
-                                  Text("...and more",
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(color: theme.hintColor)),
-                              ],
-                            ),
-                          const SizedBox(height: 10),
-                          // "See Details" button
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: theme.colorScheme.onSecondary,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 12),
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<RecipeChatbotBloc>()
-                                  .add(RecipeSelected(recipe));
-                            },
-                            icon: const Icon(Icons.arrow_forward),
-                            label: const Text("See Full Recipe"),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+      return Column(
+        children: [
+          // Recipe Grid
+          GridView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 400,
+              childAspectRatio: 1.0,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: recipes.length,
+            itemBuilder: (context, idx) {
+              final recipe = recipes[idx];
+              final recipeId = recipe['id'] ?? recipe['name'];
+              final isSaved = savedIds.contains(recipeId);
+              
+              return _buildRecipeCard(
+                recipe: recipe,
+                isSaved: isSaved,
+                isDark: isDark,
+                theme: theme,
+                onSaveToggle: () {
+                  context.read<RecipeChatbotBloc>().add(ToggleSaveRecipe(recipe));
+                },
+                onTap: () {
+                  context.read<RecipeChatbotBloc>().add(RecipeSelected(recipe));
+                },
+              );
+            },
+          ),
+          
+          // Skeleton loading cards when loading more
+          if (isLoadingMore)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: GridView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 400,
+                  childAspectRatio: 1.0,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
                 ),
+                itemCount: 3,
+                itemBuilder: (context, idx) => _buildSkeletonCard(isDark),
               ),
             ),
-          );
-        },
+          
+          const SizedBox(height: 24),
+          
+          // Find More Recipes button
+          if (!isLoadingMore)
+            ElevatedButton.icon(
+              onPressed: () {
+                _bloc.add(const FetchMoreRecipes());
+              },
+              icon: const Icon(Icons.add),
+              label: Text(S.of(context).findMoreRecipesLabel),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+            ),
+
+          
+          const SizedBox(height: 100),
+        ],
       );
     }
     return const SizedBox.shrink();
   }
 
-  Widget _nutritionDetailsChip(
-    BuildContext context,
-    IconData icon,
-    String label,
-    String value,
-    Color bgColor,
-    Color iconColor,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isDark ? bgColor.withOpacity(0.3) : bgColor,
-        borderRadius: BorderRadius.circular(16),
+  Widget _buildRecipeCard({
+    required Map<String, dynamic> recipe,
+    required bool isSaved,
+    required bool isDark,
+    required ThemeData theme,
+    required VoidCallback onSaveToggle,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 8,
+      color: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header with save button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      recipe['name'] ?? S.of(context).untitledRecipe,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: onSaveToggle,
+                    icon: Icon(
+                      isSaved ? Icons.favorite : Icons.favorite_border,
+                      color: isSaved ? Colors.red : theme.iconTheme.color,
+                    ),
+                    tooltip: isSaved ? S.of(context).unsaveRecipeTooltip : S.of(context).saveRecipeTooltip,
+                  ),
+                ],
+              ),
+            ),
+            
+            // Calories
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "${recipe['calories'] ?? 0} kcal",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Nutrition chips
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: [
+                  _nutritionChip(
+                    context,
+                    "💪",
+                    S.of(context).proteinLabel,
+                    "${recipe['protein'] ?? 0}",
+                    isDark ? Colors.green[900]! : Colors.green[100]!,
+                    isDark ? Colors.green[200]! : Colors.green[700]!,
+                  ),
+                  _nutritionChip(
+                    context,
+                    "🌾",
+                    S.of(context).carbsLabel,
+                    "${recipe['carbs'] ?? 0}",
+                    isDark ? Colors.blue[900]! : Colors.blue[100]!,
+                    isDark ? Colors.blue[200]! : Colors.blue[700]!,
+                  ),
+                  _nutritionChip(
+                    context,
+                    "🥑",
+                    S.of(context).fatLabel,
+                    "${recipe['fat'] ?? 0}",
+                    isDark ? Colors.orange[900]! : Colors.orange[100]!,
+                    isDark ? Colors.orange[200]! : Colors.orange[700]!,
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Time info
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.schedule, size: 16, color: theme.hintColor),
+                  const SizedBox(width: 4),
+                  Text(
+                    "${recipe['prep_time'] ?? 0}m prep · ${recipe['cook_time'] ?? 0}m cook",
+                    style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Ingredients preview
+            if (recipe['ingredients'] != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).ingredientsLabel,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.hintColor,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    ...List.generate(
+                      (recipe['ingredients'] as List).length > 2
+                          ? 2
+                          : (recipe['ingredients'] as List).length,
+                      (i) {
+                        final ing = recipe['ingredients'][i];
+                        return Text(
+                          "• ${ing['quantity']} ${ing['unit']} ${ing['name']}",
+                          style: theme.textTheme.bodySmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      },
+                    ),
+                    if ((recipe['ingredients'] as List).length > 2)
+                      Text(
+                        S.of(context).andMoreIngredients((recipe['ingredients'] as List).length - 2),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.hintColor,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            
+            const SizedBox(height: 12),
+            
+            // See Details button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: ElevatedButton.icon(
+                onPressed: onTap,
+                icon: const Icon(Icons.arrow_forward, size: 18),
+                label: Text(S.of(context).seeDetailsLabel),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Row(
-        children: [
-          Icon(icon, color: iconColor, size: 18),
-          const SizedBox(width: 4),
-          Text(
-            value,
-            style: TextStyle(fontWeight: FontWeight.bold, color: iconColor),
-          ),
-        ],
+    );
+  }
+
+  Widget _buildSkeletonCard(bool isDark) {
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    
+    return Card(
+      elevation: 8,
+      color: isDark ? Colors.grey[900] : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title skeleton
+            Container(
+              height: 24,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: baseColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Subtitle skeleton
+            Container(
+              height: 16,
+              width: 100,
+              decoration: BoxDecoration(
+                color: baseColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Chips skeleton
+            Row(
+              children: [
+                for (int i = 0; i < 3; i++) ...[
+                  Container(
+                    height: 32,
+                    width: 70,
+                    decoration: BoxDecoration(
+                      color: baseColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  if (i < 2) const SizedBox(width: 8),
+                ],
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Time skeleton
+            Container(
+              height: 14,
+              width: 120,
+              decoration: BoxDecoration(
+                color: baseColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const Spacer(),
+            // Ingredients skeleton
+            for (int i = 0; i < 3; i++) ...[
+              const SizedBox(height: 4),
+              Container(
+                height: 12,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: baseColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            // Button skeleton
+            Container(
+              height: 40,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: baseColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

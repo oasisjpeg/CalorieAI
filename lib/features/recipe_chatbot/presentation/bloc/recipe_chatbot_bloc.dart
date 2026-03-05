@@ -2,29 +2,42 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:calorieai/core/data/datasource/local/saved_recipe_local_data_source.dart';
+import 'package:calorieai/core/data/dbo/saved_recipe_dbo.dart';
 import 'package:calorieai/core/services/gemini_service.dart';
 import 'package:calorieai/core/domain/usecase/get_macro_goal_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_intake_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_kcal_goal_usecase.dart';
 import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_event.dart';
 import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_state.dart';
+import 'package:uuid/uuid.dart';
 
 class RecipeChatbotBloc extends Bloc<RecipeChatbotEvent, RecipeChatbotState> {
   final GeminiService _geminiService;
   final GetKcalGoalUsecase _getKcalGoalUsecase;
   final GetMacroGoalUsecase _getMacroGoalUsecase;
   final GetIntakeUsecase _getIntakeUseCase;
+  final SavedRecipeLocalDataSource _savedRecipeDataSource;
   final log = Logger('RecipeChatbotBloc');
+  final _uuid = const Uuid();
+
+  // Conversation history to maintain context between requests
+  final List<Map<String, dynamic>> _conversationHistory = [];
 
   RecipeChatbotBloc(
     this._geminiService,
     this._getKcalGoalUsecase,
     this._getMacroGoalUsecase,
     this._getIntakeUseCase,
+    this._savedRecipeDataSource,
   ) : super(RecipeChatbotInitial()) {
     on<FetchRecipes>(_onFetchRecipes);
+    on<FetchMoreRecipes>(_onFetchMoreRecipes);
     on<RecipeSelected>(_onRecipeSelected);
     on<RecipeUnselected>(_onRecipeUnselected);
+    on<ToggleSaveRecipe>(_onToggleSaveRecipe);
+    on<LoadSavedRecipes>(_onLoadSavedRecipes);
+    on<ClearConversation>(_onClearConversation);
   }
 
   void _onRecipeSelected(
@@ -240,5 +253,148 @@ Only main courses should use the full available calorie and macro targets.
       log.severe('Error parsing recipes: $e');
       throw FormatException('Could not parse recipe response: ${e.toString()}');
     }
+  }
+
+  Future<void> _onFetchMoreRecipes(
+    FetchMoreRecipes event,
+    Emitter<RecipeChatbotState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! RecipeChatbotSuccess) return;
+
+    final existingRecipes = currentState.recipes;
+    emit(RecipeChatbotLoading(
+      existingRecipes: existingRecipes,
+      isLoadingMore: true,
+    ));
+
+    try {
+      // Build follow-up prompt with conversation history
+      final followUpPrompt = _buildFollowUpPrompt(existingRecipes.length);
+      
+      final response = await _geminiService.sendMessage(
+        message: followUpPrompt,
+        history: _conversationHistory,
+      );
+
+      // Update conversation history
+      _conversationHistory.add({'role': 'user', 'content': followUpPrompt});
+      _conversationHistory.add({'role': 'assistant', 'content': response});
+
+      final newRecipes = _parseRecipes(response);
+      
+      // Generate IDs for new recipes
+      final allRecipes = [...existingRecipes, ...newRecipes.map((r) => {
+        ...r,
+        'id': _uuid.v4(),
+      })];
+
+      emit(currentState.copyWith(recipes: allRecipes));
+    } catch (e, stackTrace) {
+      log.severe('Error fetching more recipes', e, stackTrace);
+      // Keep existing recipes on error
+      emit(currentState);
+    }
+  }
+
+  String _buildFollowUpPrompt(int existingCount) {
+    return """
+Generate 3 more different recipes following the same requirements as before. 
+Make sure these new recipes are completely different from the previous $existingCount recipes.
+
+IMPORTANT: Return ONLY a valid JSON object, no text before or after. Use this exact format:
+
+{
+  "recipes": [
+    {
+      "name": "Recipe Name",
+      "description": "Brief description",
+      "prep_time": 10,
+      "cook_time": 15,
+      "calories": 350,
+      "protein": 30,
+      "carbs": 20,
+      "fat": 15,
+      "ingredients": [
+        {"name": "Ingredient 1", "quantity": 100, "unit": "g"}
+      ],
+      "instructions": ["Step 1", "Step 2"],
+      "serving_suggestion": "Serve with..."
+    }
+  ]
+}
+""";
+  }
+
+  Future<void> _onToggleSaveRecipe(
+    ToggleSaveRecipe event,
+    Emitter<RecipeChatbotState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! RecipeChatbotSuccess) return;
+
+    final recipe = event.recipe;
+    final recipeId = recipe['id'] ?? recipe['name'];
+    final isCurrentlySaved = currentState.savedRecipeIds.contains(recipeId);
+
+    try {
+      if (isCurrentlySaved) {
+        await _savedRecipeDataSource.deleteSavedRecipe(recipeId);
+      } else {
+        final savedRecipe = SavedRecipeDBO(
+          id: recipeId,
+          title: recipe['name'] ?? '',
+          description: recipe['description'] ?? '',
+          prepTime: recipe['prep_time'] ?? 0,
+          cookTime: recipe['cook_time'] ?? 0,
+          calories: recipe['calories'] ?? 0,
+          protein: recipe['protein'] ?? 0,
+          carbs: recipe['carbs'] ?? 0,
+          fat: recipe['fat'] ?? 0,
+          ingredients: List<Map<String, dynamic>>.from(recipe['ingredients'] ?? []),
+          instructions: List<String>.from(recipe['instructions'] ?? []),
+          servingSuggestion: recipe['serving_suggestion'] ?? '',
+          savedAt: DateTime.now(),
+        );
+        await _savedRecipeDataSource.saveRecipe(savedRecipe);
+      }
+
+      // Update saved IDs in state
+      final updatedSavedIds = Set<String>.from(currentState.savedRecipeIds);
+      if (isCurrentlySaved) {
+        updatedSavedIds.remove(recipeId);
+      } else {
+        updatedSavedIds.add(recipeId);
+      }
+
+      emit(currentState.copyWith(savedRecipeIds: updatedSavedIds));
+    } catch (e) {
+      log.severe('Error toggling save recipe', e);
+    }
+  }
+
+  Future<void> _onLoadSavedRecipes(
+    LoadSavedRecipes event,
+    Emitter<RecipeChatbotState> emit,
+  ) async {
+    try {
+      final savedRecipes = await _savedRecipeDataSource.getAllSavedRecipes();
+      final savedIds = savedRecipes.map((r) => r.id).toSet();
+      
+      final currentState = state;
+      if (currentState is RecipeChatbotSuccess) {
+        emit(currentState.copyWith(savedRecipeIds: savedIds));
+      }
+    } catch (e) {
+      log.severe('Error loading saved recipes', e);
+    }
+  }
+
+  void _onClearConversation(
+    ClearConversation event,
+    Emitter<RecipeChatbotState> emit,
+  ) {
+    _conversationHistory.clear();
+    emit(RecipeChatbotInitial());
   }
 }

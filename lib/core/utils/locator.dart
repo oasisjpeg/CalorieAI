@@ -50,6 +50,7 @@ import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
 import 'package:calorieai/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
 import 'package:calorieai/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:calorieai/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:calorieai/core/data/datasource/local/saved_recipe_local_data_source.dart';
 import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_bloc.dart';
 import 'package:calorieai/features/scanner/presentation/scanner_bloc.dart';
 import 'package:calorieai/features/scanner/domain/usecase/search_product_by_barcode_usecase.dart';
@@ -96,6 +97,7 @@ Future<void> initLocator() async {
   locator.registerLazySingleton(() => CalendarDayBloc(
       locator(), locator(), locator(), locator(), locator(), locator()));
   locator.registerLazySingleton<RecipeChatbotBloc>(() => RecipeChatbotBloc(
+      locator(),
       locator(),
       locator(),
       locator(),
@@ -193,6 +195,8 @@ Future<void> initLocator() async {
   locator.registerLazySingleton<FDCDataSource>(() => FDCDataSource());
   locator.registerLazySingleton(
       () => TrackedDayDataSource(hiveDBProvider.trackedDayBox));
+  locator.registerLazySingleton<SavedRecipeLocalDataSource>(
+      () => SavedRecipeLocalDataSource());
 
   await _initializeConfig(locator());
 }

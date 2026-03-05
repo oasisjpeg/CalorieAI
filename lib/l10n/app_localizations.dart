@@ -2792,6 +2792,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Analysis'**
   String get geminiAnalysis;
+
+  /// No description provided for @recipeFinderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe Finder'**
+  String get recipeFinderTitle;
+
+  /// No description provided for @savedRecipesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Recipes'**
+  String get savedRecipesTitle;
+
+  /// No description provided for @recipeDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe Details'**
+  String get recipeDetailsTitle;
+
+  /// No description provided for @savedRecipesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Recipes'**
+  String get savedRecipesButton;
+
+  /// No description provided for @filtersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filtersLabel;
+
+  /// No description provided for @describeRecipeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe what you\'re looking for 🍳'**
+  String get describeRecipeHint;
+
+  /// No description provided for @recipeContextExample.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Quick dinner with chicken and vegetables'**
+  String get recipeContextExample;
+
+  /// No description provided for @mealTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal Type 🍽️'**
+  String get mealTypeLabel;
+
+  /// No description provided for @dietaryNeedsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dietary Needs 🍎'**
+  String get dietaryNeedsLabel;
+
+  /// No description provided for @recipeErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Oops! Something went wrong'**
+  String get recipeErrorTitle;
+
+  /// No description provided for @recipeErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t fetch your recipes right now. Please check your connection and try again.'**
+  String get recipeErrorMessage;
+
+  /// No description provided for @tryAgainLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgainLabel;
+
+  /// No description provided for @noRecipesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No recipes found'**
+  String get noRecipesFound;
+
+  /// No description provided for @findRecipesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Find Recipes'**
+  String get findRecipesLabel;
+
+  /// No description provided for @findMoreRecipesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Find More Recipes'**
+  String get findMoreRecipesLabel;
+
+  /// No description provided for @untitledRecipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled Recipe'**
+  String get untitledRecipe;
+
+  /// No description provided for @saveRecipeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Recipe'**
+  String get saveRecipeTooltip;
+
+  /// No description provided for @unsaveRecipeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsave Recipe'**
+  String get unsaveRecipeTooltip;
+
+  /// No description provided for @ingredientsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredients'**
+  String get ingredientsLabel;
+
+  /// No description provided for @instructionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get instructionsLabel;
+
+  /// No description provided for @servingSuggestionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Serving Suggestion'**
+  String get servingSuggestionLabel;
+
+  /// No description provided for @descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get descriptionLabel;
+
+  /// No description provided for @seeDetailsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'See Details'**
+  String get seeDetailsLabel;
+
+  /// No description provided for @prepTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prep'**
+  String get prepTimeLabel;
+
+  /// No description provided for @cookTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cook'**
+  String get cookTimeLabel;
+
+  /// No description provided for @andMoreIngredients.
+  ///
+  /// In en, this message translates to:
+  /// **'...and {count} more'**
+  String andMoreIngredients(int count);
+
+  /// No description provided for @mealTypeAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get mealTypeAny;
+
+  /// No description provided for @mealTypeMainCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Course'**
+  String get mealTypeMainCourse;
+
+  /// No description provided for @mealTypeSideDish.
+  ///
+  /// In en, this message translates to:
+  /// **'Side Dish'**
+  String get mealTypeSideDish;
+
+  /// No description provided for @mealTypeSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Snack'**
+  String get mealTypeSnack;
+
+  /// No description provided for @mealTypeDessert.
+  ///
+  /// In en, this message translates to:
+  /// **'Dessert'**
+  String get mealTypeDessert;
+
+  /// No description provided for @mealTypeBreakfast.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast'**
+  String get mealTypeBreakfast;
+
+  /// No description provided for @dietaryVegetarian.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetarian'**
+  String get dietaryVegetarian;
+
+  /// No description provided for @dietaryVegan.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegan'**
+  String get dietaryVegan;
+
+  /// No description provided for @dietaryGlutenFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Gluten-Free'**
+  String get dietaryGlutenFree;
+
+  /// No description provided for @dietaryDairyFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Dairy-Free'**
+  String get dietaryDairyFree;
+
+  /// No description provided for @dietaryKeto.
+  ///
+  /// In en, this message translates to:
+  /// **'Keto'**
+  String get dietaryKeto;
+
+  /// No description provided for @dietaryLowCarb.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-Carb'**
+  String get dietaryLowCarb;
+
+  /// No description provided for @noSavedRecipesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved recipes yet'**
+  String get noSavedRecipesYet;
+
+  /// No description provided for @tapHeartToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart icon on recipes you like!'**
+  String get tapHeartToSave;
+
+  /// No description provided for @deleteRecipeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Recipe'**
+  String get deleteRecipeTooltip;
+
+  /// No description provided for @unsaveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsave'**
+  String get unsaveLabel;
 }
 
 class _AppLocalizationsDelegate

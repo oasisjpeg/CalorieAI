@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class GeminiService {
   final log = Logger('GeminiService');
   static const String _baseUrl = 'https://openrouter.ai/api/v1';
-  static const String _model = 'google/gemini-2.5-flash-lite';
+  static const String _model = 'google/gemini-3.1-flash-lite-preview';
   late final Map<String, String> _headers;
 
   GeminiService() {

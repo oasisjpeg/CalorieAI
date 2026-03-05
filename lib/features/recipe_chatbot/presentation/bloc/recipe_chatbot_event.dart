@@ -31,3 +31,33 @@ class RecipeUnselected extends RecipeChatbotEvent {
   @override
   List<Object?> get props => [];
 }
+
+class FetchMoreRecipes extends RecipeChatbotEvent {
+  const FetchMoreRecipes();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class ToggleSaveRecipe extends RecipeChatbotEvent {
+  final Map<String, dynamic> recipe;
+
+  const ToggleSaveRecipe(this.recipe);
+
+  @override
+  List<Object?> get props => [recipe];
+}
+
+class LoadSavedRecipes extends RecipeChatbotEvent {
+  const LoadSavedRecipes();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class ClearConversation extends RecipeChatbotEvent {
+  const ClearConversation();
+
+  @override
+  List<Object?> get props => [];
+}

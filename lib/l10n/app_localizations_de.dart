@@ -1419,4 +1419,135 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get geminiAnalysis => 'Analyse';
+
+  @override
+  String get recipeFinderTitle => 'Rezept-Finder';
+
+  @override
+  String get savedRecipesTitle => 'Gespeicherte Rezepte';
+
+  @override
+  String get recipeDetailsTitle => 'Rezeptdetails';
+
+  @override
+  String get savedRecipesButton => 'Gespeicherte Rezepte';
+
+  @override
+  String get filtersLabel => 'Filter';
+
+  @override
+  String get describeRecipeHint => 'Beschreiben Sie, wonach Sie suchen 🍳';
+
+  @override
+  String get recipeContextExample =>
+      'z.B. schnelles Abendessen mit Hähnchen und Gemüse';
+
+  @override
+  String get mealTypeLabel => 'Mahlzeitentyp 🍽️';
+
+  @override
+  String get dietaryNeedsLabel => 'Ernährungsbedürfnisse 🍎';
+
+  @override
+  String get recipeErrorTitle => 'Ups! Etwas ist schief gelaufen';
+
+  @override
+  String get recipeErrorMessage =>
+      'Wir konnten Ihre Rezepte momentan nicht abrufen. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.';
+
+  @override
+  String get tryAgainLabel => 'Erneut versuchen';
+
+  @override
+  String get noRecipesFound => 'Keine Rezepte gefunden';
+
+  @override
+  String get findRecipesLabel => 'Rezepte finden';
+
+  @override
+  String get findMoreRecipesLabel => 'Mehr Rezepte finden';
+
+  @override
+  String get untitledRecipe => 'Unbenanntes Rezept';
+
+  @override
+  String get saveRecipeTooltip => 'Rezept speichern';
+
+  @override
+  String get unsaveRecipeTooltip => 'Rezept entfernen';
+
+  @override
+  String get ingredientsLabel => 'Zutaten';
+
+  @override
+  String get instructionsLabel => 'Zubereitung';
+
+  @override
+  String get servingSuggestionLabel => 'Serviervorschlag';
+
+  @override
+  String get descriptionLabel => 'Beschreibung';
+
+  @override
+  String get seeDetailsLabel => 'Details ansehen';
+
+  @override
+  String get prepTimeLabel => 'Vorbereitung';
+
+  @override
+  String get cookTimeLabel => 'Kochen';
+
+  @override
+  String andMoreIngredients(int count) {
+    return '...und $count weitere';
+  }
+
+  @override
+  String get mealTypeAny => 'Beliebig';
+
+  @override
+  String get mealTypeMainCourse => 'Hauptgericht';
+
+  @override
+  String get mealTypeSideDish => 'Beilage';
+
+  @override
+  String get mealTypeSnack => 'Snack';
+
+  @override
+  String get mealTypeDessert => 'Dessert';
+
+  @override
+  String get mealTypeBreakfast => 'Frühstück';
+
+  @override
+  String get dietaryVegetarian => 'Vegetarisch';
+
+  @override
+  String get dietaryVegan => 'Vegan';
+
+  @override
+  String get dietaryGlutenFree => 'Glutenfrei';
+
+  @override
+  String get dietaryDairyFree => 'Laktosefrei';
+
+  @override
+  String get dietaryKeto => 'Keto';
+
+  @override
+  String get dietaryLowCarb => 'Low-Carb';
+
+  @override
+  String get noSavedRecipesYet => 'Noch keine gespeicherten Rezepte';
+
+  @override
+  String get tapHeartToSave =>
+      'Tippen Sie auf das Herz-Symbol bei Rezepten, die Ihnen gefallen!';
+
+  @override
+  String get deleteRecipeTooltip => 'Rezept löschen';
+
+  @override
+  String get unsaveLabel => 'Entfernen';
 }

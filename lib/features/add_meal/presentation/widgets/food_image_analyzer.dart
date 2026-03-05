@@ -17,6 +17,7 @@ import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
 // Removed unused imports
 import 'package:calorieai/features/add_meal/domain/entity/meal_nutriments_entity.dart';
 import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
+import 'package:calorieai/core/presentation/widgets/food_analysis_loading_dialog.dart';
 import 'package:calorieai/features/add_meal/presentation/widgets/food_items_adjustable_list.dart';
 import 'package:calorieai/features/iap/presentation/bloc/iap_bloc.dart';
 import 'package:calorieai/features/iap/presentation/bloc/iap_event.dart';
@@ -46,7 +47,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   final FocusNode _promptFocusNode = FocusNode();
 
   File? _imageFile;
-  bool _isAnalyzing = false;
   bool _isAnalyzingDescription = false;
   String _analysisResult = '';
   Map<String, dynamic>? _foodData;
@@ -110,7 +110,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
         setState(() {
           _imageFile = File(pickedFile.path);
           _analysisResult = '';
-          _isAnalyzing = false;
           _hasPrompt = false;
           _promptController.clear();
         });
@@ -126,92 +125,116 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   Future<void> _analyzeImage() async {
     if (_imageFile == null) return;
 
-    setState(() {
-      _isAnalyzing = true;
-      _analysisResult = '';
-      _foodData = null;
-    });
-
     // Check if user has premium access or remaining analyses
     final iapBloc = context.read<IAPBloc>();
     final iapState = iapBloc.state;
 
     if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
-      // Show upgrade dialog
       if (mounted) {
         _showUpgradeDialog(context);
       }
-      setState(() => _isAnalyzing = false);
       return;
     }
 
-    try {
-      // Record the analysis usage
+    setState(() {
+      _analysisResult = '';
+      _foodData = null;
+    });
 
-
-      final imageUrl = await _uploadImageToImgbb(_imageFile!);
-      if (imageUrl == null) {
-        if (mounted) {
-          setState(() {
-            _isAnalyzing = false;
-            _analysisResult = 'Failed to upload image';
-          });
-        }
-        return;
-      }
-
-      // Include the prompt in the Gemini analysis
-      final prompt = _promptController.text.trim();
-      final jsonResponse = await _geminiService.analyzeFoodImage(
-        imageBytes: await _imageFile!.readAsBytes(),
-        context: context,
-        prompt: prompt.isNotEmpty ? prompt : null,
-      );
-
-      try {
-        // Clean up the response if it contains markdown code blocks
-        String cleanedResponse = jsonResponse;
-        if (jsonResponse.contains('```json')) {
-          cleanedResponse = jsonResponse
-              .replaceAll('```json', '')
-              .replaceAll('```', '')
-              .trim();
-        }
-
-        // Try to parse the JSON response
-        final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
-
-        if (mounted) {
-          setState(() {
-            _foodData = parsedData;
-            _analysisResult = 'Successfully analyzed food image';
-            // Show remaining uses if not premium
-            if (!iapState.hasPremiumAccess) {
-              final remaining = iapState.remainingDailyAnalyses - 1;
-              if (remaining >= 0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content:
-                        Text('${S.of(context).remainingAnalyses}: $remaining'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              }
-            }
-          });
-        }
-        _isAnalyzing = false;
-
-        // Do not navigate here! Instead, show the adjustable ingredient list and "Save Meal" button.
-      } catch (jsonError) {
-        log.warning('Error parsing JSON response: $jsonError');
-      }
-    } catch (e) {
-      log.severe('Error analyzing image: $e');
+    // Upload image first (not part of the timed analysis)
+    final imageUrl = await _uploadImageToImgbb(_imageFile!);
+    if (imageUrl == null) {
       if (mounted) {
         setState(() {
-          _analysisResult = 'Error analyzing image: $e';
-          _isAnalyzing = false;
+          _analysisResult = 'Failed to upload image';
+        });
+      }
+      return;
+    }
+
+    // Prepare the analysis future with timeout
+    final prompt = _promptController.text.trim();
+    final analysisFuture = _geminiService.analyzeFoodImage(
+      imageBytes: await _imageFile!.readAsBytes(),
+      context: context,
+      prompt: prompt.isNotEmpty ? prompt : null,
+    ).timeout(
+      const Duration(seconds: 20),
+      onTimeout: () => throw TimeoutException('Analysis timed out after 20 seconds'),
+    );
+
+    // Show loading dialog and wait for result
+    final dynamic result = await context.showFoodAnalysisLoading(
+      analysisFuture: analysisFuture,
+      onTimeout: () {
+        log.warning('Analysis timed out after 20 seconds');
+      },
+    );
+
+    // Handle timeout or error
+    if (result is TimeoutException) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Analysis took too long. Please try again.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (result is Exception || result is Error) {
+      if (mounted) {
+        setState(() {
+          _analysisResult = 'Error analyzing image: $result';
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $result'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Process successful result
+    try {
+      String cleanedResponse = result as String;
+      if (cleanedResponse.contains('```json')) {
+        cleanedResponse = cleanedResponse
+            .replaceAll('```json', '')
+            .replaceAll('```', '')
+            .trim();
+      }
+
+      final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
+
+      if (mounted) {
+        setState(() {
+          _foodData = parsedData;
+          _analysisResult = 'Successfully analyzed food image';
+          // Show remaining uses if not premium
+          if (!iapState.hasPremiumAccess) {
+            final remaining = iapState.remainingDailyAnalyses - 1;
+            if (remaining >= 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text('${S.of(context).remainingAnalyses}: $remaining'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          }
+        });
+      }
+    } catch (jsonError) {
+      log.warning('Error parsing JSON response: $jsonError');
+      if (mounted) {
+        setState(() {
+          _analysisResult = 'Error parsing response: $jsonError';
         });
       }
     }
@@ -220,138 +243,99 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
   Future<void> _analyzeFoodDescription() async {
     if (!_hasPrompt) return;
 
-    setState(() {
-      _isAnalyzing = true;
-      _isAnalyzingDescription = true;
-      _analysisResult = '';
-      _foodData = null;
-    });
-
     // Check if user has premium access or remaining analyses
     final iapBloc = context.read<IAPBloc>();
     final iapState = iapBloc.state;
 
     if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
       if (mounted) {
-        setState(() {
-          _isAnalyzing = false;
-          _isAnalyzingDescription = false;
-        });
         _showUpgradeDialog(context);
       }
       return;
     }
 
-    try {
-      // Add timeout to the Gemini API call
-      final dynamic jsonResponse = await _geminiService.analyzeFoodDescription(
-        context: context,
-        prompt: _promptController.text,
-      ).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () => throw TimeoutException('The request timed out. Please try again.'),
-      );
- String cleanedResponse = jsonResponse;
-        if (jsonResponse.contains('```json')) {
-          cleanedResponse = jsonResponse
-              .replaceAll('```json', '')
-              .replaceAll('```', '')
-              .trim();
-        }
+    setState(() {
+      _isAnalyzingDescription = true;
+      _analysisResult = '';
+      _foodData = null;
+    });
 
-        // Try to parse the JSON response
-        final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
+    // Prepare the analysis future with timeout
+    final analysisFuture = _geminiService.analyzeFoodDescription(
+      context: context,
+      prompt: _promptController.text.trim(),
+    ).timeout(
+      const Duration(seconds: 20),
+      onTimeout: () => throw TimeoutException('Analysis timed out after 20 seconds'),
+    );
 
-        if (mounted) {
-          setState(() {
-            _foodData = parsedData;
-            _analysisResult = 'Successfully analyzed food image';
-            _isAnalyzingDescription = false;
-            // Show remaining uses if not premium
-          });
-        }
-        _isAnalyzing = false;
-    } on TimeoutException catch (e) {
-      log.warning('Request timed out: $e');
+    // Show loading dialog and wait for result
+    final dynamic result = await context.showFoodAnalysisLoading(
+      analysisFuture: analysisFuture,
+      onTimeout: () {
+        log.warning('Description analysis timed out after 20 seconds');
+      },
+    );
+
+    setState(() {
+      _isAnalyzingDescription = false;
+    });
+
+    // Handle timeout or error
+    if (result is TimeoutException) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('The request timed out. Please try again.'),
+            content: Text('Analysis took too long. Please try again.'),
             backgroundColor: Colors.orange,
           ),
         );
       }
-    } catch (e) {
-      log.severe('Error analyzing food description: $e');
+      return;
+    }
+
+    if (result is Exception || result is Error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error analyzing food: ${e.toString()}'),
+            content: Text('Error: $result'),
             backgroundColor: Colors.red,
           ),
         );
       }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isAnalyzing = false;
-          _isAnalyzingDescription = false;
-        });
-      }
-    }
-
-    if (!iapState.hasPremiumAccess && iapState.remainingDailyAnalyses <= 0) {
-      if (mounted) {
-        _showUpgradeDialog(context);
-        setState(() => _isAnalyzing = false);
-      }
       return;
     }
 
+    // Process successful result
     try {
-      // Record the analysis usage
-
-      // Include the prompt in the Gemini analysis
-      final prompt = _promptController.text.trim();
-      final jsonResponse = await _geminiService.analyzeFoodDescription(
-        context: context,
-        prompt: prompt,
-      );
-
-      try {
-        // Clean up the response if it contains markdown code blocks
-        String cleanedResponse = jsonResponse;
-        if (jsonResponse.contains('```json')) {
-          cleanedResponse = jsonResponse
-              .replaceAll('```json', '')
-              .replaceAll('```', '')
-              .trim();
-        }
-
-        // Try to parse the JSON response
-        final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
-
-        if (mounted) {
-          setState(() {
-            _foodData = parsedData;
-            _analysisResult = 'Successfully analyzed food image';
-            _isAnalyzingDescription = false;
-            // Show remaining uses if not premium
-          });
-        }
-        _isAnalyzing = false;
-
-        // Do not navigate here! Instead, show the adjustable ingredient list and "Save Meal" button.
-      } catch (jsonError) {
-        log.warning('Error parsing JSON response: $jsonError');
+      String cleanedResponse = result as String;
+      if (cleanedResponse.contains('```json')) {
+        cleanedResponse = cleanedResponse
+            .replaceAll('```json', '')
+            .replaceAll('```', '')
+            .trim();
       }
-    } catch (e) {
-      log.severe('Error analyzing image: $e');
+
+      final parsedData = jsonDecode(cleanedResponse) as Map<String, dynamic>;
+
       if (mounted) {
         setState(() {
-          _analysisResult = 'Error analyzing image: $e';
-          _isAnalyzing = false;
+          _foodData = parsedData;
+          _analysisResult = 'Successfully analyzed food description';
         });
+      }
+    } catch (jsonError) {
+      log.warning('Error parsing JSON response: $jsonError');
+      if (mounted) {
+        setState(() {
+          _analysisResult = 'Error parsing response: $jsonError';
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error parsing result: $jsonError'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -545,7 +529,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
           child: Column(
             children: [
               // Show buttons if not analyzing and no image selected
-              if (!_isAnalyzing && _imageFile == null)
+              if (_imageFile == null)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -606,7 +590,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                         onSubmitted: (String value) {
                           setState(() {
                             _hasPrompt = value.trim().isNotEmpty;
-                            _isAnalyzing = true;
                           });
                           _analyzeImage();
                           _promptFocusNode.unfocus();
@@ -624,7 +607,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                           setState(() {
                             _hasPrompt =
                                 _promptController.text.trim().isNotEmpty;
-                            _isAnalyzing = true;
                           });
                           _analyzeFoodDescription();
                         },
@@ -634,15 +616,8 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                   ),
                 ),
 
-              // Show loading indicator while analyzing
-              if (_isAnalyzing)
-                const Padding(
-                  padding: EdgeInsets.all(40.0),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-
-              // Show image and prompt if image is selected, not analyzing, and no food data yet
-              if (!_isAnalyzing && _imageFile != null && _foodData == null) ...[
+              // Show image and prompt if image is selected and no food data yet
+              if (_imageFile != null && _foodData == null) ...[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.file(
@@ -672,7 +647,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                           onSubmitted: (String value) {
                             setState(() {
                               _hasPrompt = value.trim().isNotEmpty;
-                              _isAnalyzing = true;
                             });
                             _analyzeImage();
                             _promptFocusNode.unfocus();
@@ -690,7 +664,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                             setState(() {
                               _hasPrompt =
                                   _promptController.text.trim().isNotEmpty;
-                              _isAnalyzing = true;
                             });
                             _analyzeImage();
                           },
