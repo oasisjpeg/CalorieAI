@@ -45,9 +45,8 @@ app.*.symbols
 app.*.map.json
 
 # Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+android/
+ios/   
 
 # nix related
 result
@@ -55,5 +54,3 @@ result
 
 # FVM Version Cache
 .fvm/
-/android/*
-/ios/*

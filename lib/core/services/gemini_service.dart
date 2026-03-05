@@ -1,38 +1,54 @@
 import 'dart:typed_data';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:logging/logging.dart';
 import 'package:calorieai/core/utils/env.dart';
+import 'package:http/http.dart' as http;
 
 class GeminiService {
   final log = Logger('GeminiService');
-  late final GenerativeModel _model;
+  static const String _baseUrl = 'https://openrouter.ai/api/v1';
+  static const String _model = 'google/gemini-2.5-flash-lite';
+  late final Map<String, String> _headers;
 
   GeminiService() {
-    _model = GenerativeModel(
-      model: 'gemini-2.5-flash-lite',
-      apiKey: Env.geminiApiKey,
-    );
+    _headers = {
+      'Authorization': 'Bearer ${Env.openrouterApiKey}',
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://calorieai.app',
+      'X-Title': 'CalorieAI',
+    };
   }
 
   /// Generates content based on the provided prompt
   Future<String> generate(String prompt) async {
     try {
-      log.fine('Generating content with Gemini...');
+      log.fine('Generating content via OpenRouter...');
 
-      final content = [
-        Content.text(prompt),
-      ];
+      final body = jsonEncode({
+        'model': _model,
+        'messages': [
+          {'role': 'user', 'content': prompt}
+        ],
+      });
 
-      final response = await _model.generateContent(content);
-      final responseText = response.text;
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/completions'),
+        headers: _headers,
+        body: body,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('OpenRouter API error: ${response.statusCode} - ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      final responseText = data['choices']?[0]?['message']?['content'] as String?;
 
       if (responseText == null || responseText.isEmpty) {
-        log.warning('Empty response from Gemini');
-        throw Exception('No response from Gemini');
+        log.warning('Empty response from OpenRouter');
+        throw Exception('No response from OpenRouter');
       }
 
       // Clean up the response by removing markdown formatting
@@ -64,7 +80,7 @@ class GeminiService {
     String? prompt,
   }) async {
     try {
-      log.fine('Analyzing food image with Gemini...');
+      log.fine('Analyzing food image via OpenRouter...');
 
       final locale = Localizations.localeOf(context);
       final languageText = locale.languageCode == 'de' ? "german" : "english";
@@ -129,31 +145,49 @@ Provide exact food names (brand names if recognizable). Use standard nutritional
 Give me the response of texts (except the tags) in $languageText
       ''';
 
-      final content = [
-        Content.multi([
-          TextPart(geminiPrompt),
-          TextPart(prompt ?? ''),
-          DataPart('image/jpeg', imageBytes),
-        ])
+      // Convert image to base64
+      final base64Image = base64Encode(imageBytes);
+
+      final messages = [
+        {
+          'role': 'user',
+          'content': [
+            {'type': 'text', 'text': geminiPrompt},
+            if (prompt != null && prompt.isNotEmpty)
+              {'type': 'text', 'text': prompt},
+            {
+              'type': 'image_url',
+              'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}
+            },
+          ]
+        }
       ];
 
-      final response = await _model.generateContent(content);
-      final responseText = response.text;
+      final body = jsonEncode({
+        'model': _model,
+        'messages': messages,
+      });
+
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/completions'),
+        headers: _headers,
+        body: body,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('OpenRouter API error: ${response.statusCode} - ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      final responseText = data['choices']?[0]?['message']?['content'] as String?;
 
       if (responseText == null || responseText.isEmpty) {
-        log.warning('Empty response from Gemini');
+        log.warning('Empty response from OpenRouter');
         return 'Could not identify the food in the image.';
       }
 
-      // For display purposes, we'll format the JSON response as a readable description
-      try {
-        // Keep the original JSON response for now, we'll handle parsing in the UI
-        log.fine('Successfully analyzed food image');
-        return responseText;
-      } catch (formatError) {
-        log.warning('Error formatting JSON response: $formatError');
-        return responseText; // Return the raw response if formatting fails
-      }
+      log.fine('Successfully analyzed food image');
+      return responseText;
     } catch (e, stackTrace) {
       log.severe('Error analyzing food image: $e', e, stackTrace);
       return 'Error analyzing image: $e';
@@ -165,7 +199,7 @@ Give me the response of texts (except the tags) in $languageText
     String? prompt,
   }) async {
     try {
-      log.fine('Analyzing food description with Gemini...');
+      log.fine('Analyzing food description via OpenRouter...');
 
       final locale = Localizations.localeOf(context);
       final languageText = locale.languageCode == 'de' ? "german" : "english";
@@ -229,62 +263,97 @@ Provide exact food names (brand names if recognizable). Use standard nutritional
 Give me the response of texts (except the tags) in $languageText
       ''';
 
-      final content = [
-        Content.multi([
-          TextPart(geminiPrompt),
-          TextPart(prompt ?? ''),
-        ])
-      ];
+      final body = jsonEncode({
+        'model': _model,
+        'messages': [
+          {
+            'role': 'user',
+            'content': [
+              {'type': 'text', 'text': geminiPrompt},
+              if (prompt != null && prompt.isNotEmpty)
+                {'type': 'text', 'text': prompt},
+            ]
+          }
+        ],
+      });
 
-      final response = await _model.generateContent(content);
-      final responseText = response.text;
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/completions'),
+        headers: _headers,
+        body: body,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('OpenRouter API error: ${response.statusCode} - ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      final responseText = data['choices']?[0]?['message']?['content'] as String?;
 
       if (responseText == null || responseText.isEmpty) {
-        log.warning('Empty response from Gemini');
+        log.warning('Empty response from OpenRouter');
         return 'Could not identify the food in the image.';
       }
 
-      try {
-        log.fine('Successfully analyzed food image');
-        return responseText;
-      } catch (formatError) {
-        log.warning('Error formatting JSON response: $formatError');
-        return responseText;
-      }
+      log.fine('Successfully analyzed food description');
+      return responseText;
     } catch (e, stackTrace) {
-      log.severe('Error analyzing food image: $e', e, stackTrace);
-      return 'Error analyzing image: $e';
+      log.severe('Error analyzing food description: $e', e, stackTrace);
+      return 'Error analyzing description: $e';
     }
   }
 
-  /// Sends a message to the Gemini model and returns the response
+  /// Sends a message to the model and returns the response
   Future<String> sendMessage({
     required String message,
-    List<Content>? history,
+    List<Map<String, dynamic>>? history,
   }) async {
     try {
-      log.fine('Sending message to Gemini...');
-      final chat = _model.startChat(history: history);
+      log.fine('Sending message via OpenRouter...');
 
-      final response = await chat.sendMessage(Content.multi([
-        TextPart(message),
-      ]));
+      final messages = <Map<String, dynamic>>[];
 
-      final responseText = response.text;
+      // Add history if provided
+      if (history != null) {
+        for (final content in history) {
+          messages.add({
+            'role': content['role'] ?? 'user',
+            'content': content['content'],
+          });
+        }
+      }
+
+      // Add current message
+      messages.add({
+        'role': 'user',
+        'content': message,
+      });
+
+      final body = jsonEncode({
+        'model': _model,
+        'messages': messages,
+      });
+
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/completions'),
+        headers: _headers,
+        body: body,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('OpenRouter API error: ${response.statusCode} - ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      final responseText = data['choices']?[0]?['message']?['content'] as String?;
 
       if (responseText == null || responseText.isEmpty) {
-        log.warning('Empty response from Gemini');
+        log.warning('Empty response from OpenRouter');
         return 'Could not process the message.';
       }
 
-      // For display purposes, we'll format the response as a readable description
-      try {
-        log.fine('Successfully processed message');
-        return responseText;
-      } catch (formatError) {
-        log.warning('Error formatting response: $formatError');
-        return responseText; // Return the raw response if formatting fails
-      }
+      log.fine('Successfully processed message');
+      return responseText;
     } catch (e, stackTrace) {
       log.severe('Error sending message: $e', e, stackTrace);
       return 'Error processing message: $e';

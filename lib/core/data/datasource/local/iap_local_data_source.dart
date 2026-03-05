@@ -8,18 +8,14 @@ import 'package:calorieai/core/utils/logger.dart';
 
 class IAPLocalDataSource {
   final FlutterSecureStorage _secureStorage;
-  final SecureAppStorageProvider _secureAppStorageProvider;
 
   IAPLocalDataSource({
     FlutterSecureStorage? secureStorage,
-    SecureAppStorageProvider? secureAppStorageProvider,
   })  : _secureStorage = secureStorage ??
             FlutterSecureStorage(
               aOptions: SecureAppStorageProvider.androidOptions,
               iOptions: SecureAppStorageProvider.iOSOptions,
-            ),
-        _secureAppStorageProvider =
-            secureAppStorageProvider ?? SecureAppStorageProvider();
+            );
 
   // Save purchase status
   Future<void> savePurchaseStatus(bool isSubscribed) async {

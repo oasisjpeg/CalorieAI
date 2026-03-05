@@ -32,7 +32,7 @@ class MealDBOAdapter extends TypeAdapter<MealDBO> {
       source: fields[12] as MealSourceDBO,
       foodItems: (fields[13] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
-          ?.toList(),
+          .toList(),
       nutritionGrade: fields[14] as String?,
       score: fields[15] as double?,
       scoreText: fields[16] as String?,

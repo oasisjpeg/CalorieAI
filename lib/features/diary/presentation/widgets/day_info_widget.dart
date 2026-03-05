@@ -159,6 +159,7 @@ class DayInfoWidget extends StatelessWidget {
               addMealType: AddMealType.snackType,
               intakeList: snackIntake,
               onItemLongPressedCallback: onIntakeItemLongPressed,
+              onItemTappedCallback: onIntakeItemTapped,
               usesImperialUnits: usesImperialUnits,
             ),
             const SizedBox(height: 16.0)
