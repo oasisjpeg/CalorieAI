@@ -3044,6 +3044,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unsave'**
   String get unsaveLabel;
+
+  /// No description provided for @fastingTimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting Timer'**
+  String get fastingTimerTitle;
+
+  /// No description provided for @fastingTimerEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Fasting Schedule'**
+  String get fastingTimerEmptyTitle;
+
+  /// No description provided for @fastingTimerEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your fasting schedule to start tracking your fasting and eating windows.'**
+  String get fastingTimerEmptySubtitle;
+
+  /// No description provided for @fastingTimerCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Schedule'**
+  String get fastingTimerCreateButton;
+
+  /// No description provided for @fastingTimerFastingPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'FASTING'**
+  String get fastingTimerFastingPhase;
+
+  /// No description provided for @fastingTimerEatingPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'EATING WINDOW'**
+  String get fastingTimerEatingPhase;
+
+  /// No description provided for @fastingTimerUntilEating.
+  ///
+  /// In en, this message translates to:
+  /// **'until eating window'**
+  String get fastingTimerUntilEating;
+
+  /// No description provided for @fastingTimerUntilFasting.
+  ///
+  /// In en, this message translates to:
+  /// **'until fasting'**
+  String get fastingTimerUntilFasting;
+
+  /// No description provided for @fastingTimerPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Timer Paused'**
+  String get fastingTimerPaused;
+
+  /// No description provided for @fastingTimerFastingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting Start'**
+  String get fastingTimerFastingStart;
+
+  /// No description provided for @fastingTimerFastingEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting End'**
+  String get fastingTimerFastingEnd;
+
+  /// No description provided for @fastingTimerDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h fasting window'**
+  String fastingTimerDurationLabel(int hours);
+
+  /// No description provided for @fastingTimerPauseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause Timer'**
+  String get fastingTimerPauseButton;
+
+  /// No description provided for @fastingTimerStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume Timer'**
+  String get fastingTimerStartButton;
+
+  /// No description provided for @fastingTimerEditButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Schedule'**
+  String get fastingTimerEditButton;
+
+  /// No description provided for @fastingTimerDeleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Schedule'**
+  String get fastingTimerDeleteButton;
+
+  /// No description provided for @fastingTimerNotificationFastingStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting Started'**
+  String get fastingTimerNotificationFastingStartedTitle;
+
+  /// No description provided for @fastingTimerNotificationFastingStartedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your fasting period has begun. Stay strong!'**
+  String get fastingTimerNotificationFastingStartedBody;
+
+  /// No description provided for @fastingTimerNotificationEatingStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Eating Window Open'**
+  String get fastingTimerNotificationEatingStartedTitle;
+
+  /// No description provided for @fastingTimerNotificationEatingStartedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your eating window is now open. Enjoy your meal!'**
+  String get fastingTimerNotificationEatingStartedBody;
+
+  /// No description provided for @fastingTimerCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Fasting Schedule'**
+  String get fastingTimerCreateTitle;
+
+  /// No description provided for @fastingTimerEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Fasting Schedule'**
+  String get fastingTimerEditTitle;
+
+  /// No description provided for @fastingTimerSelectStartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Fasting Start'**
+  String get fastingTimerSelectStartTime;
+
+  /// No description provided for @fastingTimerSelectEndTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Fasting End'**
+  String get fastingTimerSelectEndTime;
+
+  /// No description provided for @fastingTimerDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Schedule'**
+  String get fastingTimerDeleteTitle;
+
+  /// No description provided for @fastingTimerDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your fasting schedule? This will cancel all notifications.'**
+  String get fastingTimerDeleteConfirm;
+
+  /// No description provided for @fastingTimerMenuLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting Timer'**
+  String get fastingTimerMenuLabel;
+
+  /// No description provided for @settingsFoodTrackingNotificationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Food Tracking Reminders'**
+  String get settingsFoodTrackingNotificationsLabel;
+
+  /// No description provided for @settingsFoodTrackingNotificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminders at 8:00 AM, 12:30 PM, 6:30 PM, and 9:00 PM'**
+  String get settingsFoodTrackingNotificationsSubtitle;
 }
 
 class _AppLocalizationsDelegate

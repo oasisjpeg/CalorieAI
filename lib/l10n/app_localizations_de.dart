@@ -1550,4 +1550,99 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get unsaveLabel => 'Entfernen';
+
+  @override
+  String get fastingTimerTitle => 'Fasten-Timer';
+
+  @override
+  String get fastingTimerEmptyTitle => 'Kein Fasten-Zeitplan';
+
+  @override
+  String get fastingTimerEmptySubtitle =>
+      'Richten Sie Ihren Fasten-Zeitplan ein, um Ihre Fasten- und Essenszeiten zu verfolgen.';
+
+  @override
+  String get fastingTimerCreateButton => 'Zeitplan erstellen';
+
+  @override
+  String get fastingTimerFastingPhase => 'FASTEN';
+
+  @override
+  String get fastingTimerEatingPhase => 'ESSENSFENSTER';
+
+  @override
+  String get fastingTimerUntilEating => 'bis zum Essensfenster';
+
+  @override
+  String get fastingTimerUntilFasting => 'bis zum Fasten';
+
+  @override
+  String get fastingTimerPaused => 'Timer pausiert';
+
+  @override
+  String get fastingTimerFastingStart => 'Fasten-Beginn';
+
+  @override
+  String get fastingTimerFastingEnd => 'Fasten-Ende';
+
+  @override
+  String fastingTimerDurationLabel(int hours) {
+    return '${hours}h Fastenfenster';
+  }
+
+  @override
+  String get fastingTimerPauseButton => 'Timer pausieren';
+
+  @override
+  String get fastingTimerStartButton => 'Timer fortsetzen';
+
+  @override
+  String get fastingTimerEditButton => 'Zeitplan bearbeiten';
+
+  @override
+  String get fastingTimerDeleteButton => 'Zeitplan löschen';
+
+  @override
+  String get fastingTimerNotificationFastingStartedTitle => 'Fasten gestartet';
+
+  @override
+  String get fastingTimerNotificationFastingStartedBody =>
+      'Ihre Fastenperiode hat begonnen. Bleiben Sie stark!';
+
+  @override
+  String get fastingTimerNotificationEatingStartedTitle =>
+      'Essensfenster geöffnet';
+
+  @override
+  String get fastingTimerNotificationEatingStartedBody =>
+      'Ihr Essensfenster ist jetzt geöffnet. Guten Appetit!';
+
+  @override
+  String get fastingTimerCreateTitle => 'Fasten-Zeitplan erstellen';
+
+  @override
+  String get fastingTimerEditTitle => 'Fasten-Zeitplan bearbeiten';
+
+  @override
+  String get fastingTimerSelectStartTime => 'Fasten-Beginn auswählen';
+
+  @override
+  String get fastingTimerSelectEndTime => 'Fasten-Ende auswählen';
+
+  @override
+  String get fastingTimerDeleteTitle => 'Zeitplan löschen';
+
+  @override
+  String get fastingTimerDeleteConfirm =>
+      'Möchten Sie Ihren Fasten-Zeitplan wirklich löschen? Alle Benachrichtigungen werden abgebrochen.';
+
+  @override
+  String get fastingTimerMenuLabel => 'Fasten-Timer';
+
+  @override
+  String get settingsFoodTrackingNotificationsLabel => 'Essens-Erinnerungen';
+
+  @override
+  String get settingsFoodTrackingNotificationsSubtitle =>
+      'Tägliche Erinnerungen um 8:00, 12:30, 18:30 und 21:00 Uhr';
 }

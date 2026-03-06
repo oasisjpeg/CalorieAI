@@ -63,4 +63,12 @@ class ConfigRepository {
     _configDataSource.setConfigProteinGoalPct(protein);
     _configDataSource.setConfigFatGoalPct(fat);
   }
+
+  Future<bool> getFoodTrackingNotificationsEnabled() async {
+    return await _configDataSource.getFoodTrackingNotificationsEnabled();
+  }
+
+  Future<void> setFoodTrackingNotificationsEnabled(bool enabled) async {
+    await _configDataSource.setFoodTrackingNotificationsEnabled(enabled);
+  }
 }

@@ -20,6 +20,7 @@ class SettingsLoadedState extends SettingsState {
   final AppThemeEntity appTheme;
   final bool usesImperialUnits;
   final bool isSubscribed;
+  final bool foodTrackingNotificationsEnabled;
 
   const SettingsLoadedState(
     this.versionNumber,
@@ -27,6 +28,7 @@ class SettingsLoadedState extends SettingsState {
     this.appTheme,
     this.usesImperialUnits, {
     this.isSubscribed = false,
+    this.foodTrackingNotificationsEnabled = true,
   });
 
   SettingsLoadedState copyWith({
@@ -35,6 +37,7 @@ class SettingsLoadedState extends SettingsState {
     AppThemeEntity? appTheme,
     bool? usesImperialUnits,
     bool? isSubscribed,
+    bool? foodTrackingNotificationsEnabled,
   }) {
     return SettingsLoadedState(
       versionNumber ?? this.versionNumber,
@@ -42,10 +45,11 @@ class SettingsLoadedState extends SettingsState {
       appTheme ?? this.appTheme,
       usesImperialUnits ?? this.usesImperialUnits,
       isSubscribed: isSubscribed ?? this.isSubscribed,
+      foodTrackingNotificationsEnabled: foodTrackingNotificationsEnabled ?? this.foodTrackingNotificationsEnabled,
     );
   }
 
   @override
   List<Object?> get props =>
-      [versionNumber, sendAnonymousData, appTheme, usesImperialUnits, isSubscribed];
+      [versionNumber, sendAnonymousData, appTheme, usesImperialUnits, isSubscribed, foodTrackingNotificationsEnabled];
 }

@@ -16,6 +16,7 @@ import 'package:calorieai/core/data/dbo/user_dbo.dart';
 import 'package:calorieai/core/data/dbo/user_gender_dbo.dart';
 import 'package:calorieai/core/data/dbo/user_pal_dbo.dart';
 import 'package:calorieai/core/data/dbo/user_weight_goal_dbo.dart';
+import 'package:calorieai/features/fasting_timer/domain/entity/fasting_schedule_entity.dart';
 
 class HiveDBProvider extends ChangeNotifier {
   static const configBoxName = 'ConfigBox';
@@ -23,12 +24,14 @@ class HiveDBProvider extends ChangeNotifier {
   static const userActivityBoxName = 'UserActivityBox';
   static const userBoxName = 'UserBox';
   static const trackedDayBoxName = 'TrackedDayBox';
+  static const fastingTimerBoxName = 'FastingTimerBox';
 
   late Box<ConfigDBO> configBox;
   late Box<IntakeDBO> intakeBox;
   late Box<UserActivityDBO> userActivityBox;
   late Box<UserDBO> userBox;
   late Box<TrackedDayDBO> trackedDayBox;
+  late Box<FastingScheduleEntity> fastingTimerBox;
 
   Future<void> initHiveDB(Uint8List encryptionKey) async {
     final encryptionCypher = HiveAesCipher(encryptionKey);
@@ -49,6 +52,7 @@ class HiveDBProvider extends ChangeNotifier {
     Hive.registerAdapter(PhysicalActivityTypeDBOAdapter());
     Hive.registerAdapter(AppThemeDBOAdapter());
     Hive.registerAdapter(SavedRecipeDBOAdapter());
+    Hive.registerAdapter(FastingScheduleEntityAdapter());
 
     configBox =
         await Hive.openBox(configBoxName, encryptionCipher: encryptionCypher);
@@ -59,6 +63,8 @@ class HiveDBProvider extends ChangeNotifier {
     userBox =
         await Hive.openBox(userBoxName, encryptionCipher: encryptionCypher);
     trackedDayBox = await Hive.openBox(trackedDayBoxName,
+        encryptionCipher: encryptionCypher);
+    fastingTimerBox = await Hive.openBox(fastingTimerBoxName,
         encryptionCipher: encryptionCypher);
   }
 

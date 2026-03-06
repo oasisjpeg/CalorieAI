@@ -89,6 +89,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: Text(S.of(context).exportImportLabel),
                   onTap: () => _showExportImportDialog(context),
                 ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.notifications_outlined),
+                  title: Text(S.of(context).settingsFoodTrackingNotificationsLabel),
+                  subtitle: Text(S.of(context).settingsFoodTrackingNotificationsSubtitle),
+                  value: state.foodTrackingNotificationsEnabled,
+                  onChanged: (bool value) {
+                    _settingsBloc.add(ToggleFoodTrackingNotificationsEvent(value));
+                  },
+                ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: Text(S.of(context).settingsDisclaimerLabel),

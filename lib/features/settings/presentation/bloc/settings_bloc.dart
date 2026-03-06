@@ -9,6 +9,7 @@ import 'package:calorieai/core/domain/usecase/add_tracked_day_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_config_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_kcal_goal_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_macro_goal_usecase.dart';
+import 'package:calorieai/core/service/food_tracking_notification_service.dart';
 import 'package:calorieai/core/utils/app_const.dart';
 
 part 'settings_event.dart';
@@ -23,6 +24,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final AddTrackedDayUsecase _addTrackedDayUsecase;
   final GetKcalGoalUsecase _getKcalGoalUsecase;
   final GetMacroGoalUsecase _getMacroGoalUsecase;
+  final FoodTrackingNotificationService _foodTrackingNotificationService;
   final IAPService _iapService = IAPService();
 
   SettingsBloc(
@@ -30,7 +32,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       this._addConfigUsecase,
       this._addTrackedDayUsecase,
       this._getKcalGoalUsecase,
-      this._getMacroGoalUsecase)
+      this._getMacroGoalUsecase,
+      this._foodTrackingNotificationService)
       : super(SettingsInitial()) {
     // Initialize IAP service when the bloc is created
     _iapService.init();
@@ -41,6 +44,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       final userConfig = await _getConfigUsecase.getConfig();
       final appVersion = await AppConst.getVersionNumber();
       final usesImperialUnits = userConfig.usesImperialUnits;
+      final foodTrackingNotificationsEnabled = userConfig.foodTrackingNotificationsEnabled;
       
       // Get subscription status
       final isSubscribed = await _iapService.hasActiveSubscription();
@@ -50,7 +54,18 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           userConfig.hasAcceptedSendAnonymousData,
           userConfig.appTheme,
           usesImperialUnits,
-          isSubscribed: isSubscribed));
+          isSubscribed: isSubscribed,
+          foodTrackingNotificationsEnabled: foodTrackingNotificationsEnabled));
+    });
+
+    on<ToggleFoodTrackingNotificationsEvent>((event, emit) async {
+      if (state is SettingsLoadedState) {
+        final currentState = state as SettingsLoadedState;
+        await _addConfigUsecase.setFoodTrackingNotificationsEnabled(event.enabled);
+        // Schedule or cancel notifications based on the toggle
+        await _foodTrackingNotificationService.setNotificationsEnabled(event.enabled);
+        emit(currentState.copyWith(foodTrackingNotificationsEnabled: event.enabled));
+      }
     });
   }
 

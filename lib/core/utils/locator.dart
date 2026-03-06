@@ -46,6 +46,10 @@ import 'package:calorieai/features/add_meal/presentation/bloc/recent_meal_bloc.d
 import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
 import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:calorieai/features/edit_meal/presentation/bloc/edit_meal_bloc.dart';
+import 'package:calorieai/features/fasting_timer/core/service/fasting_notification_service.dart';
+import 'package:calorieai/features/fasting_timer/data/data_source/fasting_timer_data_source.dart';
+import 'package:calorieai/features/fasting_timer/presentation/bloc/fasting_timer_bloc.dart';
+import 'package:calorieai/core/service/food_tracking_notification_service.dart';
 import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
 import 'package:calorieai/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
 import 'package:calorieai/features/onboarding/presentation/bloc/onboarding_bloc.dart';
@@ -106,7 +110,7 @@ Future<void> initLocator() async {
   locator.registerLazySingleton<ProfileBloc>(
       () => ProfileBloc(locator(), locator(), locator(), locator(), locator()));
   locator.registerLazySingleton(() =>
-      SettingsBloc(locator(), locator(), locator(), locator(), locator()));
+      SettingsBloc(locator(), locator(), locator(), locator(), locator(), locator()));
   locator.registerFactory(() => ExportImportBloc(locator(), locator()));
 
   locator.registerFactory<ActivitiesBloc>(() => ActivitiesBloc(locator()));
@@ -123,6 +127,18 @@ Future<void> initLocator() async {
       .registerFactory<ProductsBloc>(() => ProductsBloc(locator(), locator()));
   locator.registerFactory<FoodBloc>(() => FoodBloc(locator(), locator()));
   locator.registerFactory(() => RecentMealBloc(locator(), locator()));
+
+  // Fasting Timer
+  locator.registerLazySingleton<FastingTimerBloc>(
+      () => FastingTimerBloc(locator(), locator()));
+  locator.registerLazySingleton<FastingTimerDataSource>(
+      () => FastingTimerDataSource(hiveDBProvider.fastingTimerBox));
+  locator.registerLazySingleton<FastingNotificationService>(
+      () => FastingNotificationService());
+
+  // Food Tracking Notifications
+  locator.registerLazySingleton<FoodTrackingNotificationService>(
+      () => FoodTrackingNotificationService(locator()));
 
   // UseCases
   locator.registerLazySingleton<GetConfigUsecase>(

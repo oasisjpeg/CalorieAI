@@ -504,5 +504,41 @@
   "noSavedRecipesYet": "No saved recipes yet",
   "tapHeartToSave": "Tap the heart icon on recipes you like!",
   "deleteRecipeTooltip": "Delete Recipe",
-  "unsaveLabel": "Unsave"
+  "unsaveLabel": "Unsave",
+  "fastingTimerTitle": "Fasting Timer",
+  "fastingTimerEmptyTitle": "No Fasting Schedule",
+  "fastingTimerEmptySubtitle": "Set up your fasting schedule to start tracking your fasting and eating windows.",
+  "fastingTimerCreateButton": "Create Schedule",
+  "fastingTimerFastingPhase": "FASTING",
+  "fastingTimerEatingPhase": "EATING WINDOW",
+  "fastingTimerUntilEating": "until eating window",
+  "fastingTimerUntilFasting": "until fasting",
+  "fastingTimerPaused": "Timer Paused",
+  "fastingTimerFastingStart": "Fasting Start",
+  "fastingTimerFastingEnd": "Fasting End",
+  "fastingTimerDurationLabel": "{hours}h fasting window",
+  "@fastingTimerDurationLabel": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "fastingTimerPauseButton": "Pause Timer",
+  "fastingTimerStartButton": "Resume Timer",
+  "fastingTimerEditButton": "Edit Schedule",
+  "fastingTimerDeleteButton": "Delete Schedule",
+  "fastingTimerNotificationFastingStartedTitle": "Fasting Started",
+  "fastingTimerNotificationFastingStartedBody": "Your fasting period has begun. Stay strong!",
+  "fastingTimerNotificationEatingStartedTitle": "Eating Window Open",
+  "fastingTimerNotificationEatingStartedBody": "Your eating window is now open. Enjoy your meal!",
+  "fastingTimerCreateTitle": "Create Fasting Schedule",
+  "fastingTimerEditTitle": "Edit Fasting Schedule",
+  "fastingTimerSelectStartTime": "Select Fasting Start",
+  "fastingTimerSelectEndTime": "Select Fasting End",
+  "fastingTimerDeleteTitle": "Delete Schedule",
+  "fastingTimerDeleteConfirm": "Are you sure you want to delete your fasting schedule? This will cancel all notifications.",
+  "fastingTimerMenuLabel": "Fasting Timer",
+  "settingsFoodTrackingNotificationsLabel": "Food Tracking Reminders",
+  "settingsFoodTrackingNotificationsSubtitle": "Daily reminders at 8:00 AM, 12:30 PM, 6:30 PM, and 9:00 PM"
 }

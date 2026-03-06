@@ -98,4 +98,17 @@ class ConfigDataSource {
     final config = _configBox.get(_configKey);
     return config?.hasAcceptedSendAnonymousData ?? false;
   }
+
+  Future<bool> getFoodTrackingNotificationsEnabled() async {
+    final config = _configBox.get(_configKey);
+    // Default to true if not set (existing users)
+    return config?.foodTrackingNotificationsEnabled ?? true;
+  }
+
+  Future<void> setFoodTrackingNotificationsEnabled(bool enabled) async {
+    _log.fine('Updating config foodTrackingNotificationsEnabled to $enabled');
+    final config = _configBox.get(_configKey);
+    config?.foodTrackingNotificationsEnabled = enabled;
+    config?.save();
+  }
 }

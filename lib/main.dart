@@ -32,6 +32,10 @@ import 'package:calorieai/features/settings/settings_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:calorieai/core/utils/env.dart';
+import 'package:calorieai/core/service/food_tracking_notification_service.dart';
+import 'package:calorieai/features/fasting_timer/core/service/fasting_notification_service.dart';
+import 'package:calorieai/features/fasting_timer/presentation/bloc/fasting_timer_bloc.dart';
+import 'package:calorieai/features/fasting_timer/presentation/fasting_timer_screen.dart';
 import 'package:sentry_flutter/sentry_flutter.dart'; // Disabled for simulator compatibility
 
 typedef S = AppLocalizations;
@@ -40,6 +44,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   LoggerConfig.intiLogger();
   await initLocator();
+  
+  // Initialize fasting timer notifications
+  final notificationService = locator<FastingNotificationService>();
+  await notificationService.initialize();
+  
+  // Initialize food tracking reminder notifications
+  final foodTrackingNotificationService = locator<FoodTrackingNotificationService>();
+  await foodTrackingNotificationService.initialize();
+  
   final isUserInitialized = await locator<UserDataSource>().hasUserData();
   final configRepo = locator<ConfigRepository>();
   final hasAcceptedAnonymousData =
@@ -78,6 +91,9 @@ void runAppWithChangeNotifiers(
                   localDataSource: IAPLocalDataSource(),
                 ),
               )..add(const LoadIAPStatus()),
+            ),
+            BlocProvider<FastingTimerBloc>(
+              create: (context) => locator<FastingTimerBloc>()..add(const LoadFastingScheduleEvent()),
             ),
           ],
           child: OpenNutriTrackerApp(userInitialized: userInitialized),
@@ -129,6 +145,7 @@ class OpenNutriTrackerApp extends StatelessWidget {
             const ActivityDetailScreen(),
         NavigationOptions.imageFullScreenRoute: (context) =>
             const ImageFullScreen(),
+        '/fasting_timer': (context) => const FastingTimerScreen(),
       },
     );
   }

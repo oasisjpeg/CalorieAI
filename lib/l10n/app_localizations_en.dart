@@ -1535,4 +1535,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unsaveLabel => 'Unsave';
+
+  @override
+  String get fastingTimerTitle => 'Fasting Timer';
+
+  @override
+  String get fastingTimerEmptyTitle => 'No Fasting Schedule';
+
+  @override
+  String get fastingTimerEmptySubtitle =>
+      'Set up your fasting schedule to start tracking your fasting and eating windows.';
+
+  @override
+  String get fastingTimerCreateButton => 'Create Schedule';
+
+  @override
+  String get fastingTimerFastingPhase => 'FASTING';
+
+  @override
+  String get fastingTimerEatingPhase => 'EATING WINDOW';
+
+  @override
+  String get fastingTimerUntilEating => 'until eating window';
+
+  @override
+  String get fastingTimerUntilFasting => 'until fasting';
+
+  @override
+  String get fastingTimerPaused => 'Timer Paused';
+
+  @override
+  String get fastingTimerFastingStart => 'Fasting Start';
+
+  @override
+  String get fastingTimerFastingEnd => 'Fasting End';
+
+  @override
+  String fastingTimerDurationLabel(int hours) {
+    return '${hours}h fasting window';
+  }
+
+  @override
+  String get fastingTimerPauseButton => 'Pause Timer';
+
+  @override
+  String get fastingTimerStartButton => 'Resume Timer';
+
+  @override
+  String get fastingTimerEditButton => 'Edit Schedule';
+
+  @override
+  String get fastingTimerDeleteButton => 'Delete Schedule';
+
+  @override
+  String get fastingTimerNotificationFastingStartedTitle => 'Fasting Started';
+
+  @override
+  String get fastingTimerNotificationFastingStartedBody =>
+      'Your fasting period has begun. Stay strong!';
+
+  @override
+  String get fastingTimerNotificationEatingStartedTitle => 'Eating Window Open';
+
+  @override
+  String get fastingTimerNotificationEatingStartedBody =>
+      'Your eating window is now open. Enjoy your meal!';
+
+  @override
+  String get fastingTimerCreateTitle => 'Create Fasting Schedule';
+
+  @override
+  String get fastingTimerEditTitle => 'Edit Fasting Schedule';
+
+  @override
+  String get fastingTimerSelectStartTime => 'Select Fasting Start';
+
+  @override
+  String get fastingTimerSelectEndTime => 'Select Fasting End';
+
+  @override
+  String get fastingTimerDeleteTitle => 'Delete Schedule';
+
+  @override
+  String get fastingTimerDeleteConfirm =>
+      'Are you sure you want to delete your fasting schedule? This will cancel all notifications.';
+
+  @override
+  String get fastingTimerMenuLabel => 'Fasting Timer';
+
+  @override
+  String get settingsFoodTrackingNotificationsLabel =>
+      'Food Tracking Reminders';
+
+  @override
+  String get settingsFoodTrackingNotificationsSubtitle =>
+      'Daily reminders at 8:00 AM, 12:30 PM, 6:30 PM, and 9:00 PM';
 }
