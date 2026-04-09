@@ -43,6 +43,15 @@ class IntakeEntity extends Equatable {
   double get totalProteinsGram =>
       amount * (meal.nutriments.proteinsPerUnit ?? 0);
 
+  double get totalSugarsGram =>
+      amount * (meal.nutriments.sugars100 ?? 0) / 100;
+
+  double get totalSaturatedFatGram =>
+      amount * (meal.nutriments.saturatedFat100 ?? 0) / 100;
+
+  double get totalFiberGram =>
+      amount * (meal.nutriments.fiber100 ?? 0) / 100;
+
   @override
   List<Object?> get props => [id, unit, amount, type, dateTime];
 }

@@ -106,7 +106,7 @@ class _OnboardingSecondPageBodyState extends State<OnboardingSecondPageBody> {
             child: TextFormField(
                 onChanged: (text) {
                   if (_weightFormKey.currentState!.validate()) {
-                    _parsedWeight = double.tryParse(text);
+                    _parsedWeight = double.tryParse(text.replaceAll(',', '.'));
                     checkCorrectInput();
                   } else {
                     checkCorrectInput();
@@ -125,8 +125,11 @@ class _OnboardingSecondPageBodyState extends State<OnboardingSecondPageBody> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly]),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d+([.,]\d{0,1})?$'))
+                ]),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -182,7 +185,7 @@ class _OnboardingSecondPageBodyState extends State<OnboardingSecondPageBody> {
 
   String? validateWeight(String? value) {
     if (value == null) return S.of(context).onboardingWrongWeightLabel;
-    if (value.isEmpty || !RegExp(r'^[0-9]').hasMatch(value)) {
+    if (value.isEmpty || !RegExp(r'^\d+([.,]\d{0,1})?$').hasMatch(value)) {
       return S.of(context).onboardingWrongHeightLabel;
     } else {
       return null;

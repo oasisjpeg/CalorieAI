@@ -393,13 +393,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get saturatedFatLabel => 'gesättigtes Fett';
 
   @override
+  String get nutritionFactsLabel => 'Nährwerte';
+
+  @override
+  String get caloriesLabel => 'Kalorien';
+
+  @override
+  String get sugarsLabel => 'Zucker';
+
+  @override
+  String get fiberLabel => 'Ballaststoffe';
+
+  @override
   String get carbohydrateLabel => 'Kohlenhydrate';
 
   @override
   String get sugarLabel => 'Zucker';
-
-  @override
-  String get fiberLabel => 'Ballaststoffe';
 
   @override
   String get per100gmlLabel => 'Pro 100 g/ml';
@@ -1645,4 +1654,38 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settingsFoodTrackingNotificationsSubtitle =>
       'Tägliche Erinnerungen um 8:00, 12:30, 18:30 und 21:00 Uhr';
+
+  @override
+  String get waterLabel => 'Wasser';
+
+  @override
+  String get waterHistory => 'Wasser-Verlauf';
+
+  @override
+  String get addWater => 'Wasser hinzufügen';
+
+  @override
+  String get waterCustomAmount => 'Benutzerdefinierte Menge';
+
+  @override
+  String get waterToday => 'Heute';
+
+  @override
+  String get waterAverage => 'Durchschnitt';
+
+  @override
+  String get waterNoData => 'Noch keine Wasserdaten';
+
+  @override
+  String get waterDeleteEntry => 'Wassereintrag löschen';
+
+  @override
+  String waterDeleteConfirm(String date) {
+    return 'Möchten Sie diesen Wassereintrag vom $date wirklich löschen?';
+  }
+
+  @override
+  String waterAmountHint(String unit) {
+    return 'Menge in $unit eingeben';
+  }
 }

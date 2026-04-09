@@ -825,6 +825,30 @@ abstract class AppLocalizations {
   /// **'saturated fat'**
   String get saturatedFatLabel;
 
+  /// No description provided for @nutritionFactsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition Facts'**
+  String get nutritionFactsLabel;
+
+  /// No description provided for @caloriesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Calories'**
+  String get caloriesLabel;
+
+  /// No description provided for @sugarsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sugars'**
+  String get sugarsLabel;
+
+  /// No description provided for @fiberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'fiber'**
+  String get fiberLabel;
+
   /// No description provided for @carbohydrateLabel.
   ///
   /// In en, this message translates to:
@@ -836,12 +860,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'sugar'**
   String get sugarLabel;
-
-  /// No description provided for @fiberLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'fiber'**
-  String get fiberLabel;
 
   /// No description provided for @per100gmlLabel.
   ///
@@ -3218,6 +3236,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Daily reminders at 8:00 AM, 12:30 PM, 6:30 PM, and 9:00 PM'**
   String get settingsFoodTrackingNotificationsSubtitle;
+
+  /// No description provided for @waterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get waterLabel;
+
+  /// No description provided for @waterHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Water History'**
+  String get waterHistory;
+
+  /// No description provided for @addWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Water'**
+  String get addWater;
+
+  /// No description provided for @waterCustomAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Amount'**
+  String get waterCustomAmount;
+
+  /// No description provided for @waterToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get waterToday;
+
+  /// No description provided for @waterAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get waterAverage;
+
+  /// No description provided for @waterNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No water data yet'**
+  String get waterNoData;
+
+  /// No description provided for @waterDeleteEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Water Entry'**
+  String get waterDeleteEntry;
+
+  /// No description provided for @waterDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this water entry from {date}?'**
+  String waterDeleteConfirm(String date);
+
+  /// No description provided for @waterAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amount in {unit}'**
+  String waterAmountHint(String unit);
 }
 
 class _AppLocalizationsDelegate

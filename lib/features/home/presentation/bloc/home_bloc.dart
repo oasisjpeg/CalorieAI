@@ -81,6 +81,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final totalSnackCarbs = getTotalCarbs(snackIntakeList);
       final totalSnackFats = getTotalFats(snackIntakeList);
       final totalSnackProteins = getTotalProteins(snackIntakeList);
+      final totalSnackSugars = getTotalSugars(snackIntakeList);
+      final totalSnackSaturatedFat = getTotalSaturatedFat(snackIntakeList);
+      final totalSnackFiber = getTotalFiber(snackIntakeList);
 
       final totalKcalIntake = totalBreakfastKcal +
           totalLunchKcal +
@@ -98,6 +101,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           totalLunchProteins +
           totalDinnerProteins +
           totalSnackProteins;
+      final totalSugarsIntake = getTotalSugars(breakfastIntakeList) +
+          getTotalSugars(lunchIntakeList) +
+          getTotalSugars(dinnerIntakeList) +
+          totalSnackSugars;
+      final totalSaturatedFatIntake = getTotalSaturatedFat(breakfastIntakeList) +
+          getTotalSaturatedFat(lunchIntakeList) +
+          getTotalSaturatedFat(dinnerIntakeList) +
+          totalSnackSaturatedFat;
+      final totalFiberIntake = getTotalFiber(breakfastIntakeList) +
+          getTotalFiber(lunchIntakeList) +
+          getTotalFiber(dinnerIntakeList) +
+          totalSnackFiber;
 
       final userActivities =
           await _getUserActivityUsecase.getTodayUserActivity();
@@ -127,6 +142,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           totalFatsGoal: totalFatsGoal,
           totalProteinsGoal: totalProteinsGoal,
           totalProteinsIntake: totalProteinsIntake,
+          totalSugarsIntake: totalSugarsIntake,
+          totalSaturatedFatIntake: totalSaturatedFatIntake,
+          totalFiberIntake: totalFiberIntake,
           breakfastIntakeList: breakfastIntakeList,
           lunchIntakeList: lunchIntakeList,
           dinnerIntakeList: dinnerIntakeList,
@@ -147,6 +165,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   double getTotalProteins(List<IntakeEntity> intakeList) =>
       intakeList.map((intake) => intake.totalProteinsGram).toList().sum;
+
+  double getTotalSugars(List<IntakeEntity> intakeList) =>
+      intakeList.map((intake) => intake.totalSugarsGram).toList().sum;
+
+  double getTotalSaturatedFat(List<IntakeEntity> intakeList) =>
+      intakeList.map((intake) => intake.totalSaturatedFatGram).toList().sum;
+
+  double getTotalFiber(List<IntakeEntity> intakeList) =>
+      intakeList.map((intake) => intake.totalFiberGram).toList().sum;
 
   void saveConfigData(bool acceptedDisclaimer) async {
     _addConfigUsecase.setConfigDisclaimer(acceptedDisclaimer);

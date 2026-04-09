@@ -111,4 +111,11 @@ class ConfigDataSource {
     config?.foodTrackingNotificationsEnabled = enabled;
     config?.save();
   }
+
+  Future<void> setConfigBMRFormula(String formulaString) async {
+    _log.fine('Updating config bmrFormula to $formulaString');
+    final config = _configBox.get(_configKey);
+    config?.bmrFormula = formulaString;
+    config?.save();
+  }
 }

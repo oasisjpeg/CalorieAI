@@ -29,12 +29,6 @@ class ActivityVerticalList extends StatelessWidget {
             children: [
               Icon(UserActivityEntity.getIconData(),
                   size: 24, color: Theme.of(context).colorScheme.onSurface),
-              const SizedBox(width: 4.0),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface),
-              ),
             ],
           ),
         ),

@@ -312,7 +312,6 @@ class IAPRepositoryImpl implements IAPRepository {
   @override
   Future<bool> presentOfferCodeRedemption() async {
     try {
-      // Offer codes are only supported on iOS
       if (Platform.isIOS) {
         // Get the StoreKit-specific instance
         final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
@@ -322,8 +321,19 @@ class IAPRepositoryImpl implements IAPRepository {
         // Present the offer code redemption sheet
         await iosPlatformAddition.presentCodeRedemptionSheet();
         return true;
+      } else if (Platform.isAndroid) {
+        // Open Google Play subscription page for promo code redemption
+        final url = 'https://play.google.com/store/account/subscriptions?package=com.axiona.calorieai';
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          return true;
+        } else {
+          debugPrint('Could not launch Google Play subscription page');
+          return false;
+        }
       } else {
-        debugPrint('Offer codes are only supported on iOS');
+        debugPrint('Offer codes are only supported on iOS and Android');
         return false;
       }
     } catch (e) {

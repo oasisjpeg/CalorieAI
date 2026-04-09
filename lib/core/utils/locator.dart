@@ -12,6 +12,8 @@ import 'package:calorieai/core/data/repository/physical_activity_repository.dart
 import 'package:calorieai/core/data/repository/tracked_day_repository.dart';
 import 'package:calorieai/core/data/repository/user_activity_repository.dart';
 import 'package:calorieai/core/data/repository/user_repository.dart';
+import 'package:calorieai/core/data/repository/water_repository.dart';
+import 'package:calorieai/core/data/repository/weight_repository.dart';
 import 'package:calorieai/core/domain/usecase/add_config_usecase.dart';
 import 'package:calorieai/core/domain/usecase/add_intake_usecase.dart';
 import 'package:calorieai/core/domain/usecase/add_tracked_day_usecase.dart';
@@ -177,9 +179,9 @@ Future<void> initLocator() async {
       () => GetKcalGoalUsecase(locator(), locator(), locator()));
   locator.registerLazySingleton(() => GetMacroGoalUsecase(locator()));
   locator.registerLazySingleton(
-      () => ExportDataUsecase(locator(), locator(), locator()));
+      () => ExportDataUsecase(locator(), locator(), locator(), locator(), locator()));
   locator.registerLazySingleton(
-      () => ImportDataUsecase(locator(), locator(), locator()));
+      () => ImportDataUsecase(locator(), locator(), locator(), locator(), locator()));
 
   // Repositories
   locator.registerLazySingleton(() => ConfigRepository(locator()));
@@ -195,6 +197,8 @@ Future<void> initLocator() async {
       () => PhysicalActivityRepository(locator()));
   locator.registerLazySingleton<TrackedDayRepository>(
       () => TrackedDayRepository(locator()));
+  locator.registerLazySingleton<WaterRepository>(() => WaterRepository());
+  locator.registerLazySingleton<WeightRepository>(() => WeightRepository());
 
   // DataSources
   locator

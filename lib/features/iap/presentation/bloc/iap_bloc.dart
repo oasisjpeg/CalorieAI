@@ -251,7 +251,7 @@ emit(state.copyWith(error: e.toString()));
       
       if (!success) {
         emit(state.copyWith(
-          error: 'Unable to open offer code redemption. This feature is only available on iOS.',
+          error: 'Unable to open offer code redemption. Please check your internet connection.',
         ));
       }
       // If successful, the purchase status will be updated via the stream

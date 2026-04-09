@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:calorieai/core/utils/calc/modern_tdee_calc.dart';
 import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
 import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
@@ -42,6 +43,10 @@ class _CalculationsDialogState extends State<CalculationsDialog> {
   double _proteinPctSelection = _defaultProteinPctSelection * 100;
   double _fatPctSelection = _defaultFatPctSelection * 100;
 
+  // BMR Formula selection
+  BMRFormula _selectedFormula = BMRFormula.mifflinStJeor;
+  double? _calculatedTDEE;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -52,15 +57,32 @@ class _CalculationsDialogState extends State<CalculationsDialog> {
     final kcalAdjustment = await widget.settingsBloc.getKcalAdjustment() *
         1.0; // Convert to double
     final userCarbsPct = await widget.settingsBloc.getUserCarbGoalPct();
-    final userProteinPct = await widget.settingsBloc.getUserProteinGoalPct();
-    final userFatPct = await widget.settingsBloc.getUserFatGoalPct();
+    final userProteinGoalPct = await widget.settingsBloc.getUserProteinGoalPct();
+    final userFatGoalPct = await widget.settingsBloc.getUserFatGoalPct();
+
+    // Load saved BMR formula preference
+    final savedFormula = await widget.settingsBloc.getBMRFormula();
+    if (savedFormula != null) {
+      _selectedFormula = savedFormula;
+    }
+
+    // Get user entity to calculate TDEE
+    final profileState = widget.profileBloc.state;
+    double? tdee;
+    if (profileState is ProfileLoadedState) {
+      tdee = ModernTDEECalc.calculateTDEE(
+        profileState.userEntity,
+        formula: _selectedFormula,
+      );
+    }
 
     setState(() {
       _kcalAdjustmentSelection = kcalAdjustment;
       _carbsPctSelection = (userCarbsPct ?? _defaultCarbsPctSelection) * 100;
       _proteinPctSelection =
-          (userProteinPct ?? _defaultProteinPctSelection) * 100;
-      _fatPctSelection = (userFatPct ?? _defaultFatPctSelection) * 100;
+          (userProteinGoalPct ?? _defaultProteinPctSelection) * 100;
+      _fatPctSelection = (userFatGoalPct ?? _defaultFatPctSelection) * 100;
+      _calculatedTDEE = tdee;
     });
   }
 
@@ -74,9 +96,10 @@ class _CalculationsDialogState extends State<CalculationsDialog> {
             child: Text(
               S.of(context).settingsCalculationsLabel,
               overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
-          const SizedBox(width: 8), // Add spacing between text and button
+          const SizedBox(width: 8),
           TextButton(
             child: Text(S.of(context).buttonResetLabel),
             onPressed: () {
@@ -93,21 +116,53 @@ class _CalculationsDialogState extends State<CalculationsDialog> {
       ),
       content: Wrap(
         children: [
-          DropdownButtonFormField(
+          DropdownButtonFormField<BMRFormula>(
               isExpanded: true,
               decoration: InputDecoration(
-                enabled: false,
-                filled: false,
                 labelText: S.of(context).calculationsTDEELabel,
               ),
+              initialValue: _selectedFormula,
               items: [
                 DropdownMenuItem(
+                    value: BMRFormula.mifflinStJeor,
                     child: Text(
-                  '${S.of(context).calculationsTDEEIOM2006Label} ${S.of(context).calculationsRecommendedLabel}',
-                  overflow: TextOverflow.ellipsis,
-                )),
+                      'Mifflin-St.Jeor (1990) ${S.of(context).calculationsRecommendedLabel}',
+                      overflow: TextOverflow.ellipsis,
+                    )),
+                DropdownMenuItem(
+                    value: BMRFormula.harrisBenedictRevised,
+                    child: Text(
+                      'Harris-Benedict Revised (1984)',
+                      overflow: TextOverflow.ellipsis,
+                    )),
               ],
-              onChanged: null),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedFormula = value;
+                    // Recalculate TDEE with new formula
+                    final profileState = widget.profileBloc.state;
+                    if (profileState is ProfileLoadedState) {
+                      _calculatedTDEE = ModernTDEECalc.calculateTDEE(
+                        profileState.userEntity,
+                        formula: _selectedFormula,
+                      );
+                    }
+                  });
+                  // Save the selected formula to config
+                  widget.settingsBloc.setBMRFormula(value);
+                }
+              }),
+          if (_calculatedTDEE != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                'Calculated TDEE: ${_calculatedTDEE!.round()} kcal',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+            ),
           const SizedBox(height: 64),
           Container(
             alignment: Alignment.centerLeft,

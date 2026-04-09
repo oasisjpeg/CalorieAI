@@ -24,6 +24,9 @@ class _DashboardTestWidgetState extends State<DashboardTestWidget> {
   final double totalCarbsGoal = 225;
   final double totalFatsGoal = 67;
   final double totalProteinsGoal = 150;
+  final double totalSugarsIntake = 30;
+  final double totalSaturatedFatIntake = 15;
+  final double totalFiberIntake = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +124,9 @@ class _DashboardTestWidgetState extends State<DashboardTestWidget> {
           totalCarbsGoal: totalCarbsGoal,
           totalFatsGoal: totalFatsGoal,
           totalProteinsGoal: totalProteinsGoal,
+          totalSugarsIntake: totalSugarsIntake,
+          totalSaturatedFatIntake: totalSaturatedFatIntake,
+          totalFiberIntake: totalFiberIntake,
         ),
       ],
     );

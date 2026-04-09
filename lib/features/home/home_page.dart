@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:calorieai/features/home/presentation/widgets/dashboard_widget.dart';
 import 'package:calorieai/features/home/presentation/widgets/fasting_timer_quick_view.dart';
-import 'package:flutter/material.dart';
+import 'package:calorieai/features/weight_tracker/presentation/widgets/weight_tracker_widget.dart';
+import 'package:calorieai/features/water_tracker/presentation/widgets/water_summary_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 import 'package:calorieai/core/domain/entity/intake_entity.dart';
@@ -69,6 +71,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               state.totalCarbsGoal,
               state.totalFatsGoal,
               state.totalProteinsGoal,
+              state.totalSugarsIntake,
+              state.totalSaturatedFatIntake,
+              state.totalFiberIntake,
               state.breakfastIntakeList,
               state.lunchIntakeList,
               state.dinnerIntakeList,
@@ -110,6 +115,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       double totalCarbsGoal,
       double totalFatsGoal,
       double totalProteinsGoal,
+      double totalSugarsIntake,
+      double totalSaturatedFatIntake,
+      double totalFiberIntake,
       List<IntakeEntity> breakfastIntakeList,
       List<IntakeEntity> lunchIntakeList,
       List<IntakeEntity> dinnerIntakeList,
@@ -136,7 +144,47 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           totalCarbsGoal: totalCarbsGoal,
           totalFatsGoal: totalFatsGoal,
           totalProteinsGoal: totalProteinsGoal,
+          totalSugarsIntake: totalSugarsIntake,
+          totalSaturatedFatIntake: totalSaturatedFatIntake,
+          totalFiberIntake: totalFiberIntake,
         ),
+        // Shortcuts section with water and weight in a row
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          alignment: Alignment.centerLeft,
+          child: Row(
+            children: [
+              const Icon(
+                Icons.flash_on,
+                size: 24,
+              ),
+              const SizedBox(width: 8.0),
+              Text(
+                'Shortcuts',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 120,
+          child: Row(
+            children: [
+              Expanded(
+                child: WeightTrackerWidget(
+                  usesImperialUnits: usesImperialUnits,
+                ),
+              ),
+              Expanded(
+                child: WaterSummaryWidget(
+                  usesImperialUnits: usesImperialUnits,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
         IntakeVerticalList(
           day: DateTime.now(),
           title: S.of(context).breakfastLabel,
@@ -187,6 +235,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           userActivityList: userActivities,
           onItemLongPressedCallback: onActivityItemLongPressed,
         ),
+       
       ]),
       Align(
           alignment: Alignment.bottomCenter,

@@ -11,6 +11,7 @@ import 'package:calorieai/core/domain/usecase/get_kcal_goal_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_macro_goal_usecase.dart';
 import 'package:calorieai/core/service/food_tracking_notification_service.dart';
 import 'package:calorieai/core/utils/app_const.dart';
+import 'package:calorieai/core/utils/calc/modern_tdee_calc.dart';
 
 part 'settings_event.dart';
 
@@ -109,6 +110,15 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       double carbGoalPct, double proteinGoalPct, double fatGoalPct) {
     _addConfigUsecase.setConfigMacroGoalPct(carbGoalPct.toInt() / 100,
         proteinGoalPct.toInt() / 100, fatGoalPct.toInt() / 100);
+  }
+
+  Future<BMRFormula?> getBMRFormula() async {
+    final config = await _getConfigUsecase.getConfig();
+    return config.bmrFormula;
+  }
+
+  void setBMRFormula(BMRFormula formula) {
+    _addConfigUsecase.setConfigBMRFormula(formula);
   }
 
   void updateTrackedDay(DateTime day) async {

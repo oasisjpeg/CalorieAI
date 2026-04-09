@@ -111,6 +111,10 @@
   "proteinLabel": "Protein",
   "energyLabel": "Energie",
   "saturatedFatLabel": "gesättigtes Fett",
+  "nutritionFactsLabel": "Nährwerte",
+  "caloriesLabel": "Kalorien",
+  "sugarsLabel": "Zucker",
+  "fiberLabel": "Ballaststoffe",
   "carbohydrateLabel": "Kohlenhydrate",
   "sugarLabel": "Zucker",
   "fiberLabel": "Ballaststoffe",
@@ -520,5 +524,29 @@
   "fastingTimerDeleteConfirm": "Möchten Sie Ihren Fasten-Zeitplan wirklich löschen? Alle Benachrichtigungen werden abgebrochen.",
   "fastingTimerMenuLabel": "Fasten-Timer",
   "settingsFoodTrackingNotificationsLabel": "Essens-Erinnerungen",
-  "settingsFoodTrackingNotificationsSubtitle": "Tägliche Erinnerungen um 8:00, 12:30, 18:30 und 21:00 Uhr"
+  "settingsFoodTrackingNotificationsSubtitle": "Tägliche Erinnerungen um 8:00, 12:30, 18:30 und 21:00 Uhr",
+  "waterLabel": "Wasser",
+  "waterHistory": "Wasser-Verlauf",
+  "addWater": "Wasser hinzufügen",
+  "waterCustomAmount": "Benutzerdefinierte Menge",
+  "waterToday": "Heute",
+  "waterAverage": "Durchschnitt",
+  "waterNoData": "Noch keine Wasserdaten",
+  "waterDeleteEntry": "Wassereintrag löschen",
+  "waterDeleteConfirm": "Möchten Sie diesen Wassereintrag vom {date} wirklich löschen?",
+  "@waterDeleteConfirm": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "waterAmountHint": "Menge in {unit} eingeben",
+  "@waterAmountHint": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  }
 }

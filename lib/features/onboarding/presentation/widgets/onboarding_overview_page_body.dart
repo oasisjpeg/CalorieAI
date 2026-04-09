@@ -9,6 +9,8 @@ class OnboardingOverviewPageBody extends StatelessWidget {
   final String proteinGoalString;
   final Function(bool active) setButtonActive;
   final double? totalKcalCalculated;
+  final VoidCallback? onEditCalories;
+  final double? tdeeValue;
 
   const OnboardingOverviewPageBody(
       {super.key,
@@ -17,7 +19,9 @@ class OnboardingOverviewPageBody extends StatelessWidget {
       required this.calorieGoalDayString,
       required this.carbsGoalString,
       required this.fatGoalString,
-      required this.proteinGoalString});
+      required this.proteinGoalString,
+      this.onEditCalories,
+      this.tdeeValue});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +31,23 @@ class OnboardingOverviewPageBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(S.of(context).onboardingOverviewLabel,
-              style: Theme.of(context).textTheme.headlineSmall),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  S.of(context).onboardingOverviewLabel,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (onEditCalories != null)
+                TextButton(
+                  onPressed: onEditCalories,
+                  child: const Text('Edit'),
+                ),
+            ],
+          ),
           const SizedBox(height: 32.0),
           Text(S.of(context).onboardingYourGoalLabel,
               style: Theme.of(context).textTheme.bodyLarge),
@@ -45,7 +64,20 @@ class OnboardingOverviewPageBody extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Theme.of(context)
                             .colorScheme
-                            .onSurface.withValues(alpha: 0.6)))
+                            .onSurface.withValues(alpha: 0.6))),
+                if (tdeeValue != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'Based on TDEE: ${tdeeValue!.round()} kcal (Mifflin-St.Jeor)',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

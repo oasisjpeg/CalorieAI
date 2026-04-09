@@ -3,6 +3,7 @@ import 'package:calorieai/core/data/dbo/app_theme_dbo.dart';
 import 'package:calorieai/core/data/dbo/config_dbo.dart';
 import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
 import 'package:calorieai/core/domain/entity/config_entity.dart';
+import 'package:calorieai/core/utils/calc/modern_tdee_calc.dart';
 
 class ConfigRepository {
   final ConfigDataSource _configDataSource;
@@ -70,5 +71,21 @@ class ConfigRepository {
 
   Future<void> setFoodTrackingNotificationsEnabled(bool enabled) async {
     await _configDataSource.setFoodTrackingNotificationsEnabled(enabled);
+  }
+
+  Future<void> setConfigBMRFormula(BMRFormula formula) async {
+    String formulaString;
+    switch (formula) {
+      case BMRFormula.mifflinStJeor:
+        formulaString = 'mifflinStJeor';
+        break;
+      case BMRFormula.harrisBenedictRevised:
+        formulaString = 'harrisBenedictRevised';
+        break;
+      case BMRFormula.katchMcArdle:
+        formulaString = 'katchMcArdle';
+        break;
+    }
+    await _configDataSource.setConfigBMRFormula(formulaString);
   }
 }

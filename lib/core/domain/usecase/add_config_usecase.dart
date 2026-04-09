@@ -1,6 +1,7 @@
 import 'package:calorieai/core/data/repository/config_repository.dart';
 import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
 import 'package:calorieai/core/domain/entity/config_entity.dart';
+import 'package:calorieai/core/utils/calc/modern_tdee_calc.dart';
 
 class AddConfigUsecase {
   final ConfigRepository _configRepository;
@@ -40,5 +41,9 @@ class AddConfigUsecase {
 
   Future<void> setFoodTrackingNotificationsEnabled(bool enabled) async {
     await _configRepository.setFoodTrackingNotificationsEnabled(enabled);
+  }
+
+  Future<void> setConfigBMRFormula(BMRFormula formula) async {
+    await _configRepository.setConfigBMRFormula(formula);
   }
 }

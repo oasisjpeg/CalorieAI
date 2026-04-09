@@ -388,13 +388,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saturatedFatLabel => 'saturated fat';
 
   @override
+  String get nutritionFactsLabel => 'Nutrition Facts';
+
+  @override
+  String get caloriesLabel => 'Calories';
+
+  @override
+  String get sugarsLabel => 'Sugars';
+
+  @override
+  String get fiberLabel => 'fiber';
+
+  @override
   String get carbohydrateLabel => 'carbohydrate';
 
   @override
   String get sugarLabel => 'sugar';
-
-  @override
-  String get fiberLabel => 'fiber';
 
   @override
   String get per100gmlLabel => 'Per 100g/ml';
@@ -1630,4 +1639,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsFoodTrackingNotificationsSubtitle =>
       'Daily reminders at 8:00 AM, 12:30 PM, 6:30 PM, and 9:00 PM';
+
+  @override
+  String get waterLabel => 'Water';
+
+  @override
+  String get waterHistory => 'Water History';
+
+  @override
+  String get addWater => 'Add Water';
+
+  @override
+  String get waterCustomAmount => 'Custom Amount';
+
+  @override
+  String get waterToday => 'Today';
+
+  @override
+  String get waterAverage => 'Average';
+
+  @override
+  String get waterNoData => 'No water data yet';
+
+  @override
+  String get waterDeleteEntry => 'Delete Water Entry';
+
+  @override
+  String waterDeleteConfirm(String date) {
+    return 'Are you sure you want to delete this water entry from $date?';
+  }
+
+  @override
+  String waterAmountHint(String unit) {
+    return 'Enter amount in $unit';
+  }
 }

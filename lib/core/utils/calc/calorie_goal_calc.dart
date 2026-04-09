@@ -1,6 +1,6 @@
 import 'package:calorieai/core/domain/entity/user_entity.dart';
 import 'package:calorieai/core/domain/entity/user_weight_goal_entity.dart';
-import 'package:calorieai/core/utils/calc/tdee_calc.dart';
+import 'package:calorieai/core/utils/calc/modern_tdee_calc.dart';
 
 class CalorieGoalCalc {
   static const double loseWeightKcalAdjustment = -500;
@@ -11,16 +11,23 @@ class CalorieGoalCalc {
           double totalKcalGoal, double totalKcalIntake) =>
       totalKcalGoal - totalKcalIntake;
 
-  static double getTdee(UserEntity userEntity) =>
-      TDEECalc.getTDEEKcalIOM2005(userEntity);
+  static double getTdee(UserEntity userEntity, {BMRFormula? formula}) =>
+      ModernTDEECalc.calculateTDEE(
+        userEntity,
+        formula: formula ?? BMRFormula.mifflinStJeor,
+      );
 
   static double getTotalKcalGoal(
           UserEntity userEntity, double totalKcalActivities,
-          {double? kcalUserAdjustment}) =>
-      getTdee(userEntity) +
-      getKcalGoalAdjustment(userEntity.goal) +
-      (kcalUserAdjustment ?? 0) +
-      totalKcalActivities;
+          {double? kcalUserAdjustment, BMRFormula? formula}) {
+    final tdee = getTdee(userEntity, formula: formula);
+    return ModernTDEECalc.calculateCalorieGoal(
+      userEntity,
+      tdee,
+      userAdjustment: kcalUserAdjustment,
+      activityCalories: totalKcalActivities,
+    );
+  }
 
   static double getKcalGoalAdjustment(UserWeightGoalEntity goal) {
     double kcalAdjustment;

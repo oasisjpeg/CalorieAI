@@ -10,6 +10,7 @@ import 'package:calorieai/core/utils/custom_icons.dart';
 import 'package:calorieai/core/utils/navigation_options.dart';
 import 'package:calorieai/features/add_meal/presentation/add_meal_type.dart';
 import 'package:calorieai/features/home/presentation/widgets/intake_vertical_list.dart';
+import 'package:calorieai/features/home/presentation/widgets/nutrition_facts_bottom_sheet.dart';
 import 'package:calorieai/features/meal_view/presentation/meal_view_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import '../../../../core/presentation/widgets/copy_or_delete_dialog.dart';
@@ -81,23 +82,26 @@ class DayInfoWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Card(
-                          elevation: 0.0,
-                          margin: const EdgeInsets.all(0.0),
-                          color: trackedDayEntity
-                              ?.getRatingDayTextBackgroundColor(context),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 8.0),
-                            child: Text(
-                              _getCaloriesTrackedDisplayString(trackedDay),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      color: trackedDayEntity
-                                          ?.getRatingDayTextColor(context),
-                                      fontWeight: FontWeight.bold),
+                        GestureDetector(
+                          onTap: () => _showNutritionFactsBottomSheet(context),
+                          child: Card(
+                            elevation: 0.0,
+                            margin: const EdgeInsets.all(0.0),
+                            color: trackedDayEntity
+                                ?.getRatingDayTextBackgroundColor(context),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 8.0),
+                              child: Text(
+                                _getCaloriesTrackedDisplayString(trackedDay),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                        color: trackedDayEntity
+                                            ?.getRatingDayTextColor(context),
+                                        fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
@@ -252,5 +256,38 @@ class DayInfoWidget extends StatelessWidget {
     if (shouldDeleteActivity != null) {
       onDeleteActivity(activityEntity, trackedDayEntity);
     }
+  }
+
+  void _showNutritionFactsBottomSheet(BuildContext context) {
+    final allIntake = [...breakfastIntake, ...lunchIntake, ...dinnerIntake, ...snackIntake];
+    
+    final totalKcalSupplied = allIntake.fold<double>(0, (sum, intake) => sum + intake.totalKcal);
+    final totalCarbsIntake = allIntake.fold<double>(0, (sum, intake) => sum + intake.totalCarbsGram);
+    final totalFatsIntake = allIntake.fold<double>(0, (sum, intake) => sum + intake.totalFatsGram);
+    final totalProteinsIntake = allIntake.fold<double>(0, (sum, intake) => sum + intake.totalProteinsGram);
+    final totalSugarsIntake = allIntake.fold<double>(0, (sum, intake) => sum + intake.totalSugarsGram);
+    final totalSaturatedFatIntake = allIntake.fold<double>(0, (sum, intake) => sum + intake.totalSaturatedFatGram);
+    final totalFiberIntake = allIntake.fold<double>(0, (sum, intake) => sum + intake.totalFiberGram);
+    
+    final totalCarbsGoal = trackedDayEntity?.carbsGoal ?? 0;
+    final totalFatsGoal = trackedDayEntity?.fatGoal ?? 0;
+    final totalProteinsGoal = trackedDayEntity?.proteinGoal ?? 0;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => NutritionFactsBottomSheet(
+        totalKcalSupplied: totalKcalSupplied,
+        totalCarbsIntake: totalCarbsIntake,
+        totalFatsIntake: totalFatsIntake,
+        totalProteinsIntake: totalProteinsIntake,
+        totalSugarsIntake: totalSugarsIntake,
+        totalSaturatedFatIntake: totalSaturatedFatIntake,
+        totalFiberIntake: totalFiberIntake,
+        totalCarbsGoal: totalCarbsGoal,
+        totalFatsGoal: totalFatsGoal,
+        totalProteinsGoal: totalProteinsGoal,
+      ),
+    );
   }
 }

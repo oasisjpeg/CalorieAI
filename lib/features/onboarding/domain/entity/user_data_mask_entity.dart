@@ -18,6 +18,12 @@ class UserDataMaskEntity {
 
   bool usesImperialUnits = false;
 
+  // Calorie and macro adjustments
+  double kcalAdjustment = 0;
+  double carbGoalPct = 0.5;
+  double proteinGoalPct = 0.25;
+  double fatGoalPct = 0.25;
+
   UserDataMaskEntity(
       {this.gender,
       this.birthday,

@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
+import 'package:calorieai/core/data/repository/weight_repository.dart';
+import 'package:calorieai/core/data/repository/water_repository.dart';
 import 'package:calorieai/core/domain/entity/app_theme_entity.dart';
 import 'package:calorieai/core/presentation/widgets/app_banner_version.dart';
 import 'package:calorieai/core/presentation/widgets/disclaimer_dialog.dart';
@@ -250,6 +252,93 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Error resetting IAP status: $e')),
+                );
+              }
+            }
+          }
+        },
+      ),
+      ListTile(
+        title: const Text('Delete All Weight Entries'),
+        subtitle: const Text('Clear all weight entries from the database'),
+        leading: const Icon(Icons.monitor_weight, color: Colors.orange),
+        onTap: () async {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Delete All Weight Entries'),
+              content: const Text('Are you sure you want to delete all weight entries? This cannot be undone.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('CANCEL'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('DELETE', style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+          );
+
+          if (confirmed == true) {
+            try {
+              final weightRepository = WeightRepository();
+              await weightRepository.clearAll();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('All weight entries deleted successfully')),
+                );
+                _homeBloc.add(LoadItemsEvent());
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error deleting weight entries: $e')),
+                );
+              }
+            }
+          }
+        },
+      ),
+      ListTile(
+        title: const Text('Delete All Water Entries'),
+        subtitle: const Text('Clear all water entries from the database'),
+        leading: const Icon(Icons.water_drop, color: Colors.blue),
+        onTap: () async {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Delete All Water Entries'),
+              content: const Text('Are you sure you want to delete all water entries? This cannot be undone.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('CANCEL'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('DELETE', style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+          );
+
+          if (confirmed == true) {
+            try {
+              final waterRepository = WaterRepository();
+              await waterRepository.clearAll();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('All water entries deleted successfully')),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error deleting water entries: $e')),
                 );
               }
             }

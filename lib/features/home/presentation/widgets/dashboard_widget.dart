@@ -1,6 +1,7 @@
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:calorieai/features/home/presentation/widgets/macro_nutriments_widget.dart';
+import 'package:calorieai/features/home/presentation/widgets/nutrition_facts_bottom_sheet.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:calorieai/features/settings/presentation/widgets/references_screen.dart';
@@ -18,6 +19,9 @@ class DashboardWidget extends StatefulWidget {
   final double totalCarbsGoal;
   final double totalFatsGoal;
   final double totalProteinsGoal;
+  final double totalSugarsIntake;
+  final double totalSaturatedFatIntake;
+  final double totalFiberIntake;
 
   const DashboardWidget({
     super.key,
@@ -31,6 +35,9 @@ class DashboardWidget extends StatefulWidget {
     required this.totalCarbsGoal,
     required this.totalFatsGoal,
     required this.totalProteinsGoal,
+    required this.totalSugarsIntake,
+    required this.totalSaturatedFatIntake,
+    required this.totalFiberIntake,
   });
 
   @override
@@ -111,8 +118,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         children: [
           Stack(children: [
             // Main calories card
-            Container(
-              decoration: BoxDecoration(
+            GestureDetector(
+              onTap: () => _showNutritionFactsBottomSheet(context),
+              child: Container(
+                decoration: BoxDecoration(
                 color: isDarkMode
                     ? Colors.black.withValues(alpha: 0.25)
                     : Colors.white.withValues(alpha: 0.25),
@@ -290,6 +299,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   ),
                 ],
               ),
+              ),
             ),
             Positioned(
               top: 0,
@@ -432,6 +442,25 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             center: Text(emoji, style: TextStyle(fontSize: 16)),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showNutritionFactsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => NutritionFactsBottomSheet(
+        totalKcalSupplied: widget.totalKcalSupplied,
+        totalCarbsIntake: widget.totalCarbsIntake,
+        totalFatsIntake: widget.totalFatsIntake,
+        totalProteinsIntake: widget.totalProteinsIntake,
+        totalSugarsIntake: widget.totalSugarsIntake,
+        totalSaturatedFatIntake: widget.totalSaturatedFatIntake,
+        totalFiberIntake: widget.totalFiberIntake,
+        totalCarbsGoal: widget.totalCarbsGoal,
+        totalFatsGoal: widget.totalFatsGoal,
+        totalProteinsGoal: widget.totalProteinsGoal,
       ),
     );
   }

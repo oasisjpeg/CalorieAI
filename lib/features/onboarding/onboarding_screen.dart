@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:calorieai/core/utils/calc/modern_tdee_calc.dart';
 import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/core/utils/navigation_options.dart';
 import 'package:calorieai/features/onboarding/domain/entity/user_activity_selection_entity.dart';
@@ -182,6 +183,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       .toString() ??
                   "?",
               setButtonActive: _setOverviewPageContent,
+              onEditCalories: () => _showCaloriesEditDialog(context),
+              tdeeValue: _onboardingBloc.userSelection.toUserEntity() != null
+                  ? ModernTDEECalc.calculateTDEE(_onboardingBloc.userSelection.toUserEntity()!)
+                  : null,
             ),
             footer: HighlightButton(
               buttonLabel: S.of(context).buttonStartLabel,
@@ -259,6 +264,170 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     setState(() {
       _overviewPageButtonActive = active;
     });
+  }
+
+  void _showCaloriesEditDialog(BuildContext context) {
+    final userEntity = _onboardingBloc.userSelection.toUserEntity();
+    if (userEntity == null) return;
+
+    final tdee = ModernTDEECalc.calculateTDEE(userEntity);
+    final currentGoal = _onboardingBloc.getOverviewCalorieGoal() ?? tdee;
+    final adjustment = currentGoal - tdee;
+
+    // Use current user selection values if they exist, otherwise use defaults
+    double kcalAdjustment = _onboardingBloc.userSelection.kcalAdjustment != 0 
+        ? _onboardingBloc.userSelection.kcalAdjustment 
+        : adjustment;
+    double carbsPct = _onboardingBloc.userSelection.carbGoalPct != 0.5 
+        ? _onboardingBloc.userSelection.carbGoalPct * 100 
+        : 50.0;
+    double proteinPct = _onboardingBloc.userSelection.proteinGoalPct != 0.25 
+        ? _onboardingBloc.userSelection.proteinGoalPct * 100 
+        : 25.0;
+    double fatPct = _onboardingBloc.userSelection.fatGoalPct != 0.25 
+        ? _onboardingBloc.userSelection.fatGoalPct * 100 
+        : 25.0;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Expanded(
+                child: Text('Adjust Calories & Macros'),
+              ),
+              TextButton(
+                child: const Text('Reset'),
+                onPressed: () {
+                  setDialogState(() {
+                    kcalAdjustment = 0;
+                    carbsPct = 50.0;
+                    proteinPct = 25.0;
+                    fatPct = 25.0;
+                  });
+                },
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: 300,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('TDEE: ${tdee.round()} kcal (Mifflin-St.Jeor)',
+                    style: Theme.of(context).textTheme.bodySmall),
+                const SizedBox(height: 16),
+                Text('Calorie Adjustment: ${kcalAdjustment.round()} kcal'),
+                Slider(
+                  min: -1000,
+                  max: 1000,
+                  divisions: 200,
+                  value: kcalAdjustment,
+                  label: '${kcalAdjustment.round()} kcal',
+                  onChanged: (value) {
+                    setDialogState(() {
+                      kcalAdjustment = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text('Macro Distribution'),
+                const SizedBox(height: 16),
+                _buildMacroSlider('Carbs', carbsPct, Colors.orange, (value) {
+                  setDialogState(() {
+                    double delta = value - carbsPct;
+                    carbsPct = value;
+                    // Adjust protein and fat proportionally
+                    if (proteinPct + fatPct > 0) {
+                      double proteinRatio = proteinPct / (proteinPct + fatPct);
+                      double fatRatio = fatPct / (proteinPct + fatPct);
+                      proteinPct = (proteinPct - delta * proteinRatio).clamp(5.0, 90.0);
+                      fatPct = (fatPct - delta * fatRatio).clamp(5.0, 90.0);
+                    }
+                  });
+                }),
+                _buildMacroSlider('Protein', proteinPct, Colors.blue, (value) {
+                  setDialogState(() {
+                    double delta = value - proteinPct;
+                    proteinPct = value;
+                    // Adjust carbs and fat proportionally
+                    if (carbsPct + fatPct > 0) {
+                      double carbsRatio = carbsPct / (carbsPct + fatPct);
+                      double fatRatio = fatPct / (carbsPct + fatPct);
+                      carbsPct = (carbsPct - delta * carbsRatio).clamp(5.0, 90.0);
+                      fatPct = (fatPct - delta * fatRatio).clamp(5.0, 90.0);
+                    }
+                  });
+                }),
+                _buildMacroSlider('Fat', fatPct, Colors.green, (value) {
+                  setDialogState(() {
+                    double delta = value - fatPct;
+                    fatPct = value;
+                    // Adjust carbs and protein proportionally
+                    if (carbsPct + proteinPct > 0) {
+                      double carbsRatio = carbsPct / (carbsPct + proteinPct);
+                      double proteinRatio = proteinPct / (carbsPct + proteinPct);
+                      carbsPct = (carbsPct - delta * carbsRatio).clamp(5.0, 90.0);
+                      proteinPct = (proteinPct - delta * proteinRatio).clamp(5.0, 90.0);
+                    }
+                  });
+                }),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Save the adjustments to the bloc's user selection
+                _onboardingBloc.userSelection.kcalAdjustment = kcalAdjustment;
+                _onboardingBloc.userSelection.carbGoalPct = carbsPct / 100;
+                _onboardingBloc.userSelection.proteinGoalPct = proteinPct / 100;
+                _onboardingBloc.userSelection.fatGoalPct = fatPct / 100;
+                Navigator.pop(context);
+                // Refresh the overview
+                setState(() {});
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMacroSlider(String label, double value, Color color, ValueChanged<double> onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label),
+            Text('${value.round()}%'),
+          ],
+        ),
+        SliderTheme(
+          data: SliderThemeData(
+            activeTrackColor: color,
+            thumbColor: color,
+            inactiveTrackColor: color.withValues(alpha: 0.2),
+          ),
+          child: Slider(
+            min: 5,
+            max: 90,
+            value: value,
+            divisions: 85,
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
   }
 
   void _onOverviewStartButtonPressed(BuildContext context) {
