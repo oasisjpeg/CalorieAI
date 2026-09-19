@@ -107,10 +107,12 @@ class GeminiService {
   6. for the score and score_text don't be harsh and give higher ratings, but for unhealthy food stay strict, make the user feel good and use a higher scoring for healthy snacks, fruits or high protein meals. so give a score of 8 for a healthy meal and 5 for a meal but has too much sugar or salt or too much fat etc and 2 for a unhealthy meal
   7. the score_text should be maximum 1-2 sentences long that explain why the meal has the score it has
   8. the score should be a compliment to the user and encourage him if he takes healthy food and the nutritional values are good
+  9. set "meal_kind" to "single" when the image shows one simple food item or drink (e.g. a banana, an apple, a can of soda) and to "recipe" when it shows a composed dish or meal made of multiple components (e.g. pasta with chicken, a salad bowl, a sandwich with several fillings)
 IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backticks, or any formatting. Output raw JSON only by using this structure:
 {
   "valid_food_image": boolean,
   "is_liquid": boolean,
+  "meal_kind": "single" | "recipe",
   "title": "Specific meal name",
   "score": X.X,
   "score_text": "Explanation for the score",
@@ -225,10 +227,12 @@ is_liquid is only true if you only describe liquids (only can of red-bull and no
 for the score and score_text don't be harsh and give higher ratings, but for unhealthy food stay strict, make the user feel good if and use a higher scoring for healthy snacks, fruits or high protein meals. so give a score of 8 for a healthy meal and 5 for a meal but has too much sugar or salt or too much fat etc and 2 for a unhealthy meal
 the score should be a compliment to the user and encourage him if he takes healthy food and the nutritional values are good
 the score_text should be maximum 1-2 sentences long that explain why the meal has the score it has
+set "meal_kind" to "single" when the description is one simple food item or drink (e.g. a banana, an apple, a can of soda) and to "recipe" when it describes a composed dish or meal made of multiple components (e.g. pasta with chicken, a salad bowl, a sandwich with several fillings)
 IMPORTANT: Respond ONLY with valid JSON. DO NOT use markdown code blocks, backticks, or any formatting. Output raw JSON only by using this structure:
 {
 "valid_food_image": boolean,
 "is_liquid": boolean,
+"meal_kind": "single" | "recipe",
 "title": "Specific meal name",
 "score": X.X,
 "score_text": "Explanation for the score",

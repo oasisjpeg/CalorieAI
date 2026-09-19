@@ -116,7 +116,7 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
                   weightKG: widget.usesImperialUnits ? weight / 2.20462 : weight,
                 );
                 await _weightRepository.addWeightEntry(entry);
-                if (mounted) {
+                if (context.mounted) {
                   Navigator.pop(context);
                 }
               }

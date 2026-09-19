@@ -1,15 +1,18 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 import 'package:calorieai/core/domain/entity/intake_entity.dart';
 import 'package:calorieai/core/domain/entity/tracked_day_entity.dart';
 import 'package:calorieai/core/domain/entity/user_activity_entity.dart';
 import 'package:calorieai/core/domain/usecase/add_tracked_day_usecase.dart';
 import 'package:calorieai/core/domain/usecase/delete_intake_usecase.dart';
 import 'package:calorieai/core/domain/usecase/delete_user_activity_usecase.dart';
+import 'package:calorieai/core/domain/usecase/get_config_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_intake_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_tracked_day_usecase.dart';
 import 'package:calorieai/core/domain/usecase/get_user_activity_usecase.dart';
+import 'package:calorieai/core/services/apple_health_service.dart';
 import 'package:calorieai/core/utils/calc/macro_calc.dart';
 import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
@@ -25,6 +28,8 @@ class CalendarDayBloc extends Bloc<CalendarDayEvent, CalendarDayState> {
   final DeleteUserActivityUsecase _deleteUserActivityUsecase;
   final GetTrackedDayUsecase _getTrackedDayUsecase;
   final AddTrackedDayUsecase _addTrackedDayUsecase;
+  final GetConfigUsecase _getConfigUsecase;
+  final log = Logger('CalendarDayBloc');
 
   DateTime? _currentDay;
 
@@ -34,7 +39,8 @@ class CalendarDayBloc extends Bloc<CalendarDayEvent, CalendarDayState> {
       this._deleteIntakeUsecase,
       this._deleteUserActivityUsecase,
       this._getTrackedDayUsecase,
-      this._addTrackedDayUsecase)
+      this._addTrackedDayUsecase,
+      this._getConfigUsecase)
       : super(CalendarDayInitial()) {
     on<LoadCalendarDayEvent>((event, emit) async {
       emit(CalendarDayLoading());
@@ -82,6 +88,22 @@ class CalendarDayBloc extends Bloc<CalendarDayEvent, CalendarDayState> {
         carbsTracked: intakeEntity.totalCarbsGram,
         fatTracked: intakeEntity.totalFatsGram,
         proteinTracked: intakeEntity.totalProteinsGram);
+    
+    // Delete from HealthKit if sync is enabled
+    final configData = await _getConfigUsecase.getConfig();
+    if (configData.appleHealthSyncEnabled) {
+      try {
+        final appleHealthService = AppleHealthService();
+        await appleHealthService.deleteIntakeFromHealthKit(
+          intakeEntity.id,
+          intakeEntity.dateTime,
+          intakeEntity.totalKcal,
+          intakeEntity.meal.name ?? 'Meal',
+        );
+      } catch (e) {
+        log.warning('Failed to delete intake from HealthKit: $e');
+      }
+    }
   }
 
   Future<void> deleteUserActivityItem(BuildContext context,

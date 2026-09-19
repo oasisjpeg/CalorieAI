@@ -8,7 +8,6 @@ import 'package:calorieai/core/domain/entity/user_weight_goal_entity.dart';
 import 'package:calorieai/core/utils/calc/unit_calc.dart';
 import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:calorieai/features/profile/presentation/widgets/bmi_overview.dart';
 import 'package:calorieai/features/profile/presentation/widgets/set_gender_dialog.dart';
 import 'package:calorieai/features/profile/presentation/widgets/set_goal_dialog.dart';
 import 'package:calorieai/features/profile/presentation/widgets/set_height_dialog.dart';

@@ -134,6 +134,8 @@
   "additionalInfoLabelUnknown": "Unknown Meal Item",
   "additionalInfoLabelCustom": "Custom Meal Item",
   "additionalInfoLabelCompendium2011": "Information provided\n by the \n'2011 Compendium\n of Physical Activities'",
+  "manualEntryNameLabel": "Activity name (optional)",
+  "manualEntryNameHint": "e.g., Morning run, Gym workout",
   "quantityLabel": "Quantity",
   "baseQuantityLabel": "Base quantity (g/ml)",
   "unitLabel": "Unit",
@@ -568,5 +570,56 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsAppleHealthSyncLabel": "Apple Health Sync",
+  "settingsAppleHealthSyncSubtitle": "Sync nutrition data with Apple Health",
+  "settingsAppleHealthSyncConnected": "Connected",
+  "settingsAppleHealthResyncLabel": "Resync meal intakes",
+  "settingsAppleHealthResyncSubtitle": "Resend all meal data to Apple Health",
+  "appleHealthResyncInProgress": "Resyncing all meal intakes to Apple Health...",
+  "settingsAppleHealthActivitySyncLabel": "Apple Health Activity Sync",
+  "settingsAppleHealthActivitySyncSubtitle": "Sync workouts and steps with Apple Health",
+  "appleHealthPermissionDenied": "Please grant access to Apple Health to sync nutrition data",
+  "appleHealthSyncError": "Error syncing with Apple Health",
+  "recipesLabel": "Recipes",
+  "myRecipesLabel": "My Recipes",
+  "aiIdeasLabel": "AI Ideas",
+  "recipeExample": "e.g. your go-to breakfast bowl ...",
+  "createRecipeLabel": "Create recipe",
+  "editRecipeLabel": "Edit recipe",
+  "noRecipesYet": "No recipes yet",
+  "noRecipesYetHint": "Combine foods into a recipe and log it with one tap",
+  "recipeListSubtitle": "{count} items · {kcal} kcal/serving · {servings} servings",
+  "@recipeListSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "kcal": {
+        "type": "int"
+      },
+      "servings": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseMealLabel": "Add to…",
+  "recipeNameLabel": "Recipe name",
+  "recipeNameRequired": "Please enter a name",
+  "recipeNeedsItems": "Add at least one item",
+  "servingsLabel": "Servings",
+  "batchWeightLabel": "Total weight",
+  "batchWeightHint": "Empty = sum of ingredients",
+  "addComponentLabel": "Add item",
+  "recipeTotalsLabel": "Totals",
+  "saveRecipeLabel": "Save recipe",
+  "recipeSavedSnackbar": "Recipe saved",
+  "logOnceLabel": "Log once",
+  "logToDiaryLabel": "Log to diary",
+  "saveAsRecipeLabel": "Save as recipe",
+  "pickerTodayLabel": "Today",
+  "pickerCustomLabel": "Custom",
+  "pickerAiLabel": "AI",
+  "pickerCustomNameLabel": "Item name",
+  "additionalInfoLabelRecipe": "Created from your recipe"
 }

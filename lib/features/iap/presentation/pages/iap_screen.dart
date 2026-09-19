@@ -120,7 +120,7 @@ class IAPScreen extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(height: 16),
-                ...features.map((feature) => _buildFeatureItem(feature)).toList(),
+                ...features.map((feature) => _buildFeatureItem(feature)),
               ],
             ),
           ),
@@ -131,7 +131,6 @@ class IAPScreen extends StatelessWidget {
 
   Widget _buildSubscriptionCard(BuildContext context, IAPState state) {
     final hasProducts = state.availableProducts.isNotEmpty;
-    final isPurchasing = state.isPurchasing;
     final isPremium = state.hasPremiumAccess;
 
     return Card(

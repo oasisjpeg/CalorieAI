@@ -31,8 +31,8 @@ class RecipeChatbotSuccess extends RecipeChatbotState {
   const RecipeChatbotSuccess({
     required this.recipes,
     this.savedRecipeIds = const {},
-    Map<String, dynamic>? selectedRecipe,
-  }) : super(selectedRecipe: selectedRecipe);
+    super.selectedRecipe,
+  });
 
   @override
   List<Object?> get props => [recipes, savedRecipeIds, selectedRecipe];

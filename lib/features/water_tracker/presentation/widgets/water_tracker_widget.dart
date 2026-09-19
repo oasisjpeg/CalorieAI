@@ -49,9 +49,9 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget> {
   String _formatWaterAmountShort(double amountML) {
     if (widget.usesImperialUnits) {
       final oz = amountML / 29.5735; // ml to fl oz
-      return '${oz.toStringAsFixed(0)}';
+      return oz.toStringAsFixed(0);
     }
-    return '${(amountML / 1000).toStringAsFixed(1)}';
+    return (amountML / 1000).toStringAsFixed(1);
   }
 
   Future<void> _addWater(double amountML) async {
@@ -171,7 +171,7 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 );
-              }).toList(),
+              }),
               // Custom amount button (hidden option)
               IconButton(
                 onPressed: _showCustomAmountDialog,

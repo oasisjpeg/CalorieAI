@@ -22,6 +22,7 @@ class IAPHelper {
     final canPerform = await dailyLimitService.canPerformAnalysis();
     if (!canPerform) {
       final remaining = await dailyLimitService.getRemainingUses();
+      if (!context.mounted) return false;
       await OutOfLimitsDialog.show(context, remaining);
       return false;
     }

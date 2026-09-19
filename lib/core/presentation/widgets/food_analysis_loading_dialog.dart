@@ -145,7 +145,7 @@ class _FoodAnalysisLoadingDialogState extends State<FoodAnalysisLoadingDialog>
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -161,8 +161,8 @@ class _FoodAnalysisLoadingDialogState extends State<FoodAnalysisLoadingDialog>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                      Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -219,7 +219,7 @@ class _FoodAnalysisLoadingDialogState extends State<FoodAnalysisLoadingDialog>
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 0.7),
                         fontStyle: FontStyle.italic,
                       ),
                 ),
@@ -240,7 +240,7 @@ class _FoodAnalysisLoadingDialogState extends State<FoodAnalysisLoadingDialog>
                           backgroundColor: Theme.of(context)
                               .colorScheme
                               .primary
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Theme.of(context).colorScheme.primary,
                           ),
@@ -253,7 +253,7 @@ class _FoodAnalysisLoadingDialogState extends State<FoodAnalysisLoadingDialog>
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.5),
+                                  .withValues(alpha: 0.5),
                             ),
                       ),
                     ],
@@ -267,7 +267,7 @@ class _FoodAnalysisLoadingDialogState extends State<FoodAnalysisLoadingDialog>
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

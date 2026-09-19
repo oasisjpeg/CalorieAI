@@ -16,19 +16,35 @@ class GetKcalGoalUsecase {
   Future<double> getKcalGoal(
       {UserEntity? userEntity,
       double? totalKcalActivitiesParam,
-      double? kcalUserAdjustment}) async {
+      double? kcalUserAdjustment,
+      bool includeActivityCalories = false}) async {
     final user = userEntity ?? await _userRepository.getUserData();
     final config = await _configRepository.getConfig();
-    final totalKcalActivities = totalKcalActivitiesParam ??
-        (await _userActivityRepository.getAllUserActivityByDate(DateTime.now()))
-            .map((activity) => activity.burnedKcal)
-            .toList()
-            .sum;
+    
+    // Only include activity calories if explicitly requested
+    // Otherwise, calculate goal without activities (to subtract from intake instead)
+    final totalKcalActivities = includeActivityCalories
+        ? (totalKcalActivitiesParam ??
+            (await _userActivityRepository.getAllUserActivityByDate(DateTime.now()))
+                .map((activity) => activity.burnedKcal)
+                .toList()
+                .sum
+                .toDouble())
+        : 0.0;
+        
     return CalorieGoalCalc.getTotalKcalGoal(
       user,
       totalKcalActivities,
       kcalUserAdjustment: config.userKcalAdjustment,
       formula: config.bmrFormula,
     );
+  }
+  
+  Future<double> getTotalKcalActivities(DateTime date) async {
+    return (await _userActivityRepository.getAllUserActivityByDate(date))
+        .map((activity) => activity.burnedKcal)
+        .toList()
+        .sum
+        .toDouble();
   }
 }

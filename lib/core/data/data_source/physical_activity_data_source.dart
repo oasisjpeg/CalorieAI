@@ -6,6 +6,8 @@ import 'package:calorieai/core/data/dbo/physical_activity_dbo.dart';
 /// by Ainsworth et al.
 class PhysicalActivityDataSource {
   List<PhysicalActivityDBO> getPhysicalActivityList() => [
+        PhysicalActivityDBO("99999", "manual entry", "manual kcal input", 0.0,
+            [], PhysicalActivityTypeDBO.sport),
         PhysicalActivityDBO("01015", "bicycling", "general", 7.5, [],
             PhysicalActivityTypeDBO.bicycling),
         PhysicalActivityDBO("01009", "bicycling, mountain", "general", 8.5, [],

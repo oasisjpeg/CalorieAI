@@ -12,10 +12,12 @@ import 'package:calorieai/core/domain/entity/purchase_status.dart'
     as iap_entity;
 import 'package:calorieai/core/domain/repository/iap_repository.dart';
 import 'package:calorieai/core/utils/iap_constants.dart';
+import 'package:logging/logging.dart';
 
 class IAPRepositoryImpl implements IAPRepository {
   final IAPLocalDataSource _localDataSource;
   final iap.InAppPurchase _inAppPurchase;
+  final _log = Logger('IAPRepositoryImpl');
 
   StreamSubscription<List<iap.PurchaseDetails>>? _subscription;
   final List<String> _productIds = [IAPConstants.premiumSubscriptionId];
@@ -63,37 +65,38 @@ class IAPRepositoryImpl implements IAPRepository {
   Future<bool> hasActiveSubscription() async {
     // Check if device is in developer whitelist (works in all modes)
     if (await _isDeviceWhitelisted()) {
-      print('✅ Premium granted: Device whitelisted');
+      _log.info('Premium granted: Device whitelisted');
       return true;
     }
-    
+
     // Debug override: Always return true in debug mode for development
     if (kDebugMode) {
-      print('✅ Premium granted: Debug mode');
+      _log.info('Premium granted: Debug mode');
       return true;
     }
-    
+
     final purchaseStatus = await _localDataSource.getPurchaseStatus();
-    print('🔍 Purchase status from storage: $purchaseStatus');
+    _log.info('Purchase status from storage: $purchaseStatus');
     return purchaseStatus;
   }
   
   Future<bool> _isDeviceWhitelisted() async {
     if (IAPConstants.developerDeviceWhitelist.isEmpty) {
-      print('❌ Whitelist is empty');
+      _log.info('Whitelist is empty');
       return false;
     }
-    
+
     try {
       final deviceId = await _getDeviceId();
-      print('🔍 Checking whitelist...');
-      print('🔍 Device ID: $deviceId');
-      print('🔍 Whitelist: ${IAPConstants.developerDeviceWhitelist}');
-      final isWhitelisted = IAPConstants.developerDeviceWhitelist.contains(deviceId);
-      print('🔍 Is whitelisted: $isWhitelisted');
+      _log.info('Checking whitelist...');
+      _log.info('Device ID: $deviceId');
+      _log.info('Whitelist: ${IAPConstants.developerDeviceWhitelist}');
+      final isWhitelisted =
+          IAPConstants.developerDeviceWhitelist.contains(deviceId);
+      _log.info('Is whitelisted: $isWhitelisted');
       return isWhitelisted;
     } catch (e) {
-      print('❌ Error checking device whitelist: $e');
+      _log.warning('Error checking device whitelist: $e');
       return false;
     }
   }
@@ -123,7 +126,7 @@ class IAPRepositoryImpl implements IAPRepository {
           await _inAppPurchase.queryProductDetails(Set.from(_productIds));
 
       if (response.notFoundIDs.isNotEmpty) {
-        print('Missing product IDs: ${response.notFoundIDs}');
+        _log.warning('Missing product IDs: ${response.notFoundIDs}');
       }
 
       for (var product in response.productDetails) {
@@ -160,7 +163,7 @@ class IAPRepositoryImpl implements IAPRepository {
       await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
       return true;
     } catch (e) {
-      print('Purchase error: $e');
+      _log.warning('Purchase error: $e');
       return false;
     }
   }
@@ -171,7 +174,7 @@ class IAPRepositoryImpl implements IAPRepository {
       await _inAppPurchase.restorePurchases();
       return true;
     } catch (e) {
-      print('Restore purchases error: $e');
+      _log.warning('Restore purchases error: $e');
       return false;
     }
   }

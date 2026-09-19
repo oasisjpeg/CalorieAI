@@ -9,9 +9,9 @@ class PremiumFeatureLockedDialog extends StatelessWidget {
   final String featureName;
   
   const PremiumFeatureLockedDialog({
-    Key? key,
+    super.key,
     required this.featureName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

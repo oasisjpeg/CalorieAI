@@ -92,12 +92,12 @@ class UsageCounter extends StatelessWidget {
           border: isOutOfAnalyses
               ? Border.all(color: colorScheme.error, width: 1)
               : kDebugMode 
-                  ? Border.all(color: colorScheme.outline.withOpacity(0.3), width: 1)
+                  ? Border.all(color: colorScheme.outline.withValues(alpha: 0.3), width: 1)
                   : null,
           boxShadow: isOutOfAnalyses
               ? [
                   BoxShadow(
-                    color: colorScheme.error.withOpacity(0.2),
+                    color: colorScheme.error.withValues(alpha: 0.2),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   )
@@ -133,7 +133,7 @@ class UsageCounter extends StatelessWidget {
               Icon(
                 Icons.bug_report,
                 size: 12,
-                color: colorScheme.onPrimaryContainer.withOpacity(0.7),
+                color: colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
               ),
             ],
           ],

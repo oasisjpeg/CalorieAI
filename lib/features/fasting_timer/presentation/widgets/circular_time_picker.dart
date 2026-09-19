@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class CircularTimePicker extends StatefulWidget {
   final int initialHour;
@@ -137,7 +136,7 @@ class _ClockPainter extends CustomPainter {
     final radius = size.width / 2 - 20;
     
     final tickPaint = Paint()
-      ..color = onSurfaceColor.withOpacity(0.5)
+      ..color = onSurfaceColor.withValues(alpha: 0.5)
       ..strokeWidth = 1;
     
     final majorTickPaint = Paint()

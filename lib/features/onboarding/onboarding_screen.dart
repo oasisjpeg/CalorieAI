@@ -10,6 +10,7 @@ import 'package:calorieai/features/onboarding/domain/entity/user_goal_selection_
 import 'package:calorieai/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:calorieai/features/onboarding/presentation/onboarding_intro_page_body.dart';
 import 'package:calorieai/features/onboarding/presentation/widgets/onboarding_fourth_page_body.dart';
+import 'package:calorieai/features/onboarding/presentation/widgets/onboarding_display_mode_page_body.dart';
 import 'package:calorieai/features/onboarding/presentation/widgets/onboarding_overview_page_body.dart';
 import 'package:calorieai/features/onboarding/presentation/widgets/onboarding_third_page_body.dart';
 import 'package:calorieai/features/onboarding/presentation/widgets/highlight_button.dart';
@@ -40,6 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _thirdPageButtonActive = false;
   bool _fourthPageButtonActive = false;
   bool _overviewPageButtonActive = false;
+  bool _displayModePageButtonActive = true;
 
   @override
   void initState() {
@@ -189,11 +191,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   : null,
             ),
             footer: HighlightButton(
+              buttonLabel: S.of(context).buttonNextLabel,
+              onButtonPressed: () {
+                _scrollToPage(6);
+              },
+              buttonActive: _overviewPageButtonActive,
+            )),
+        PageViewModel(
+            titleWidget: const SizedBox(),
+            decoration: _pageDecoration,
+            image: _defaultImageWidget,
+            bodyWidget: OnboardingDisplayModePageBody(
+              showConsumedKcalAndMacros:
+                  _onboardingBloc.userSelection.showConsumedKcalAndMacros,
+              onModeChanged: _setDisplayModeSelection,
+            ),
+            footer: HighlightButton(
               buttonLabel: S.of(context).buttonStartLabel,
               onButtonPressed: () {
                 _onOverviewStartButtonPressed(context);
               },
-              buttonActive: _overviewPageButtonActive,
+              buttonActive: _displayModePageButtonActive,
             )),
       ];
 
@@ -263,6 +281,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _setOverviewPageContent(bool active) {
     setState(() {
       _overviewPageButtonActive = active;
+    });
+  }
+
+  void _setDisplayModeSelection(bool showConsumed) {
+    setState(() {
+      _onboardingBloc.userSelection.showConsumedKcalAndMacros = showConsumed;
+      _displayModePageButtonActive = true;
     });
   }
 

@@ -63,6 +63,12 @@ class IntakeDataSource {
         .toList();
   }
 
+  Future<List<IntakeDBO>> getAllIntakesForDate(DateTime dateTime) async {
+    return _intakeBox.values
+        .where((intake) => DateUtils.isSameDay(dateTime, intake.dateTime))
+        .toList();
+  }
+
   Future<List<IntakeDBO>> getRecentlyAddedIntake({int number = 1000}) async {
     final intakeList = _intakeBox.values.toList();
 

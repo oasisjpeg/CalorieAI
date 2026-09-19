@@ -6,7 +6,7 @@ class ThemeModeProvider extends ChangeNotifier {
 
   ThemeModeProvider({required this.appTheme});
 
-  get themeMode => appTheme.toThemeMode();
+  ThemeMode get themeMode => appTheme.toThemeMode();
 
   void updateTheme(AppThemeEntity appTheme) {
     this.appTheme = appTheme;

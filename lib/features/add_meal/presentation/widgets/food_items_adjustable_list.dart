@@ -8,8 +8,10 @@ class FoodItemsAdjustableList extends StatefulWidget {
   final void Function(List<Map<String, dynamic>> adjustedItems)? onChanged;
 
   const FoodItemsAdjustableList(
-      {required this.foodItems, required this.totals, this.onChanged, Key? key})
-      : super(key: key);
+      {required this.foodItems,
+      required this.totals,
+      this.onChanged,
+      super.key});
 
   @override
   State<FoodItemsAdjustableList> createState() =>
@@ -265,7 +267,7 @@ class _FoodItemsAdjustableListState extends State<FoodItemsAdjustableList> {
 
         // Totals section
         Card(
-          color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Column(
@@ -313,7 +315,7 @@ class _FoodItemsAdjustableListState extends State<FoodItemsAdjustableList> {
         Text(
           label,
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+            color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -333,7 +335,7 @@ class _FoodItemsAdjustableListState extends State<FoodItemsAdjustableList> {
         Text(
           label,
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+            color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
           ),
         ),
       ],

@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.12.5+7
+version: 1.12.7+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -74,6 +74,7 @@ dependencies:
   
   # In-App Purchases
   in_app_purchase: ^3.1.13
+  in_app_purchase_storekit: ^0.4.3
   
   # Fasting Timer
   flutter_local_notifications: ^20.1.0
@@ -88,6 +89,9 @@ dependencies:
   
   # Charts
   fl_chart: ^0.69.0
+  
+  # HealthKit integration
+  health: ^13.1.4
 
 dev_dependencies:
   flutter_test:
@@ -105,6 +109,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - .env
     - assets/icon/calorieai_logo.png
     - assets/datenschutzerklaerung.md
 

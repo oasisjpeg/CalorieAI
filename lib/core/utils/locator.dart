@@ -14,6 +14,8 @@ import 'package:calorieai/core/data/repository/user_activity_repository.dart';
 import 'package:calorieai/core/data/repository/user_repository.dart';
 import 'package:calorieai/core/data/repository/water_repository.dart';
 import 'package:calorieai/core/data/repository/weight_repository.dart';
+import 'package:calorieai/core/services/apple_health_service.dart';
+import 'package:calorieai/core/services/synology_health_service.dart';
 import 'package:calorieai/core/domain/usecase/add_config_usecase.dart';
 import 'package:calorieai/core/domain/usecase/add_intake_usecase.dart';
 import 'package:calorieai/core/domain/usecase/add_tracked_day_usecase.dart';
@@ -56,8 +58,14 @@ import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
 import 'package:calorieai/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
 import 'package:calorieai/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:calorieai/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:calorieai/core/data/datasource/local/meal_recipe_local_data_source.dart';
 import 'package:calorieai/core/data/datasource/local/saved_recipe_local_data_source.dart';
+import 'package:calorieai/core/data/repository/meal_recipe_repository.dart';
 import 'package:calorieai/features/recipe_chatbot/presentation/bloc/recipe_chatbot_bloc.dart';
+import 'package:calorieai/features/recipes/domain/usecase/delete_meal_recipe_usecase.dart';
+import 'package:calorieai/features/recipes/domain/usecase/get_meal_recipes_usecase.dart';
+import 'package:calorieai/features/recipes/domain/usecase/save_meal_recipe_usecase.dart';
+import 'package:calorieai/features/recipes/presentation/bloc/recipes_bloc.dart';
 import 'package:calorieai/features/scanner/presentation/scanner_bloc.dart';
 import 'package:calorieai/features/scanner/domain/usecase/search_product_by_barcode_usecase.dart';
 import 'package:calorieai/features/settings/domain/usecase/export_data_usecase.dart';
@@ -82,6 +90,17 @@ Future<void> initLocator() async {
   // AI Services
   locator.registerLazySingleton<GeminiService>(() => GeminiService());
 
+  // Health Services
+  locator.registerLazySingleton<AppleHealthService>(() => AppleHealthService());
+  locator.registerLazySingleton<SynologyHealthService>(() {
+    final service = SynologyHealthService();
+    service.init(
+      locator<ConfigDataSource>(),
+      hiveDBProvider.pendingHealthSyncBox,
+    );
+    return service;
+  });
+
   // ChatbotService
   //locator.registerLazySingleton<RecipeChatbotService>(() => RecipeChatbotService(locator()));
 
@@ -98,10 +117,14 @@ Future<void> initLocator() async {
       locator(),
       locator(),
       locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
       locator()));
   locator.registerLazySingleton(() => DiaryBloc(locator(), locator()));
   locator.registerLazySingleton(() => CalendarDayBloc(
-      locator(), locator(), locator(), locator(), locator(), locator()));
+      locator(), locator(), locator(), locator(), locator(), locator(), locator()));
   locator.registerLazySingleton<RecipeChatbotBloc>(() => RecipeChatbotBloc(
       locator(),
       locator(),
@@ -129,6 +152,8 @@ Future<void> initLocator() async {
       .registerFactory<ProductsBloc>(() => ProductsBloc(locator(), locator()));
   locator.registerFactory<FoodBloc>(() => FoodBloc(locator(), locator()));
   locator.registerFactory(() => RecentMealBloc(locator(), locator()));
+  locator.registerLazySingleton<RecipesBloc>(
+      () => RecipesBloc(locator(), locator(), locator(), locator()));
 
   // Fasting Timer
   locator.registerLazySingleton<FastingTimerBloc>(
@@ -178,6 +203,12 @@ Future<void> initLocator() async {
   locator.registerLazySingleton(
       () => GetKcalGoalUsecase(locator(), locator(), locator()));
   locator.registerLazySingleton(() => GetMacroGoalUsecase(locator()));
+  locator.registerLazySingleton<GetMealRecipesUsecase>(
+      () => GetMealRecipesUsecase(locator()));
+  locator.registerLazySingleton<SaveMealRecipeUsecase>(
+      () => SaveMealRecipeUsecase(locator()));
+  locator.registerLazySingleton<DeleteMealRecipeUsecase>(
+      () => DeleteMealRecipeUsecase(locator()));
   locator.registerLazySingleton(
       () => ExportDataUsecase(locator(), locator(), locator(), locator(), locator()));
   locator.registerLazySingleton(
@@ -188,7 +219,7 @@ Future<void> initLocator() async {
   locator
       .registerLazySingleton<UserRepository>(() => UserRepository(locator()));
   locator.registerLazySingleton<IntakeRepository>(
-      () => IntakeRepository(locator()));
+      () => IntakeRepository(locator(), locator(), locator()));
   locator.registerLazySingleton<ProductsRepository>(
       () => ProductsRepository(locator(), locator()));
   locator.registerLazySingleton<UserActivityRepository>(
@@ -198,6 +229,8 @@ Future<void> initLocator() async {
   locator.registerLazySingleton<TrackedDayRepository>(
       () => TrackedDayRepository(locator()));
   locator.registerLazySingleton<WaterRepository>(() => WaterRepository());
+  locator.registerLazySingleton<MealRecipeRepository>(
+      () => MealRecipeRepository(locator()));
   locator.registerLazySingleton<WeightRepository>(() => WeightRepository());
 
   // DataSources
@@ -217,6 +250,9 @@ Future<void> initLocator() async {
       () => TrackedDayDataSource(hiveDBProvider.trackedDayBox));
   locator.registerLazySingleton<SavedRecipeLocalDataSource>(
       () => SavedRecipeLocalDataSource());
+  locator.registerLazySingleton<MealRecipeLocalDataSource>(
+      () => MealRecipeLocalDataSource());
+
 
   await _initializeConfig(locator());
 }

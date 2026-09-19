@@ -100,6 +100,105 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _settingsBloc.add(ToggleFoodTrackingNotificationsEvent(value));
                   },
                 ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.swap_horiz_outlined),
+                  title: const Text('Show consumed calories and macros'),
+                  subtitle: const Text('Turn off to show remaining to goal'),
+                  value: state.showConsumedKcalAndMacros,
+                  onChanged: (bool value) {
+                    _settingsBloc.add(ToggleConsumedDashboardModeEvent(value));
+                    _homeBloc.add(LoadItemsEvent());
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.favorite_outline),
+                  title: Text(S.of(context).settingsAppleHealthSyncLabel),
+                  subtitle: Text(state.appleHealthSyncEnabled
+                      ? S.of(context).settingsAppleHealthSyncConnected
+                      : S.of(context).settingsAppleHealthSyncSubtitle),
+                  trailing: state.appleHealthSyncEnabled
+                      ? const Icon(Icons.check_circle, color: Colors.green)
+                      : const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    if (!state.appleHealthSyncEnabled) {
+                      _settingsBloc.add(const ToggleAppleHealthSyncEvent(true));
+                      // Trigger home bloc refresh to update steps after enabling
+                      _homeBloc.add(LoadItemsEvent());
+                    }
+                  },
+                ),
+                if (state.appleHealthSyncEnabled)
+                  ListTile(
+                    leading: const Icon(Icons.sync),
+                    title: Text(S.of(context).settingsAppleHealthResyncLabel),
+                    subtitle: Text(S.of(context).settingsAppleHealthResyncSubtitle),
+                    onTap: () async {
+                      _settingsBloc.add(ResyncAppleHealthIntakesEvent());
+                      if (mounted) {
+                        _showResyncProgressDialog(context);
+                      }
+                    },
+                  ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.cloud_sync_outlined),
+                  title: const Text('Synology Health Sync'),
+                  subtitle: Text(
+                    state.synologyHealthSyncEnabled
+                        ? (state.synologyHealthHistoricSyncedAt != null
+                            ? 'Historic sync done on ${_formatDate(state.synologyHealthHistoricSyncedAt!)}'
+                            : 'Sync enabled — historic data pending')
+                        : 'Push nutrition data to your Synology',
+                  ),
+                  value: state.synologyHealthSyncEnabled,
+                  onChanged: (bool value) {
+                    _settingsBloc.add(ToggleSynologyHealthSyncEvent(value));
+                  },
+                ),
+                if (state.synologyHealthSyncEnabled && !state.synologyServerReachable)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                    child: Card(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.cloud_off,
+                              color: Theme.of(context).colorScheme.onErrorContainer,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Synology server unreachable. Sync is paused until the server recovers.',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onErrorContainer,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                if (state.synologyHealthSyncEnabled)
+                  ListTile(
+                    leading: const Icon(Icons.sync),
+                    title: const Text('Resync Synology Health'),
+                    subtitle: const Text('Push all historic nutrition data again'),
+                    onTap: () async {
+                      _settingsBloc.add(ResyncSynologyHealthEvent());
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Synology resync started in the background'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: Text(S.of(context).settingsDisclaimerLabel),
@@ -345,7 +444,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
           }
         },
       ),
+      ListTile(
+        title: const Text('Reset Steps Count'),
+        subtitle: const Text('Clear cached steps and re-fetch from HealthKit'),
+        leading: const Icon(Icons.directions_walk, color: Colors.green),
+        onTap: () async {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Reset Steps Count'),
+              content: const Text('Are you sure you want to reset the steps count? This will clear the cached steps and re-fetch from HealthKit.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('CANCEL'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('RESET', style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+          );
+
+          if (confirmed == true) {
+            try {
+              // Clear cached steps
+              await _settingsBloc.clearLastSteps();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Steps count reset successfully, re-fetching from HealthKit...')),
+                );
+                // Trigger home bloc refresh to re-fetch steps from HealthKit
+                _homeBloc.add(LoadItemsEvent());
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error resetting steps count: $e')),
+                );
+              }
+            }
+          }
+        },
+      ),
     ];
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
   void _showUnitsDialog(BuildContext context, bool usesImperialUnits) async {
@@ -361,7 +509,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Column(
                   children: [
                     DropdownButtonFormField(
-                      value: selectedUnit,
+                      initialValue: selectedUnit,
                       decoration: InputDecoration(
                         enabled: true,
                         filled: false,
@@ -433,41 +581,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
             content: StatefulBuilder(
               builder: (BuildContext context,
                   void Function(void Function()) setState) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    RadioListTile(
-                      title:
-                          Text(S.of(context).settingsThemeSystemDefaultLabel),
-                      value: AppThemeEntity.system,
-                      groupValue: selectedTheme,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTheme = value as AppThemeEntity;
-                        });
-                      },
-                    ),
-                    RadioListTile(
-                      title: Text(S.of(context).settingsThemeLightLabel),
-                      value: AppThemeEntity.light,
-                      groupValue: selectedTheme,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTheme = value as AppThemeEntity;
-                        });
-                      },
-                    ),
-                    RadioListTile(
-                      title: Text(S.of(context).settingsThemeDarkLabel),
-                      value: AppThemeEntity.dark,
-                      groupValue: selectedTheme,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTheme = value as AppThemeEntity;
-                        });
-                      },
-                    ),
-                  ],
+                return RadioGroup<AppThemeEntity>(
+                  groupValue: selectedTheme,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedTheme = value ?? AppThemeEntity.system;
+                    });
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RadioListTile(
+                        title: Text(
+                            S.of(context).settingsThemeSystemDefaultLabel),
+                        value: AppThemeEntity.system,
+                      ),
+                      RadioListTile(
+                        title: Text(S.of(context).settingsThemeLightLabel),
+                        value: AppThemeEntity.light,
+                      ),
+                      RadioListTile(
+                        title: Text(S.of(context).settingsThemeDarkLabel),
+                        value: AppThemeEntity.dark,
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -500,6 +638,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
         builder: (context) {
           return const DisclaimerDialog();
         });
+  }
+
+  void _showResyncProgressDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StreamBuilder<SettingsResyncProgress>(
+          stream: _settingsBloc.resyncProgressStream,
+          builder: (context, snapshot) {
+            final progress = snapshot.data ??
+                const SettingsResyncProgress(
+                  status: 'Starting...',
+                );
+            return AlertDialog(
+              title: const Text('Apple Health Resync'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(progress.status),
+                  const SizedBox(height: 16),
+                  if (progress.total > 0) ...[
+                    LinearProgressIndicator(
+                      value: progress.progress,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${progress.current} / ${progress.total}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ] else
+                    const LinearProgressIndicator(),
+                ],
+              ),
+              actions: [
+                if (progress.isComplete)
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: Text(S.of(context).dialogOKLabel),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   void _showReportErrorDialog(BuildContext context) {

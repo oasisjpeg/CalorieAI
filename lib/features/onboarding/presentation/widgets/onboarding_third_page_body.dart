@@ -169,10 +169,10 @@ class _OnboardingThirdPageBodyState extends State<OnboardingThirdPageBody> {
   }
 
   void _setSelectedChoiceChip(
-      {sedentary = false,
-      lowActive = false,
-      active = false,
-      veryActive = false}) {
+      {bool sedentary = false,
+      bool lowActive = false,
+      bool active = false,
+      bool veryActive = false}) {
     _sedentarySelected = sedentary;
     _lowActiveSelected = lowActive;
     _activeSelected = active;

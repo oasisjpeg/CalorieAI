@@ -14,7 +14,7 @@ class PhysicalActivityEntity extends Equatable {
   final String description;
   final double mets;
 
-  get displayIcon => getDisplayIcon();
+  IconData get displayIcon => getDisplayIcon();
 
   final List<String> tags;
 
@@ -28,6 +28,7 @@ class PhysicalActivityEntity extends Equatable {
 
   String getName(BuildContext context) {
     final physicalActivityMap = {
+      "99999": "Manual Entry",
       "01015": S.of(context).paBicyclingGeneral,
       "01009": S.of(context).paBicyclingMountainGeneral,
       "01070": S.of(context).paUnicyclingGeneral,
@@ -126,6 +127,7 @@ class PhysicalActivityEntity extends Equatable {
 
   String getDescription(BuildContext context) {
     final physicalActivityMap = {
+      "99999": "Manual kcal input",
       "01009": S.of(context).paBicyclingMountainGeneralDesc,
       "01015": S.of(context).paBicyclingGeneralDesc,
       "01070": S.of(context).paUnicyclingGeneralDesc,
@@ -225,6 +227,9 @@ class PhysicalActivityEntity extends Equatable {
   IconData getDisplayIcon() {
     IconData iconData;
     switch (code) {
+      case "99999":
+        iconData = Icons.edit_note;
+        break;
       case "01015":
         iconData = Icons.directions_bike_outlined;
         break;

@@ -172,7 +172,7 @@ json
     try {
       // Ensure the response is not empty before trying to decode
       if (responseString.isEmpty) {
-        print('Gemini returned an empty response string.');
+        log.warning('Gemini returned an empty response string.');
         return [];
       }
       final List<dynamic> decodedJson = jsonDecode(responseString);
@@ -181,8 +181,8 @@ json
           .toList();
       return recipes;
     } catch (e) {
-      print('Error decoding JSON from Gemini: $e');
-      print('Problematic JSON string: $responseString');
+      log.warning('Error decoding JSON from Gemini: $e');
+      log.warning('Problematic JSON string: $responseString');
       return [];
     }
   }

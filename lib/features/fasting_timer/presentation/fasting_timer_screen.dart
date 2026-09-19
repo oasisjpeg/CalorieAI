@@ -41,7 +41,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return BlocProvider.value(
       value: _bloc,
@@ -60,7 +60,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
             } else if (state is FastingTimerEmpty) {
               return _buildEmptyState(context, l10n);
             } else if (state is FastingTimerError) {
-              return Center(child: Text('Error: ${(state as FastingTimerError).message}'));
+              return Center(child: Text('Error: ${state.message}'));
             }
             return const Center(child: CircularProgressIndicator());
           },
@@ -115,7 +115,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
           Icon(
             Icons.timer_outlined,
             size: 80,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
@@ -126,7 +126,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
           Text(
             l10n.fastingTimerEmptySubtitle,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -166,7 +166,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
               ),
         boxShadow: [
           BoxShadow(
-            color: (isFasting ? colorScheme.primary : colorScheme.tertiary).withOpacity(0.3),
+            color: (isFasting ? colorScheme.primary : colorScheme.tertiary).withValues(alpha: 0.3),
             blurRadius: 20,
             spreadRadius: 5,
           ),
@@ -178,7 +178,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -202,7 +202,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
           Text(
             isFasting ? l10n.fastingTimerUntilEating : l10n.fastingTimerUntilFasting,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -230,13 +230,13 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
           Icon(
             Icons.pause_circle_outline,
             size: 64,
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             l10n.fastingTimerPaused,
             style: theme.textTheme.titleLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -261,7 +261,7 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
                   '${schedule.fastingStartHour.toString().padLeft(2, '0')}:${schedule.fastingStartMinute.toString().padLeft(2, '0')}',
                   theme.colorScheme.primary,
                 ),
-                Icon(Icons.arrow_forward, color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                Icon(Icons.arrow_forward, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                 _buildTimeBlock(
                   context,
                   l10n.fastingTimerFastingEnd,
@@ -289,9 +289,9 @@ class _FastingTimerScreenState extends State<FastingTimerScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Text(
             time,

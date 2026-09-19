@@ -34,6 +34,8 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     _addConfigUsecase
         .setConfigHasAcceptedAnonymousData(hasAcceptedDataCollection);
     _addConfigUsecase.setConfigUsesImperialUnits(usesImperialUnits);
+    _addConfigUsecase.setShowConsumedKcalAndMacros(
+        userSelection.showConsumedKcalAndMacros);
     
     // Save user's calorie and macro adjustments if they were modified
     if (userSelection.kcalAdjustment != 0) {

@@ -9,11 +9,11 @@ part 'config_dbo.g.dart';
 @JsonSerializable() // Used for exporting to JSON
 class ConfigDBO extends HiveObject {
   @HiveField(0)
-  bool hasAcceptedDisclaimer;
+  bool? hasAcceptedDisclaimer;
   @HiveField(1)
-  bool hasAcceptedPolicy;
+  bool? hasAcceptedPolicy;
   @HiveField(2)
-  bool hasAcceptedSendAnonymousData;
+  bool? hasAcceptedSendAnonymousData;
   @HiveField(3)
   AppThemeDBO selectedAppTheme;
   @HiveField(4)
@@ -30,25 +30,67 @@ class ConfigDBO extends HiveObject {
   bool? foodTrackingNotificationsEnabled;
   @HiveField(10)
   String? bmrFormula;
+  @HiveField(11)
+  bool? appleHealthSyncEnabled;
+  @HiveField(12)
+  bool? appleHealthActivitySyncEnabled;
+  @HiveField(13)
+  int? lastStepsCount;
+  @HiveField(14)
+  DateTime? lastStepsUpdateDate;
+  @HiveField(15)
+  bool? showConsumedKcalAndMacros;
+  @HiveField(16)
+  DateTime? lastHealthKitSyncTimestamp;
+  @HiveField(17)
+  bool? synologyHealthSyncEnabled;
+  @HiveField(18)
+  DateTime? synologyHealthHistoricSyncedAt;
 
-  ConfigDBO(this.hasAcceptedDisclaimer, this.hasAcceptedPolicy,
-      this.hasAcceptedSendAnonymousData, this.selectedAppTheme,
-      {this.usesImperialUnits = false,
+  ConfigDBO(
+      {this.hasAcceptedDisclaimer = false,
+      this.hasAcceptedPolicy = false,
+      this.hasAcceptedSendAnonymousData = false,
+      required this.selectedAppTheme,
+      this.usesImperialUnits = false,
       this.userKcalAdjustment,
+      this.userCarbGoalPct,
+      this.userProteinGoalPct,
+      this.userFatGoalPct,
       this.foodTrackingNotificationsEnabled,
-      this.bmrFormula});
+      this.bmrFormula,
+      this.appleHealthSyncEnabled,
+      this.appleHealthActivitySyncEnabled,
+      this.lastStepsCount,
+      this.lastStepsUpdateDate,
+      this.showConsumedKcalAndMacros = false,
+      this.lastHealthKitSyncTimestamp,
+      this.synologyHealthSyncEnabled = false,
+      this.synologyHealthHistoricSyncedAt});
 
   factory ConfigDBO.empty() =>
-      ConfigDBO(false, false, false, AppThemeDBO.system);
+      ConfigDBO(selectedAppTheme: AppThemeDBO.system);
 
   factory ConfigDBO.fromConfigEntity(ConfigEntity entity) => ConfigDBO(
-      entity.hasAcceptedDisclaimer,
-      entity.hasAcceptedPolicy,
-      entity.hasAcceptedSendAnonymousData,
-      AppThemeDBO.fromAppThemeEntity(entity.appTheme),
+      hasAcceptedDisclaimer: entity.hasAcceptedDisclaimer,
+      hasAcceptedPolicy: entity.hasAcceptedPolicy,
+      hasAcceptedSendAnonymousData: entity.hasAcceptedSendAnonymousData,
+      selectedAppTheme: AppThemeDBO.fromAppThemeEntity(entity.appTheme),
       usesImperialUnits: entity.usesImperialUnits,
+      userKcalAdjustment: entity.userKcalAdjustment,
+      userCarbGoalPct: entity.userCarbGoalPct,
+      userProteinGoalPct: entity.userProteinGoalPct,
+      userFatGoalPct: entity.userFatGoalPct,
       foodTrackingNotificationsEnabled: entity.foodTrackingNotificationsEnabled,
-      bmrFormula: entity.bmrFormulaString);
+      bmrFormula: entity.bmrFormulaString,
+      appleHealthSyncEnabled: entity.appleHealthSyncEnabled,
+      appleHealthActivitySyncEnabled: entity.appleHealthActivitySyncEnabled,
+      lastStepsCount: entity.lastStepsCount,
+      lastStepsUpdateDate: entity.lastStepsUpdateDate,
+      showConsumedKcalAndMacros: entity.showConsumedKcalAndMacros,
+      lastHealthKitSyncTimestamp: entity.lastHealthKitSyncTimestamp,
+      synologyHealthSyncEnabled: entity.synologyHealthSyncEnabled,
+      synologyHealthHistoricSyncedAt: entity.synologyHealthHistoricSyncedAt);
 
   factory ConfigDBO.fromJson(Map<String, dynamic> json) =>
       _$ConfigDBOFromJson(json);

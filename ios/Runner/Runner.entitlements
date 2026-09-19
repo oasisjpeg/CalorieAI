@@ -4,5 +4,7 @@
 <dict>
     <key>application-identifier</key>
     <string>$(TeamIdentifierPrefix)com.axiona.calorieai</string>
+    <key>com.apple.developer.healthkit</key>
+    <true/>
 </dict>
 </plist>

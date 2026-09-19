@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:calorieai/core/data/datasource/local/iap_local_data_source.dart';
 import 'package:calorieai/core/domain/entity/iap_product.dart';

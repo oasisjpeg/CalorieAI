@@ -5,10 +5,10 @@ class NutriScoreWidget extends StatelessWidget {
   final double size;
 
   const NutriScoreWidget({
-    Key? key,
+    super.key,
     required this.score,
     this.size = 40.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -46,4 +46,44 @@ class AddConfigUsecase {
   Future<void> setConfigBMRFormula(BMRFormula formula) async {
     await _configRepository.setConfigBMRFormula(formula);
   }
+
+  Future<void> setAppleHealthSyncEnabled(bool enabled) async {
+    await _configRepository.setAppleHealthSyncEnabled(enabled);
+  }
+
+  Future<void> setAppleHealthActivitySyncEnabled(bool enabled) async {
+    await _configRepository.setAppleHealthActivitySyncEnabled(enabled);
+  }
+
+  Future<void> setLastSteps(int stepsCount, DateTime? updateDate) async {
+    await _configRepository.setLastSteps(stepsCount, updateDate);
+  }
+
+  Future<void> clearLastSteps() async {
+    await _configRepository.clearLastSteps();
+  }
+
+  Future<DateTime?> getLastHealthKitSyncTimestamp() async {
+    return await _configRepository.getLastHealthKitSyncTimestamp();
+  }
+
+  Future<void> setLastHealthKitSyncTimestamp(DateTime? timestamp) async {
+    await _configRepository.setLastHealthKitSyncTimestamp(timestamp);
+  }
+
+  Future<void> setShowConsumedKcalAndMacros(bool showConsumed) async {
+    await _configRepository.setShowConsumedKcalAndMacros(showConsumed);
+  }
+
+  Future<void> setSynologyHealthSyncEnabled(bool enabled) async {
+    await _configRepository.setSynologyHealthSyncEnabled(enabled);
+  }
+
+  Future<DateTime?> getSynologyHealthHistoricSyncedAt() async {
+    return await _configRepository.getSynologyHealthHistoricSyncedAt();
+  }
+
+  Future<void> setSynologyHealthHistoricSyncedAt(DateTime? timestamp) async {
+    await _configRepository.setSynologyHealthHistoricSyncedAt(timestamp);
+  }
 }

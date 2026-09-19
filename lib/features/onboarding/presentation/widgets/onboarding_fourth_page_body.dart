@@ -73,7 +73,9 @@ class _OnboardingFourthPageBodyState extends State<OnboardingFourthPageBody> {
   }
 
   void _setSelectedChoiceChip(
-      {looseWeight = false, maintainWeigh = false, gainWeight = false}) {
+      {bool looseWeight = false,
+      bool maintainWeigh = false,
+      bool gainWeight = false}) {
     _looseWeightSelected = looseWeight;
     _maintainWeightSelected = maintainWeigh;
     _gainWeightSelected = gainWeight;

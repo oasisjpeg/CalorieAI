@@ -7,6 +7,7 @@ class NavigationOptions {
   static const mealViewRoute = "mealView";
   static const mealDetailRoute = "mealDetail";
   static const editMealRoute = "editMeal";
+  static const recipeBuilderRoute = "recipeBuilder";
   static const addActivityRoute = "addActivity";
   static const activityDetailRoute = "activityDetail";
   static const imageFullScreenRoute = "imageFullScreen";

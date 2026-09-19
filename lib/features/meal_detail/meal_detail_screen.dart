@@ -70,7 +70,9 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
 
     // Set initial unit
     if (_initialUnit == "") {
-      if (meal.hasServingValues) {
+      if (meal.source == MealSourceEntity.recipe) {
+        _initialUnit = UnitDropdownItem.g.toString();
+      } else if (meal.hasServingValues) {
         _initialUnit = UnitDropdownItem.serving.toString();
       } else if (meal.isLiquid) {
         _initialUnit = _usesImperialUnits
@@ -89,16 +91,20 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
 
     // Set initial quantity
     if (_initialQuantity == "") {
-      if (meal.hasServingValues) {
+      if (meal.source == MealSourceEntity.recipe) {
+        // Recipes log the full batch weight by default, not 100 g
+        final batchGrams = double.tryParse(meal.mealQuantity ?? '');
+        _initialQuantity = (batchGrams != null && batchGrams > 0)
+            ? batchGrams.toStringAsFixed(0)
+            : _initialQuantityMetric;
+      } else if (meal.hasServingValues) {
         _initialQuantity = "1";
-        quantityTextController.text = "1";
       } else if (_usesImperialUnits) {
         _initialQuantity = _initialQuantityImperial;
-        quantityTextController.text = _initialQuantityImperial;
       } else {
         _initialQuantity = _initialQuantityMetric;
-        quantityTextController.text = _initialQuantityMetric;
       }
+      quantityTextController.text = _initialQuantity;
       _mealDetailBloc.add(UpdateKcalEvent(
           meal: meal, totalQuantity: quantityTextController.text));
     }
@@ -150,7 +156,6 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       double totalProtein,
       String selectedUnit) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
@@ -274,7 +279,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                 if (meal.source == MealSourceEntity.custom &&
                     meal.score != null &&
                     meal.scoreText != null)
-                  GeminiScoreCard(score: meal.score!, scoreText: meal.scoreText!),
+                  GeminiScoreCard(
+                      score: meal.score!, scoreText: meal.scoreText!),
                 MealDetailNutrimentsTable(
                   product: meal,
                   usesImperialUnits: _usesImperialUnits,
@@ -485,8 +491,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       ),
     );
   }
-
 }
+
 class MealDetailScreenArguments {
   final MealEntity mealEntity;
   final IntakeTypeEntity intakeTypeEntity;

@@ -10,13 +10,15 @@ class ActivityDetailBottomSheet extends StatefulWidget {
   final PhysicalActivityEntity activityEntity;
   final TextEditingController quantityTextController;
   final ActivityDetailBloc activityDetailBloc;
+  final bool isManualEntry;
 
   const ActivityDetailBottomSheet(
       {super.key,
       required this.onAddButtonPressed,
       required this.quantityTextController,
       required this.activityEntity,
-      required this.activityDetailBloc});
+      required this.activityDetailBloc,
+      required this.isManualEntry});
 
   @override
   State<ActivityDetailBottomSheet> createState() =>
@@ -76,9 +78,12 @@ class _ActivityDetailBottomSheetState extends State<ActivityDetailBottomSheet> {
                           decoration: InputDecoration(
                               border: const OutlineInputBorder(),
                               labelText: S.of(context).unitLabel),
-                          items: const <DropdownMenuItem<String>>[
-                            DropdownMenuItem(child: Text('min'))
+                          items: <DropdownMenuItem<String>>[
+                            DropdownMenuItem(
+                                value: widget.isManualEntry ? 'kcal' : 'min',
+                                child: Text(widget.isManualEntry ? 'kcal' : 'min'))
                           ],
+                          initialValue: widget.isManualEntry ? 'kcal' : 'min',
                           onChanged: (Object? value) {},
                         ))
                       ],

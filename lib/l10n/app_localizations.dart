@@ -903,6 +903,18 @@ abstract class AppLocalizations {
   /// **'Information provided\n by the \n\'2011 Compendium\n of Physical Activities\''**
   String get additionalInfoLabelCompendium2011;
 
+  /// No description provided for @manualEntryNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity name (optional)'**
+  String get manualEntryNameLabel;
+
+  /// No description provided for @manualEntryNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Morning run, Gym workout'**
+  String get manualEntryNameHint;
+
   /// No description provided for @quantityLabel.
   ///
   /// In en, this message translates to:
@@ -3296,6 +3308,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter amount in {unit}'**
   String waterAmountHint(String unit);
+
+  /// No description provided for @settingsAppleHealthSyncLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Health Sync'**
+  String get settingsAppleHealthSyncLabel;
+
+  /// No description provided for @settingsAppleHealthSyncSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync nutrition data with Apple Health'**
+  String get settingsAppleHealthSyncSubtitle;
+
+  /// No description provided for @settingsAppleHealthSyncConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get settingsAppleHealthSyncConnected;
+
+  /// No description provided for @settingsAppleHealthResyncLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Resync meal intakes'**
+  String get settingsAppleHealthResyncLabel;
+
+  /// No description provided for @settingsAppleHealthResyncSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend all meal data to Apple Health'**
+  String get settingsAppleHealthResyncSubtitle;
+
+  /// No description provided for @appleHealthResyncInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Resyncing all meal intakes to Apple Health...'**
+  String get appleHealthResyncInProgress;
+
+  /// No description provided for @settingsAppleHealthActivitySyncLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Health Activity Sync'**
+  String get settingsAppleHealthActivitySyncLabel;
+
+  /// No description provided for @settingsAppleHealthActivitySyncSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync workouts and steps with Apple Health'**
+  String get settingsAppleHealthActivitySyncSubtitle;
+
+  /// No description provided for @appleHealthPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Please grant access to Apple Health to sync nutrition data'**
+  String get appleHealthPermissionDenied;
+
+  /// No description provided for @appleHealthSyncError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error syncing with Apple Health'**
+  String get appleHealthSyncError;
+
+  /// No description provided for @recipesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipes'**
+  String get recipesLabel;
+
+  /// No description provided for @myRecipesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'My Recipes'**
+  String get myRecipesLabel;
+
+  /// No description provided for @aiIdeasLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Ideas'**
+  String get aiIdeasLabel;
+
+  /// No description provided for @recipeExample.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. your go-to breakfast bowl ...'**
+  String get recipeExample;
+
+  /// No description provided for @createRecipeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Create recipe'**
+  String get createRecipeLabel;
+
+  /// No description provided for @editRecipeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit recipe'**
+  String get editRecipeLabel;
+
+  /// No description provided for @noRecipesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No recipes yet'**
+  String get noRecipesYet;
+
+  /// No description provided for @noRecipesYetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Combine foods into a recipe and log it with one tap'**
+  String get noRecipesYetHint;
+
+  /// No description provided for @recipeListSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items · {kcal} kcal/serving · {servings} servings'**
+  String recipeListSubtitle(int count, int kcal, int servings);
+
+  /// No description provided for @chooseMealLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to…'**
+  String get chooseMealLabel;
+
+  /// No description provided for @recipeNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe name'**
+  String get recipeNameLabel;
+
+  /// No description provided for @recipeNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name'**
+  String get recipeNameRequired;
+
+  /// No description provided for @recipeNeedsItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one item'**
+  String get recipeNeedsItems;
+
+  /// No description provided for @servingsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Servings'**
+  String get servingsLabel;
+
+  /// No description provided for @batchWeightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total weight'**
+  String get batchWeightLabel;
+
+  /// No description provided for @batchWeightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty = sum of ingredients'**
+  String get batchWeightHint;
+
+  /// No description provided for @addComponentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add item'**
+  String get addComponentLabel;
+
+  /// No description provided for @recipeTotalsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals'**
+  String get recipeTotalsLabel;
+
+  /// No description provided for @saveRecipeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Save recipe'**
+  String get saveRecipeLabel;
+
+  /// No description provided for @recipeSavedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe saved'**
+  String get recipeSavedSnackbar;
+
+  /// No description provided for @logOnceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Log once'**
+  String get logOnceLabel;
+
+  /// No description provided for @logToDiaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Log to diary'**
+  String get logToDiaryLabel;
+
+  /// No description provided for @saveAsRecipeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as recipe'**
+  String get saveAsRecipeLabel;
+
+  /// No description provided for @pickerTodayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get pickerTodayLabel;
+
+  /// No description provided for @pickerCustomLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get pickerCustomLabel;
+
+  /// No description provided for @pickerAiLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get pickerAiLabel;
+
+  /// No description provided for @pickerCustomNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Item name'**
+  String get pickerCustomNameLabel;
+
+  /// No description provided for @additionalInfoLabelRecipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Created from your recipe'**
+  String get additionalInfoLabelRecipe;
 }
 
 class _AppLocalizationsDelegate

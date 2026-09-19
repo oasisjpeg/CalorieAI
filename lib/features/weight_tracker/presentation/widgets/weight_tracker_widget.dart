@@ -146,7 +146,7 @@ class _WeightTrackerWidgetState extends State<WeightTrackerWidget> {
           TextButton(
             onPressed: () async {
               await _weightRepository.deleteWeightEntry(entry.date);
-              if (mounted) {
+              if (context.mounted) {
                 Navigator.pop(context);
                 _loadLatestWeight();
               }

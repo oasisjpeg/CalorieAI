@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:calorieai/core/utils/iap_constants.dart';
 import 'package:calorieai/features/iap/presentation/bloc/iap_bloc.dart';
 import 'package:calorieai/features/iap/presentation/pages/iap_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
@@ -10,9 +9,9 @@ class OutOfLimitsDialog extends StatelessWidget {
   final int remainingAnalyses;
   
   const OutOfLimitsDialog({
-    Key? key,
+    super.key,
     required this.remainingAnalyses,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

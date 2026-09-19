@@ -32,7 +32,6 @@ class MealViewScreen extends StatefulWidget {
 }
 
 class _MealViewScreenState extends State<MealViewScreen> {
-  static const _containerSize = 350.0;
   final log = Logger('MealViewScreen');
   late MealDetailBloc _mealDetailBloc;
   final _scrollController = ScrollController();
@@ -137,8 +136,8 @@ class _MealViewScreenState extends State<MealViewScreen> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(S.of(context).itemDeletedSnackbar)));
+          Navigator.pop(context);
         }
-        Navigator.pop(context);
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -159,7 +158,6 @@ class _MealViewScreenState extends State<MealViewScreen> {
     String selectedUnit,
   ) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return CustomScrollView(
       controller: _scrollController,

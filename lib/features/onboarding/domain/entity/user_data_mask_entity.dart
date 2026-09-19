@@ -23,6 +23,7 @@ class UserDataMaskEntity {
   double carbGoalPct = 0.5;
   double proteinGoalPct = 0.25;
   double fatGoalPct = 0.25;
+  bool showConsumedKcalAndMacros = false;
 
   UserDataMaskEntity(
       {this.gender,

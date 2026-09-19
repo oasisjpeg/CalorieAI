@@ -19,6 +19,33 @@ class ReferencesScreen extends StatelessWidget {
             title: 'Energy Expenditure Calculations',
             references: [
               _Reference(
+                title: 'A new predictive equation for resting energy expenditure in healthy individuals',
+                authors: 'Mifflin MD, et al.',
+                year: '1990',
+                journal: 'The American Journal of Clinical Nutrition',
+                volume: '51',
+                issue: '2',
+                pages: '241-247',
+                doi: '10.1093/ajcn/51.2.241',
+              ),
+              _Reference(
+                title: 'The Harris Benedict equation reevaluated: resting energy requirements and the body cell mass',
+                authors: 'Roza AM, Shizgal HM',
+                year: '1984',
+                journal: 'The American Journal of Clinical Nutrition',
+                volume: '40',
+                issue: '1',
+                pages: '168-182',
+                doi: '10.1093/ajcn/40.1.168',
+              ),
+              _Reference(
+                title: 'Human energy requirements: Report of a Joint FAO/WHO/UNU Expert Consultation',
+                authors: 'Food and Agriculture Organization, World Health Organization, United Nations University',
+                year: '2001',
+                publisher: 'Food and Agriculture Organization',
+                url: 'https://www.fao.org/3/y5686e/y5686e00.htm',
+              ),
+              _Reference(
                 title: 'Dietary Reference Intakes for Energy, Carbohydrate, Fiber, Fat, Fatty Acids, Cholesterol, Protein, and Amino Acids',
                 authors: 'Institute of Medicine',
                 year: '2005',
@@ -87,7 +114,7 @@ class ReferencesScreen extends StatelessWidget {
               ),
         ),
         const SizedBox(height: 8),
-        ...references.map((ref) => _buildReferenceItem(context, ref)).toList(),
+        ...references.map((ref) => _buildReferenceItem(context, ref)),
       ],
     );
   }

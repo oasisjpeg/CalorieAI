@@ -5,6 +5,7 @@ import 'package:calorieai/core/utils/navigation_options.dart';
 import 'package:calorieai/features/add_activity/presentation/add_activity_screen.dart';
 import 'package:calorieai/features/add_meal/presentation/add_meal_screen.dart';
 import 'package:calorieai/features/add_meal/presentation/add_meal_type.dart';
+import 'package:calorieai/features/recipes/presentation/recipe_builder_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 class AddItemBottomSheet extends StatelessWidget {
@@ -139,6 +140,31 @@ class AddItemBottomSheet extends StatelessWidget {
               child: Icon(IntakeTypeEntity.snack.getIconData())),
           onTap: () {
             _showAddItemScreen(context, AddMealType.snackType);
+          },
+        ),
+        const Divider(indent: 16, endIndent: 16),
+        ListTile(
+          title: Text(
+            S.of(context).recipesLabel,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+          ),
+          subtitle: Text(
+            S.of(context).recipeExample,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color:
+                    Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+          ),
+          // ignore: sized_box_for_whitespace
+          leading: Container(
+              height: double.infinity,
+              child: const Icon(Icons.restaurant_menu_outlined)),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(NavigationOptions.recipeBuilderRoute,
+                arguments: RecipeBuilderScreenArguments(day: day));
           },
         ),
       ],

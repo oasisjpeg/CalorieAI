@@ -436,6 +436,12 @@ class AppLocalizationsDe extends AppLocalizations {
       'Informationen bereitgestellt von\n\'2011 Compendium\n of Physical Activities\'';
 
   @override
+  String get manualEntryNameLabel => 'Aktivitätsname (optional)';
+
+  @override
+  String get manualEntryNameHint => 'z. B. Morgenspaß, Fitnessstudio';
+
+  @override
   String get quantityLabel => 'Menge';
 
   @override
@@ -1688,4 +1694,128 @@ class AppLocalizationsDe extends AppLocalizations {
   String waterAmountHint(String unit) {
     return 'Menge in $unit eingeben';
   }
+
+  @override
+  String get settingsAppleHealthSyncLabel => 'Apple Health Sync';
+
+  @override
+  String get settingsAppleHealthSyncSubtitle =>
+      'Nährungsdaten mit Apple Health synchronisieren';
+
+  @override
+  String get settingsAppleHealthSyncConnected => 'Verbunden';
+
+  @override
+  String get settingsAppleHealthResyncLabel => 'Mahlzeiten neu synchronisieren';
+
+  @override
+  String get settingsAppleHealthResyncSubtitle =>
+      'Alle Mahlzeitendaten erneut an Apple Health senden';
+
+  @override
+  String get appleHealthResyncInProgress =>
+      'Mahlzeiten werden mit Apple Health neu synchronisiert...';
+
+  @override
+  String get settingsAppleHealthActivitySyncLabel =>
+      'Apple Health Aktivitäten Sync';
+
+  @override
+  String get settingsAppleHealthActivitySyncSubtitle =>
+      'Workouts und Schritte mit Apple Health synchronisieren';
+
+  @override
+  String get appleHealthPermissionDenied =>
+      'Bitte erteilen Sie Zugriff auf Apple Health, um Nährungsdaten zu synchronisieren';
+
+  @override
+  String get appleHealthSyncError =>
+      'Fehler beim Synchronisieren mit Apple Health';
+
+  @override
+  String get recipesLabel => 'Rezepte';
+
+  @override
+  String get myRecipesLabel => 'Meine Rezepte';
+
+  @override
+  String get aiIdeasLabel => 'KI-Ideen';
+
+  @override
+  String get recipeExample => 'z. B. deine Lieblings-Bowl ...';
+
+  @override
+  String get createRecipeLabel => 'Rezept erstellen';
+
+  @override
+  String get editRecipeLabel => 'Rezept bearbeiten';
+
+  @override
+  String get noRecipesYet => 'Noch keine Rezepte';
+
+  @override
+  String get noRecipesYetHint =>
+      'Kombiniere Lebensmittel zu einem Rezept und trage es mit einem Tippen ein';
+
+  @override
+  String recipeListSubtitle(int count, int kcal, int servings) {
+    return '$count Zutaten · $kcal kcal/Portion · $servings Portionen';
+  }
+
+  @override
+  String get chooseMealLabel => 'Hinzufügen zu…';
+
+  @override
+  String get recipeNameLabel => 'Rezeptname';
+
+  @override
+  String get recipeNameRequired => 'Bitte einen Namen eingeben';
+
+  @override
+  String get recipeNeedsItems => 'Mindestens eine Zutat hinzufügen';
+
+  @override
+  String get servingsLabel => 'Portionen';
+
+  @override
+  String get batchWeightLabel => 'Gesamtgewicht';
+
+  @override
+  String get batchWeightHint => 'Leer = Summe der Zutaten';
+
+  @override
+  String get addComponentLabel => 'Zutat hinzufügen';
+
+  @override
+  String get recipeTotalsLabel => 'Gesamt';
+
+  @override
+  String get saveRecipeLabel => 'Rezept speichern';
+
+  @override
+  String get recipeSavedSnackbar => 'Rezept gespeichert';
+
+  @override
+  String get logOnceLabel => 'Einmal eintragen';
+
+  @override
+  String get logToDiaryLabel => 'Ins Tagebuch eintragen';
+
+  @override
+  String get saveAsRecipeLabel => 'Als Rezept speichern';
+
+  @override
+  String get pickerTodayLabel => 'Heute';
+
+  @override
+  String get pickerCustomLabel => 'Eigene';
+
+  @override
+  String get pickerAiLabel => 'KI';
+
+  @override
+  String get pickerCustomNameLabel => 'Name der Zutat';
+
+  @override
+  String get additionalInfoLabelRecipe => 'Aus deinem Rezept erstellt';
 }

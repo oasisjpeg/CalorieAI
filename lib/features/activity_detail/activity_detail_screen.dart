@@ -30,17 +30,20 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
   late PhysicalActivityEntity activityEntity;
   late DateTime _day;
   late TextEditingController quantityTextController;
+  late TextEditingController noteTextController;
 
   late ActivityDetailBloc _activityDetailBloc;
 
   late double totalQuantity;
   late double totalKcal;
+  bool get isManualEntry => activityEntity.code == '99999';
 
   @override
   void initState() {
     _activityDetailBloc = locator<ActivityDetailBloc>();
     quantityTextController = TextEditingController();
     quantityTextController.text = "0";
+    noteTextController = TextEditingController();
     totalQuantity = 0; // TODO change to 60
     totalKcal = 0;
     super.initState();
@@ -83,6 +86,7 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
         quantityTextController: quantityTextController,
         activityEntity: activityEntity,
         activityDetailBloc: _activityDetailBloc,
+        isManualEntry: isManualEntry,
       ),
     );
   }
@@ -152,13 +156,23 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
                     // set Focus
                     Text('~${totalKcal.toInt()} ${S.of(context).kcalLabel}',
                         style: Theme.of(context).textTheme.headlineSmall),
-                    Text(' / ${totalQuantity.toInt()} min')
+                    Text(' / ${totalQuantity.toInt()} ${isManualEntry ? S.of(context).kcalLabel : 'min'}')
                   ],
                 ),
                 const SizedBox(height: 8.0),
+                if (isManualEntry)
+                  TextField(
+                    controller: noteTextController,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: S.of(context).manualEntryNameLabel,
+                      hintText: S.of(context).manualEntryNameHint,
+                    ),
+                  ),
+                const SizedBox(height: 8.0),
                 const Divider(),
                 const SizedBox(height: 48.0),
-                const ActivityInfoButton(),
+                if (!isManualEntry) const ActivityInfoButton(),
                 const SizedBox(height: 200.0) // height added to scroll
               ],
             ),
@@ -171,8 +185,17 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
   void _onQuantityChanged(String quantityString, UserEntity userEntity) async {
     try {
       final newQuantity = double.parse(quantityString);
-      final newTotalKcal = _activityDetailBloc.getTotalKcalBurned(
-          userEntity, activityEntity, newQuantity);
+      double newTotalKcal;
+      
+      if (isManualEntry) {
+        // Manual entry mode: use input directly as kcal
+        newTotalKcal = newQuantity;
+      } else {
+        // Duration mode: calculate kcal from duration
+        newTotalKcal = _activityDetailBloc.getTotalKcalBurned(
+            userEntity, activityEntity, newQuantity);
+      }
+      
       setState(() {
         totalQuantity = newQuantity;
         totalKcal = newTotalKcal;
@@ -188,9 +211,10 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
         duration: const Duration(seconds: 1), curve: Curves.easeInOut);
   }
 
-  void onAddButtonPressed(BuildContext context) {
-    _activityDetailBloc.persistActivity(
-        context, quantityTextController.text, totalKcal, activityEntity, _day);
+  Future<void> onAddButtonPressed(BuildContext context) async {
+    final note = isManualEntry ? noteTextController.text : null;
+    await _activityDetailBloc.persistActivity(
+        context, quantityTextController.text, totalKcal, activityEntity, _day, note);
 
     // Refresh Home Page
     locator<HomeBloc>().add(const LoadItemsEvent());
@@ -198,6 +222,8 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
     // Refresh Diary Page
     locator<DiaryBloc>().add(const LoadDiaryYearEvent());
     locator<CalendarDayBloc>().add(RefreshCalendarDayEvent());
+
+    if (!context.mounted) return;
 
     // Show snackbar and return to dashboard
     ScaffoldMessenger.of(context).showSnackBar(

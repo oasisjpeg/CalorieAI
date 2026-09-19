@@ -15,7 +15,6 @@ import 'package:calorieai/core/styles/fonts.dart';
 import 'package:calorieai/features/iap/domain/service/daily_limit_service.dart';
 import 'package:calorieai/features/iap/presentation/bloc/iap_bloc.dart';
 import 'package:calorieai/features/iap/presentation/bloc/iap_event.dart';
-import 'package:calorieai/shared/iap_service.dart';
 import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/core/utils/logger_config.dart';
 import 'package:calorieai/core/utils/navigation_options.dart';
@@ -28,11 +27,13 @@ import 'package:calorieai/features/onboarding/onboarding_screen.dart';
 import 'package:calorieai/features/scanner/scanner_screen.dart';
 import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
 import 'package:calorieai/features/meal_view/presentation/meal_view_screen.dart';
+import 'package:calorieai/features/recipes/presentation/recipe_builder_screen.dart';
 import 'package:calorieai/features/settings/settings_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:calorieai/core/utils/env.dart';
 import 'package:calorieai/core/service/food_tracking_notification_service.dart';
+import 'package:calorieai/core/services/apple_health_service.dart';
 import 'package:calorieai/features/fasting_timer/core/service/fasting_notification_service.dart';
 import 'package:calorieai/features/fasting_timer/presentation/bloc/fasting_timer_bloc.dart';
 import 'package:calorieai/features/fasting_timer/presentation/fasting_timer_screen.dart';
@@ -45,6 +46,25 @@ Future<void> main() async {
   LoggerConfig.intiLogger();
   await initLocator();
   
+  // Initialize Apple Health service
+  final appleHealthService = locator<AppleHealthService>();
+  await appleHealthService.init();
+  
+  // Check if Apple Health sync was previously enabled and restore authorization
+  final configRepo = locator<ConfigRepository>();
+  final config = await configRepo.getConfig();
+  final log = Logger('main');
+  
+  if (config.appleHealthSyncEnabled || config.appleHealthActivitySyncEnabled) {
+    log.info('Apple Health sync was previously enabled - restoring authorization state');
+    log.info('appleHealthSyncEnabled: ${config.appleHealthSyncEnabled}, appleHealthActivitySyncEnabled: ${config.appleHealthActivitySyncEnabled}');
+    
+    // Restore authorization state from HealthKit
+    await appleHealthService.restoreAuthorizationState();
+    
+    log.info('Authorization restored: isAuthorized=${appleHealthService.isAuthorized}');
+  }
+  
   // Initialize fasting timer notifications
   final notificationService = locator<FastingNotificationService>();
   await notificationService.initialize();
@@ -54,11 +74,9 @@ Future<void> main() async {
   await foodTrackingNotificationService.initialize();
   
   final isUserInitialized = await locator<UserDataSource>().hasUserData();
-  final configRepo = locator<ConfigRepository>();
   final hasAcceptedAnonymousData =
       await configRepo.getConfigHasAcceptedAnonymousData();
   final savedAppTheme = await configRepo.getConfigAppTheme();
-  final log = Logger('main');
   
   if (kReleaseMode && hasAcceptedAnonymousData) {
     log.info('Starting App with Sentry enabled ...');
@@ -107,7 +125,7 @@ class OpenNutriTrackerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateTitle: (context) => S.of(context)?.appTitle ?? 'CalorieAI',
+      onGenerateTitle: (context) => S.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           useMaterial3: true,
@@ -139,6 +157,8 @@ class OpenNutriTrackerApp extends StatelessWidget {
             const MealDetailScreen(),
         NavigationOptions.mealViewRoute: (context) => const MealViewScreen(),
         NavigationOptions.editMealRoute: (context) => const EditMealScreen(),
+        NavigationOptions.recipeBuilderRoute: (context) =>
+            const RecipeBuilderScreen(),
         NavigationOptions.addActivityRoute: (context) =>
             const AddActivityScreen(),
         NavigationOptions.activityDetailRoute: (context) =>

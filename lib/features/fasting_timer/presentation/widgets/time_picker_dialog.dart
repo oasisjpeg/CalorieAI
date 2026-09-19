@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:calorieai/features/fasting_timer/presentation/widgets/circular_time_picker.dart';
 
 class TimePickerDialog extends StatefulWidget {
@@ -39,7 +38,6 @@ class _TimePickerDialogState extends State<TimePickerDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return AlertDialog(
       title: Text(widget.title),

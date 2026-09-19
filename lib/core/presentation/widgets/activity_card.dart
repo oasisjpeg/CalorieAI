@@ -73,7 +73,9 @@ class ActivityCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  activityEntity.physicalActivityEntity.getName(context),
+                  activityEntity.note != null && activityEntity.note!.isNotEmpty
+                      ? activityEntity.note!
+                      : activityEntity.physicalActivityEntity.getName(context),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurface),
                   maxLines: 1,

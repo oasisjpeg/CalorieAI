@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calorieai/core/services/imgbb_service.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
@@ -17,6 +16,8 @@ import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
 // Removed unused imports
 import 'package:calorieai/features/add_meal/domain/entity/meal_nutriments_entity.dart';
 import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
+import 'package:calorieai/features/recipes/domain/entity/meal_recipe_entity.dart';
+import 'package:calorieai/features/recipes/presentation/recipe_builder_screen.dart';
 import 'package:calorieai/core/presentation/widgets/food_analysis_loading_dialog.dart';
 import 'package:calorieai/features/add_meal/presentation/widgets/food_items_adjustable_list.dart';
 import 'package:calorieai/features/iap/presentation/bloc/iap_bloc.dart';
@@ -31,11 +32,11 @@ class FoodImageAnalyzer extends StatefulWidget {
   final IntakeTypeEntity intakeType;
 
   const FoodImageAnalyzer({
-    Key? key,
+    super.key,
     required this.onSearchTermsExtracted,
     required this.day,
     required this.intakeType,
-  }) : super(key: key);
+  });
 
   @override
   State<FoodImageAnalyzer> createState() => _FoodImageAnalyzerState();
@@ -56,16 +57,6 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
   // Flag to track if we can add this food to the meal log
 
-  Future<String?> _convertImageToBase64Url(File imageFile) async {
-    try {
-      final bytes = await imageFile.readAsBytes();
-      final base64 = base64Encode(bytes);
-      return 'data:image/jpeg;base64,$base64';
-    } catch (e) {
-      log.severe('Error converting image to base64: $e');
-      return null;
-    }
-  }
 
   Future<String?> _uploadImageToImgbb(File imageFile) async {
     try {
@@ -116,6 +107,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
       }
     } catch (e) {
       log.severe('Error picking image: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error selecting image: $e')),
       );
@@ -154,8 +146,10 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
 
     // Prepare the analysis future with timeout
     final prompt = _promptController.text.trim();
+    final imageBytes = await _imageFile!.readAsBytes();
+    if (!mounted) return;
     final analysisFuture = _geminiService.analyzeFoodImage(
-      imageBytes: await _imageFile!.readAsBytes(),
+      imageBytes: imageBytes,
       context: context,
       prompt: prompt.isNotEmpty ? prompt : null,
     ).timeout(
@@ -496,6 +490,36 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
     }
   }
 
+  /// Whether the analysis describes a composed meal/recipe rather than a
+  /// single food item (Gemini meal_kind field, with an item-count fallback).
+  bool _isComposedMeal() {
+    if (_foodData == null) return false;
+    final mealKind = _foodData!['meal_kind']?.toString();
+    if (mealKind == 'recipe' || mealKind == 'composed') return true;
+    if (mealKind == 'single') return false;
+    final items = _foodData!['items'] as List<dynamic>?;
+    return (items?.length ?? 0) > 1;
+  }
+
+  /// Opens the recipe builder pre-filled with the analyzed items so the
+  /// result can be saved as a reusable recipe instead of a one-off entry.
+  void _openRecipeBuilder() {
+    final items = _adjustedFoodItems ??
+        (_foodData!['items'] as List<dynamic>?)
+            ?.map((e) => Map<String, dynamic>.from(e as Map))
+            .toList() ??
+        [];
+    Navigator.of(context).pushNamed(
+      NavigationOptions.recipeBuilderRoute,
+      arguments: RecipeBuilderScreenArguments(
+        day: widget.day,
+        intakeType: widget.intakeType,
+        initialName: _foodData!['title'] as String?,
+        initialComponents: MealRecipeEntity.componentsFromGeminiItems(items),
+      ),
+    );
+  }
+
   void _showUpgradeDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -636,8 +660,8 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                           controller: _promptController,
                           focusNode: _promptFocusNode,
                           decoration: InputDecoration(
-                            labelText: S.of(context)!.addPromptForGemini,
-                            hintText: S.of(context)!.addPromptForGeminiHint,
+                            labelText: S.of(context).addPromptForGemini,
+                            hintText: S.of(context).addPromptForGeminiHint,
                             border: OutlineInputBorder(),
                           ),
                           maxLines: 3,
@@ -667,7 +691,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                             });
                             _analyzeImage();
                           },
-                          child: Text(S.of(context)!.analyzeWithGemini),
+                          child: Text(S.of(context).analyzeWithGemini),
                         ),
                       ],
                     ),
@@ -767,7 +791,7 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                                 final mealEntity =
                                     await createMealEntityFromGeminiData(
                                         _adjustedFoodItems);
-                                if (!mounted) return;
+                                if (!context.mounted) return;
                                 Navigator.of(context).pushReplacementNamed(
                                   NavigationOptions.mealDetailRoute,
                                   arguments: MealDetailScreenArguments(
@@ -779,6 +803,14 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                                 );
                               },
                             ),
+                            if (_isComposedMeal()) ...[
+                              const SizedBox(height: 8),
+                              OutlinedButton.icon(
+                                icon: const Icon(Icons.restaurant_menu),
+                                label: Text(S.of(context).saveAsRecipeLabel),
+                                onPressed: _openRecipeBuilder,
+                              ),
+                            ],
                             const SizedBox(height: 16),
                           ],
                         )
@@ -786,11 +818,13 @@ class _FoodImageAnalyzerState extends State<FoodImageAnalyzer> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: Colors.black.withValues(alpha: 0.05),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),

@@ -13,4 +13,15 @@ class PhysicalActivityRepository {
         .map((dbo) => PhysicalActivityEntity.fromPhysicalActivityDBO(dbo))
         .toList();
   }
+
+  Future<PhysicalActivityEntity?> getPhysicalActivityByCode(String code) async {
+    final physicalActivitiesDBOList =
+        _physicalActivityDataSource.getPhysicalActivityList();
+    final matchingDBO = physicalActivitiesDBOList
+        .where((dbo) => dbo.code == code)
+        .firstOrNull;
+    return matchingDBO != null
+        ? PhysicalActivityEntity.fromPhysicalActivityDBO(matchingDBO)
+        : null;
+  }
 }

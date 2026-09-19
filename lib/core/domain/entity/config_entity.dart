@@ -15,6 +15,14 @@ class ConfigEntity extends Equatable {
   final double? userFatGoalPct;
   final bool foodTrackingNotificationsEnabled;
   final BMRFormula? bmrFormula;
+  final bool appleHealthSyncEnabled;
+  final bool appleHealthActivitySyncEnabled;
+  final int lastStepsCount;
+  final DateTime? lastStepsUpdateDate;
+  final bool showConsumedKcalAndMacros;
+  final DateTime? lastHealthKitSyncTimestamp;
+  final bool synologyHealthSyncEnabled;
+  final DateTime? synologyHealthHistoricSyncedAt;
 
   const ConfigEntity(this.hasAcceptedDisclaimer, this.hasAcceptedPolicy,
       this.hasAcceptedSendAnonymousData, this.appTheme,
@@ -24,12 +32,20 @@ class ConfigEntity extends Equatable {
       this.userProteinGoalPct,
       this.userFatGoalPct,
       this.foodTrackingNotificationsEnabled = true,
-      this.bmrFormula});
+      this.bmrFormula,
+      this.appleHealthSyncEnabled = false,
+      this.appleHealthActivitySyncEnabled = false,
+      this.lastStepsCount = 0,
+      this.lastStepsUpdateDate,
+      this.showConsumedKcalAndMacros = false,
+      this.lastHealthKitSyncTimestamp,
+      this.synologyHealthSyncEnabled = false,
+      this.synologyHealthHistoricSyncedAt});
 
   factory ConfigEntity.fromConfigDBO(ConfigDBO dbo) => ConfigEntity(
-        dbo.hasAcceptedDisclaimer,
-        dbo.hasAcceptedPolicy,
-        dbo.hasAcceptedSendAnonymousData,
+        dbo.hasAcceptedDisclaimer ?? false,
+        dbo.hasAcceptedPolicy ?? false,
+        dbo.hasAcceptedSendAnonymousData ?? false,
         AppThemeEntity.fromAppThemeDBO(dbo.selectedAppTheme),
         usesImperialUnits: dbo.usesImperialUnits ?? false,
         userKcalAdjustment: dbo.userKcalAdjustment,
@@ -38,6 +54,14 @@ class ConfigEntity extends Equatable {
         userFatGoalPct: dbo.userFatGoalPct,
         foodTrackingNotificationsEnabled: dbo.foodTrackingNotificationsEnabled ?? true,
         bmrFormula: _parseBMRFormula(dbo.bmrFormula),
+        appleHealthSyncEnabled: dbo.appleHealthSyncEnabled ?? false,
+        appleHealthActivitySyncEnabled: dbo.appleHealthActivitySyncEnabled ?? false,
+        lastStepsCount: dbo.lastStepsCount ?? 0,
+        lastStepsUpdateDate: dbo.lastStepsUpdateDate,
+        showConsumedKcalAndMacros: dbo.showConsumedKcalAndMacros ?? false,
+        lastHealthKitSyncTimestamp: dbo.lastHealthKitSyncTimestamp,
+        synologyHealthSyncEnabled: dbo.synologyHealthSyncEnabled ?? false,
+        synologyHealthHistoricSyncedAt: dbo.synologyHealthHistoricSyncedAt,
       );
 
   static BMRFormula? _parseBMRFormula(String? value) {
@@ -67,6 +91,51 @@ class ConfigEntity extends Equatable {
     }
   }
 
+  ConfigEntity copyWith({
+    bool? hasAcceptedDisclaimer,
+    bool? hasAcceptedPolicy,
+    bool? hasAcceptedSendAnonymousData,
+    AppThemeEntity? appTheme,
+    bool? usesImperialUnits,
+    double? userKcalAdjustment,
+    double? userCarbGoalPct,
+    double? userProteinGoalPct,
+    double? userFatGoalPct,
+    bool? foodTrackingNotificationsEnabled,
+    BMRFormula? bmrFormula,
+    bool? appleHealthSyncEnabled,
+    bool? appleHealthActivitySyncEnabled,
+    int? lastStepsCount,
+    DateTime? lastStepsUpdateDate,
+    bool? showConsumedKcalAndMacros,
+    DateTime? lastHealthKitSyncTimestamp,
+    bool? synologyHealthSyncEnabled,
+    DateTime? synologyHealthHistoricSyncedAt,
+  }) {
+    return ConfigEntity(
+      hasAcceptedDisclaimer ?? this.hasAcceptedDisclaimer,
+      hasAcceptedPolicy ?? this.hasAcceptedPolicy,
+      hasAcceptedSendAnonymousData ?? this.hasAcceptedSendAnonymousData,
+      appTheme ?? this.appTheme,
+      usesImperialUnits: usesImperialUnits ?? this.usesImperialUnits,
+      userKcalAdjustment: userKcalAdjustment ?? this.userKcalAdjustment,
+      userCarbGoalPct: userCarbGoalPct ?? this.userCarbGoalPct,
+      userProteinGoalPct: userProteinGoalPct ?? this.userProteinGoalPct,
+      userFatGoalPct: userFatGoalPct ?? this.userFatGoalPct,
+      foodTrackingNotificationsEnabled: foodTrackingNotificationsEnabled ?? this.foodTrackingNotificationsEnabled,
+      bmrFormula: bmrFormula ?? this.bmrFormula,
+      appleHealthSyncEnabled: appleHealthSyncEnabled ?? this.appleHealthSyncEnabled,
+      appleHealthActivitySyncEnabled: appleHealthActivitySyncEnabled ?? this.appleHealthActivitySyncEnabled,
+      lastStepsCount: lastStepsCount ?? this.lastStepsCount,
+      lastStepsUpdateDate: lastStepsUpdateDate ?? this.lastStepsUpdateDate,
+      showConsumedKcalAndMacros:
+          showConsumedKcalAndMacros ?? this.showConsumedKcalAndMacros,
+      lastHealthKitSyncTimestamp: lastHealthKitSyncTimestamp ?? this.lastHealthKitSyncTimestamp,
+      synologyHealthSyncEnabled: synologyHealthSyncEnabled ?? this.synologyHealthSyncEnabled,
+      synologyHealthHistoricSyncedAt: synologyHealthHistoricSyncedAt ?? this.synologyHealthHistoricSyncedAt,
+    );
+  }
+
   @override
   List<Object?> get props => [
         hasAcceptedDisclaimer,
@@ -79,5 +148,13 @@ class ConfigEntity extends Equatable {
         userFatGoalPct,
         foodTrackingNotificationsEnabled,
         bmrFormula,
+        appleHealthSyncEnabled,
+        appleHealthActivitySyncEnabled,
+        lastStepsCount,
+        lastStepsUpdateDate,
+        showConsumedKcalAndMacros,
+        lastHealthKitSyncTimestamp,
+        synologyHealthSyncEnabled,
+        synologyHealthHistoricSyncedAt,
       ];
 }

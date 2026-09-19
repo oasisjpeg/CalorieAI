@@ -33,7 +33,8 @@ class WaterGraphWidget extends StatefulWidget {
 class _WaterGraphWidgetState extends State<WaterGraphWidget> {
   final WaterRepository _waterRepository = WaterRepository();
   WaterTimeRange _selectedTimeRange = WaterTimeRange.last7Days;
-  List<WaterEntryEntity> _waterEntries = [];
+  List<WaterEntryEntity> _waterEntries = []; // Original entries for history list
+  List<WaterEntryEntity> _groupedEntries = []; // Grouped entries for graph
   bool _isLoading = true;
 
   @override
@@ -66,8 +67,35 @@ class _WaterGraphWidgetState extends State<WaterGraphWidget> {
     
     final entries = await _waterRepository.getWaterEntriesInRange(startDate, now);
     
+    // Group entries by date for graph
+    final groupedEntries = <DateTime, WaterEntryEntity>{};
+    for (final entry in entries) {
+      final date = DateTime(entry.date.year, entry.date.month, entry.date.day);
+      final existing = groupedEntries[date];
+      if (existing != null) {
+        groupedEntries[date] = WaterEntryEntity(
+          date: date,
+          amountML: existing.amountML + entry.amountML,
+        );
+      } else {
+        groupedEntries[date] = WaterEntryEntity(
+          date: date,
+          amountML: entry.amountML,
+        );
+      }
+    }
+    
+    // Convert grouped entries back to list and sort by date
+    final sortedGroupedEntries = groupedEntries.values.toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+    
+    // Sort original entries by date (newest first for history)
+    final sortedOriginalEntries = entries.toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+    
     setState(() {
-      _waterEntries = entries;
+      _waterEntries = sortedOriginalEntries; // Original entries for history/delete
+      _groupedEntries = sortedGroupedEntries; // Grouped entries for graph
       _isLoading = false;
     });
   }
@@ -75,9 +103,14 @@ class _WaterGraphWidgetState extends State<WaterGraphWidget> {
   String _formatWaterAmount(double amountML) {
     if (widget.usesImperialUnits) {
       final oz = amountML / 29.5735; // ml to fl oz
-      return '${oz.toStringAsFixed(1)} fl oz';
+      return '${oz.toStringAsFixed(2)} fl oz';
     }
-    return '${(amountML / 1000).toStringAsFixed(1)} L';
+    return '${(amountML / 1000).toStringAsFixed(2)} L';
+  }
+
+  String _formatYAxisValue(double value) {
+    // value is already in display units (liters or fl oz)
+    return value.toStringAsFixed(1);
   }
 
   @override
@@ -224,8 +257,8 @@ class _WaterGraphWidgetState extends State<WaterGraphWidget> {
                                       interval: _calculateXInterval(),
                                       getTitlesWidget: (value, meta) {
                                         final index = value.toInt();
-                                        if (index >= 0 && index < _waterEntries.length) {
-                                          final date = _waterEntries[index].date;
+                                        if (index >= 0 && index < _groupedEntries.length) {
+                                          final date = _groupedEntries[index].date;
                                           final formatter = DateFormat('MMM d');
                                           return Padding(
                                             padding: const EdgeInsets.only(top: 8.0),
@@ -250,7 +283,7 @@ class _WaterGraphWidgetState extends State<WaterGraphWidget> {
                                         return Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
                                           child: Text(
-                                            _formatWaterAmount(value).split(' ')[0],
+                                            _formatYAxisValue(value),
                                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                               color: Theme.of(context).colorScheme.onSurface
                                                   .withValues(alpha: 0.6),
@@ -267,7 +300,7 @@ class _WaterGraphWidgetState extends State<WaterGraphWidget> {
                                 ),
                                 minY: 0,
                                 maxY: _calculateMaxY(),
-                                barGroups: _waterEntries.asMap().entries.map((entry) {
+                                barGroups: _groupedEntries.asMap().entries.map((entry) {
                                   return BarChartGroupData(
                                     x: entry.key,
                                     barRods: [
@@ -312,7 +345,7 @@ class _WaterGraphWidgetState extends State<WaterGraphWidget> {
                                     padding: const EdgeInsets.only(bottom: 20),
                                     itemCount: _waterEntries.length,
                                     itemBuilder: (context, index) {
-                                      final entry = _waterEntries[_waterEntries.length - 1 - index];
+                                      final entry = _waterEntries[index];
                                       return _buildHistoryItem(entry, index);
                                     },
                                   ),
@@ -409,31 +442,54 @@ class _WaterGraphWidgetState extends State<WaterGraphWidget> {
   }
 
   double _calculateMaxY() {
-    if (_waterEntries.isEmpty) return widget.usesImperialUnits ? 100 : 2000;
-    final amounts = _waterEntries.map((e) => 
+    if (_groupedEntries.isEmpty) return widget.usesImperialUnits ? 32 : 3.0;
+    final amounts = _groupedEntries.map((e) => 
       widget.usesImperialUnits ? e.amountML / 29.5735 : e.amountML / 1000
     ).toList();
     final max = amounts.reduce((a, b) => a > b ? a : b);
-    return (max * 1.2).ceilToDouble();
+    // Round up to nearest nice number with some padding
+    if (widget.usesImperialUnits) {
+      if (max <= 8) return 8;
+      if (max <= 16) return 16;
+      if (max <= 32) return 32;
+      if (max <= 64) return 64;
+      return (max / 32).ceil() * 32;
+    } else {
+      if (max <= 0.5) return 0.5;
+      if (max <= 1.0) return 1.0;
+      if (max <= 1.5) return 1.5;
+      if (max <= 2.0) return 2.0;
+      if (max <= 2.5) return 2.5;
+      if (max <= 3.0) return 3.0;
+      if (max <= 4.0) return 4.0;
+      return (max / 0.5).ceil() * 0.5;
+    }
   }
 
   double _calculateYInterval() {
     final max = _calculateMaxY();
     if (widget.usesImperialUnits) {
+      if (max <= 8) return 2;
+      if (max <= 16) return 4;
       if (max <= 32) return 8;
       if (max <= 64) return 16;
       return 32;
     } else {
-      if (max <= 1000) return 250;
-      if (max <= 2000) return 500;
-      return 1000;
+      if (max <= 0.5) return 0.1;
+      if (max <= 1.0) return 0.2;
+      if (max <= 1.5) return 0.3;
+      if (max <= 2.0) return 0.5;
+      if (max <= 2.5) return 0.5;
+      if (max <= 3.0) return 0.5;
+      if (max <= 4.0) return 1.0;
+      return 0.5;
     }
   }
 
   double _calculateXInterval() {
-    if (_waterEntries.length <= 7) return 1;
-    if (_waterEntries.length <= 30) return 5;
-    if (_waterEntries.length <= 90) return 10;
+    if (_groupedEntries.length <= 7) return 1;
+    if (_groupedEntries.length <= 30) return 5;
+    if (_groupedEntries.length <= 90) return 10;
     return 20;
   }
 }

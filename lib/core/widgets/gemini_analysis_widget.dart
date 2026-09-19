@@ -8,10 +8,10 @@ class GeminiScoreCard extends StatelessWidget {
   final String scoreText;
 
   const GeminiScoreCard({
-    Key? key,
+    super.key,
     required this.score,
     required this.scoreText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {    
@@ -40,7 +40,7 @@ class GeminiScoreCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '${S.of(context).geminiAnalysis}',
+                  S.of(context).geminiAnalysis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -71,7 +71,6 @@ class GeminiScoreCard extends StatelessWidget {
                     (fill - oneThird).clamp(0, oneThird).toDouble();
                 final double greenWidth =
                     (fill - 2 * oneThird).clamp(0, oneThird).toDouble();
-                ;
 
                 // Length of each gradient overlay at the boundary (e.g., 8px)
                 const double transition = 48.0;

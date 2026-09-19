@@ -36,9 +36,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance.addObserver(this);
     _homeBloc = locator<HomeBloc>();
-    super.initState();
+    _homeBloc.add(const LoadItemsEvent());
+    // Refresh steps when home page becomes visible
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _homeBloc.add(const RefreshStepsEvent());
+    });
   }
 
   @override
@@ -79,7 +84,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               state.dinnerIntakeList,
               state.snackIntakeList,
               state.userActivityList,
-              state.usesImperialUnits);
+              state.usesImperialUnits,
+              state.todaySteps,
+              state.showConsumedKcalAndMacros);
         } else {
           return _getLoadingContent();
         }
@@ -92,6 +99,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       log.info('App resumed');
       _refreshPageOnDayChange();
+      // Refresh steps without reloading entire UI
+      _homeBloc.add(const RefreshStepsEvent());
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -123,7 +132,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       List<IntakeEntity> dinnerIntakeList,
       List<IntakeEntity> snackIntakeList,
       List<UserActivityEntity> userActivities,
-      bool usesImperialUnits) {
+      bool usesImperialUnits,
+      int todaySteps,
+      bool showConsumedKcalAndMacros) {
     if (showDisclaimerDialog) {
       _showDisclaimerDialog(context);
     }
@@ -147,8 +158,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           totalSugarsIntake: totalSugarsIntake,
           totalSaturatedFatIntake: totalSaturatedFatIntake,
           totalFiberIntake: totalFiberIntake,
+          showConsumedKcalAndMacros: showConsumedKcalAndMacros,
         ),
-        // Shortcuts section with water and weight in a row
+        // Shortcuts section with water, weight, and steps in a row
         Container(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           alignment: Alignment.centerLeft,
@@ -179,6 +191,42 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               Expanded(
                 child: WaterSummaryWidget(
                   usesImperialUnits: usesImperialUnits,
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.directions_walk,
+                        size: 32,
+                        color: Colors.green,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        todaySteps.toString(),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        'Steps',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -229,6 +277,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           onItemLongPressedCallback: onIntakeItemLongPressed,
           usesImperialUnits: usesImperialUnits,
         ),
+        
         ActivityVerticalList(
           day: DateTime.now(),
           title: S.of(context).activityLabel,

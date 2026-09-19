@@ -1,6 +1,5 @@
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
-import 'package:calorieai/features/home/presentation/widgets/macro_nutriments_widget.dart';
 import 'package:calorieai/features/home/presentation/widgets/nutrition_facts_bottom_sheet.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
@@ -22,6 +21,7 @@ class DashboardWidget extends StatefulWidget {
   final double totalSugarsIntake;
   final double totalSaturatedFatIntake;
   final double totalFiberIntake;
+  final bool showConsumedKcalAndMacros;
 
   const DashboardWidget({
     super.key,
@@ -38,6 +38,7 @@ class DashboardWidget extends StatefulWidget {
     required this.totalSugarsIntake,
     required this.totalSaturatedFatIntake,
     required this.totalFiberIntake,
+    this.showConsumedKcalAndMacros = false,
   });
 
   @override
@@ -51,19 +52,28 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     // Calculate values for progress indicators
-    double kcalLeftLabel = 0;
+    final isConsumedMode = widget.showConsumedKcalAndMacros;
+    final consumedKcal = widget.totalKcalSupplied;
+
+    double kcalPrimaryValue = 0;
     double gaugeValue = 0;
-    bool isOverLimit = widget.totalKcalLeft < 0;
+    bool isOverLimit = isConsumedMode
+        ? consumedKcal > widget.totalKcalDaily
+        : widget.totalKcalLeft < 0;
     double overagePercentage = 0.0;
-    
+
     if (isOverLimit) {
-      double overage = widget.totalKcalLeft.abs();
+      double overage = isConsumedMode
+          ? (consumedKcal - widget.totalKcalDaily).abs()
+          : widget.totalKcalLeft.abs();
       overagePercentage = (overage / widget.totalKcalDaily) * 100;
-      kcalLeftLabel = 0;
+      kcalPrimaryValue = isConsumedMode ? consumedKcal : 0;
       gaugeValue = 1.0;
     } else {
-      kcalLeftLabel = widget.totalKcalLeft;
-      gaugeValue = (widget.totalKcalDaily - widget.totalKcalLeft) / widget.totalKcalDaily;
+      kcalPrimaryValue = isConsumedMode ? consumedKcal : widget.totalKcalLeft;
+      gaugeValue = isConsumedMode
+          ? (consumedKcal / widget.totalKcalDaily).clamp(0.0, 1.0)
+          : (widget.totalKcalDaily - widget.totalKcalLeft) / widget.totalKcalDaily;
     }
     
     // Determine gauge color based on overage percentage
@@ -78,6 +88,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         (widget.totalProteinsIntake - widget.totalProteinsGoal).round();
     final carbsLeft = (widget.totalCarbsIntake - widget.totalCarbsGoal).round();
     final fatsLeft = (widget.totalFatsIntake - widget.totalFatsGoal).round();
+    final proteinsIntake = widget.totalProteinsIntake.round();
+    final carbsIntake = widget.totalCarbsIntake.round();
+    final fatsIntake = widget.totalFatsIntake.round();
 
     // Check if any nutrients are over limit
     final proteinsOverLimit =
@@ -109,7 +122,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final fatsBg = fatsOverLimit
         ? Colors.red.withValues(alpha: 0.25)
         : (isDarkMode
-            ? Colors.blue.shade900.withOpacity(0.25)
+            ? Colors.blue.shade900.withValues(alpha: 0.25)
             : Colors.blue.shade50);
 
     return Padding(
@@ -181,7 +194,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                               : Colors.red[700],
                                           shadows: [
                                             Shadow(
-                                              color: Colors.black.withOpacity(0.1),
+                                              color: Colors.black.withValues(alpha: 0.1),
                                               blurRadius: 4,
                                               offset: const Offset(0, 2),
                                             ),
@@ -189,10 +202,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                         ),
                                       )
                                     : AnimatedFlipCounter(
-                                        key: ValueKey<double>(kcalLeftLabel),
+                                        key: ValueKey<double>(kcalPrimaryValue),
                                         duration: const Duration(milliseconds: 800),
                                         curve: Curves.easeOutCubic,
-                                        value: kcalLeftLabel.toInt(),
+                                        value: kcalPrimaryValue.toInt(),
                                         textStyle: TextStyle(
                                           fontSize: 48,
                                           fontWeight: FontWeight.bold,
@@ -209,10 +222,15 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           AnimatedFlipCounter(
-                                            key: ValueKey<double>(widget.totalKcalLeft.abs()),
+                                            key: ValueKey<double>(isConsumedMode
+                                                ? (consumedKcal - widget.totalKcalDaily).abs()
+                                                : widget.totalKcalLeft.abs()),
                                             duration: const Duration(milliseconds: 600),
                                             curve: Curves.easeOutBack,
-                                            value: widget.totalKcalLeft.abs().toInt(),
+                                            value: (isConsumedMode
+                                                    ? (consumedKcal - widget.totalKcalDaily).abs()
+                                                    : widget.totalKcalLeft.abs())
+                                                .toInt(),
                                             prefix: '+',
                                             textStyle: TextStyle(
                                               fontSize: 18,
@@ -259,13 +277,15 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                     ),
                                   )
                                 : Text(
-                                    S.of(context).kcalLeftLabel,
+                                    isConsumedMode
+                                        ? S.of(context).suppliedLabel
+                                        : S.of(context).kcalLeftLabel,
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSurface
-                                          .withOpacity(0.7),
+                                          .withValues(alpha: 0.7),
                                     ),
                                   ),
                         ],
@@ -327,7 +347,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             children: [
               _buildMacroCard(
                 context,
-                value: proteinsLeft,
+                value: isConsumedMode ? proteinsIntake : proteinsLeft,
+                overageValue: proteinsLeft,
+                isOverLimit: proteinsOverLimit,
                 label: S.of(context).proteinLabel,
                 color: proteinColor,
                 bgColor: proteinBg,
@@ -335,10 +357,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 percent: proteinsPercent,
                 isDarkMode: isDarkMode,
                 goalValue: widget.totalProteinsGoal,
+                showConsumedMode: isConsumedMode,
               ),
               _buildMacroCard(
                 context,
-                value: carbsLeft,
+                value: isConsumedMode ? carbsIntake : carbsLeft,
+                overageValue: carbsLeft,
+                isOverLimit: carbsOverLimit,
                 label: S.of(context).carbsLabel,
                 color: carbsColor,
                 bgColor: carbsBg,
@@ -346,10 +371,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 percent: carbsPercent,
                 isDarkMode: isDarkMode,
                 goalValue: widget.totalCarbsGoal,
+                showConsumedMode: isConsumedMode,
               ),
               _buildMacroCard(
                 context,
-                value: fatsLeft,
+                value: isConsumedMode ? fatsIntake : fatsLeft,
+                overageValue: fatsLeft,
+                isOverLimit: fatsOverLimit,
                 label: S.of(context).fatLabel,
                 color: fatsColor,
                 bgColor: fatsBg,
@@ -357,6 +385,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 percent: fatsPercent,
                 isDarkMode: isDarkMode,
                 goalValue: widget.totalFatsGoal,
+                showConsumedMode: isConsumedMode,
               ),
             ],
           ),
@@ -368,6 +397,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   Widget _buildMacroCard(
     BuildContext context, {
     required int value,
+    required int overageValue,
+    required bool isOverLimit,
     required String label,
     required Color color,
     required Color bgColor,
@@ -375,9 +406,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     required double percent,
     required bool isDarkMode,
     required double goalValue,
+    required bool showConsumedMode,
   }) {
-    final isOverLimit = value > 0;
-    final hasWarning = isOverLimit;
     return Container(
       width: 100,
       padding: const EdgeInsets.all(12),
@@ -389,7 +419,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         boxShadow: [
           if (!isDarkMode)
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -403,7 +433,11 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${value > 0 ? '+${value}g' : '${-value}g'}',
+                    showConsumedMode
+                        ? (isOverLimit
+                            ? '+${overageValue}g'
+                            : '${value}g')
+                        : (value > 0 ? '+${value}g' : '${-value}g'),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -417,7 +451,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 "/ ${goalValue.toInt()}g",
                 style: TextStyle(
                   fontSize: 12,
-                  color: color.withOpacity(0.7),
+                  color: color.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -437,7 +471,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             lineWidth: 6,
             percent: percent,
             circularStrokeCap: CircularStrokeCap.round,
-            backgroundColor: color.withOpacity(0.15),
+            backgroundColor: color.withValues(alpha: 0.15),
             progressColor: color,
             center: Text(emoji, style: TextStyle(fontSize: 16)),
           ),

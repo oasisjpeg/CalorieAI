@@ -7,7 +7,6 @@ import 'dart:developer' as developer;
 
 import 'package:calorieai/core/domain/entity/purchase_status.dart';
 import 'package:calorieai/core/domain/repository/iap_repository.dart';
-import 'package:calorieai/core/utils/iap_constants.dart';
 import 'package:calorieai/core/utils/logger.dart';
 
 class IAPService {
@@ -172,9 +171,6 @@ class IAPService {
 
     // Log to debug console
     developer.log(buffer.toString(), name: 'IAPService');
-
-    // Also print to console for easier debugging
-    print(buffer);
   }
 
   // Load products and update stream

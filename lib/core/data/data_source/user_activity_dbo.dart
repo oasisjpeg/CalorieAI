@@ -20,8 +20,24 @@ class UserActivityDBO extends HiveObject {
   @HiveField(4)
   final PhysicalActivityDBO physicalActivityDBO;
 
-  UserActivityDBO(this.id, this.duration, this.burnedKcal, this.date,
-      this.physicalActivityDBO);
+  @HiveField(5)
+  final String? healthKitWorkoutId;
+
+  @HiveField(6)
+  final bool isFromHealthKit;
+
+  @HiveField(7)
+  final String? note;
+
+  UserActivityDBO(
+      this.id,
+      this.duration,
+      this.burnedKcal,
+      this.date,
+      this.physicalActivityDBO,
+      [this.healthKitWorkoutId,
+      this.isFromHealthKit = false,
+      this.note]);
 
   factory UserActivityDBO.fromUserActivityEntity(
       UserActivityEntity userActivityEntity) {
@@ -31,7 +47,10 @@ class UserActivityDBO extends HiveObject {
         userActivityEntity.burnedKcal,
         userActivityEntity.date,
         PhysicalActivityDBO.fromPhysicalActivityEntity(
-            userActivityEntity.physicalActivityEntity));
+            userActivityEntity.physicalActivityEntity),
+        null,
+        false,
+        userActivityEntity.note);
   }
 
   factory UserActivityDBO.fromJson(Map<String, dynamic> json) =>

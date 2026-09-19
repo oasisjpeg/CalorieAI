@@ -5,7 +5,6 @@ import 'package:calorieai/core/utils/navigation_options.dart';
 import 'package:calorieai/features/add_meal/domain/entity/meal_entity.dart';
 import 'package:calorieai/features/add_meal/presentation/add_meal_type.dart';
 import 'package:calorieai/features/add_meal/presentation/bloc/add_meal_bloc.dart';
-import 'package:calorieai/features/add_meal/presentation/bloc/food_bloc.dart';
 import 'package:calorieai/features/add_meal/presentation/bloc/recent_meal_bloc.dart';
 import 'package:calorieai/features/add_meal/presentation/widgets/default_results_widget.dart';
 import 'package:calorieai/features/add_meal/presentation/widgets/meal_search_bar.dart';
@@ -15,6 +14,7 @@ import 'package:calorieai/features/add_meal/presentation/widgets/meal_item_card.
 import 'package:calorieai/features/add_meal/presentation/bloc/products_bloc.dart';
 import 'package:calorieai/features/add_meal/presentation/widgets/food_image_analyzer.dart';
 import 'package:calorieai/features/edit_meal/presentation/edit_meal_screen.dart';
+import 'package:calorieai/features/recipes/presentation/widgets/recipe_list_widget.dart';
 import 'package:calorieai/features/scanner/scanner_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
@@ -32,8 +32,6 @@ class _AddMealScreenState extends State<AddMealScreen>
 
   late AddMealType _mealType;
   late DateTime _day;
-  late AddMealBloc _addMealBloc;
-  late FoodBloc _foodBloc;
   late ProductsBloc _productsBloc;
   late RecentMealBloc _recentMealBloc;
 
@@ -42,11 +40,9 @@ class _AddMealScreenState extends State<AddMealScreen>
   @override
   void initState() {
     super.initState();
-    _addMealBloc = locator<AddMealBloc>();
-    _foodBloc = locator<FoodBloc>();
     _productsBloc = locator<ProductsBloc>();
     _recentMealBloc = locator<RecentMealBloc>();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(() {
       // Update search results when tab changes
       _onSearchSubmit(_searchStringListener.value);
@@ -106,7 +102,8 @@ class _AddMealScreenState extends State<AddMealScreen>
                   tabs: [
                     Tab(text: "AI"),
                     Tab(text: S.of(context).searchProductsPage),
-                    Tab(text: S.of(context).recentlyAddedLabel)
+                    Tab(text: S.of(context).recentlyAddedLabel),
+                    Tab(text: S.of(context).recipesLabel)
                   ],
                   controller: _tabController,
                   indicatorSize: TabBarIndicatorSize.tab),
@@ -214,7 +211,12 @@ class _AddMealScreenState extends State<AddMealScreen>
                           })
                     ],
                   ),// Image Recognition Tab
-                  
+                  RecipeListWidget(
+                    day: _day,
+                    intakeType: _mealType.getIntakeType(),
+                    selectionMode: true,
+                    filterListenable: _searchStringListener,
+                  ),
                 ],
               ),
             ),
@@ -227,10 +229,7 @@ class _AddMealScreenState extends State<AddMealScreen>
     _productsBloc.add(const RefreshProductsEvent());
   }
 
-  void _onFoodRefreshButtonPressed() {
-    _foodBloc.add(const RefreshFoodEvent());
-  }
-    void _onRecentMealsRefreshButtonPressed() {
+  void _onRecentMealsRefreshButtonPressed() {
     _recentMealBloc.add(const LoadRecentMealEvent(searchString: ""));
   }
 

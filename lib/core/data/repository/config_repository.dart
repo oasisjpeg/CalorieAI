@@ -88,4 +88,60 @@ class ConfigRepository {
     }
     await _configDataSource.setConfigBMRFormula(formulaString);
   }
+
+  Future<bool> getAppleHealthSyncEnabled() async {
+    return await _configDataSource.getAppleHealthSyncEnabled();
+  }
+
+  Future<void> setAppleHealthSyncEnabled(bool enabled) async {
+    await _configDataSource.setAppleHealthSyncEnabled(enabled);
+  }
+
+  Future<bool> getAppleHealthActivitySyncEnabled() async {
+    return await _configDataSource.getAppleHealthActivitySyncEnabled();
+  }
+
+  Future<void> setAppleHealthActivitySyncEnabled(bool enabled) async {
+    await _configDataSource.setAppleHealthActivitySyncEnabled(enabled);
+  }
+
+  Future<void> setLastSteps(int stepsCount, DateTime? updateDate) async {
+    await _configDataSource.setLastSteps(stepsCount, updateDate);
+  }
+
+  Future<void> clearLastSteps() async {
+    await _configDataSource.clearLastSteps();
+  }
+
+  Future<bool> getSynologyHealthSyncEnabled() async {
+    return await _configDataSource.getSynologyHealthSyncEnabled();
+  }
+
+  Future<void> setSynologyHealthSyncEnabled(bool enabled) async {
+    await _configDataSource.setSynologyHealthSyncEnabled(enabled);
+  }
+
+  Future<DateTime?> getSynologyHealthHistoricSyncedAt() async {
+    return await _configDataSource.getSynologyHealthHistoricSyncedAt();
+  }
+
+  Future<void> setSynologyHealthHistoricSyncedAt(DateTime? timestamp) async {
+    await _configDataSource.setSynologyHealthHistoricSyncedAt(timestamp);
+  }
+
+  Future<bool> getShowConsumedKcalAndMacros() async {
+    return await _configDataSource.getShowConsumedKcalAndMacros();
+  }
+
+  Future<void> setShowConsumedKcalAndMacros(bool showConsumed) async {
+    await _configDataSource.setShowConsumedKcalAndMacros(showConsumed);
+  }
+
+  Future<DateTime?> getLastHealthKitSyncTimestamp() async {
+    return await _configDataSource.getLastHealthKitSyncTimestamp();
+  }
+
+  Future<void> setLastHealthKitSyncTimestamp(DateTime? timestamp) async {
+    await _configDataSource.setLastHealthKitSyncTimestamp(timestamp);
+  }
 }

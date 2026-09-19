@@ -13,6 +13,20 @@ class UserActivityRepository {
     _userActivityDataSource.addUserActivity(activityDBO);
   }
 
+  Future<void> addUserActivityWithHealthKitId(
+      UserActivityEntity activityEntity, String healthKitWorkoutId) async {
+    final activityDBO = UserActivityDBO(
+        activityEntity.id,
+        activityEntity.duration,
+        activityEntity.burnedKcal,
+        activityEntity.date,
+        UserActivityDBO.fromUserActivityEntity(activityEntity).physicalActivityDBO,
+        healthKitWorkoutId,
+        true);
+
+    _userActivityDataSource.addUserActivity(activityDBO);
+  }
+
   Future<void> addAllUserActivityDBOs(
       List<UserActivityDBO> userActivityDBOs) async {
     await _userActivityDataSource.addAllUserActivities(userActivityDBOs);
@@ -43,6 +57,20 @@ class UserActivityRepository {
     return userActivityDBOList
         .map((userActivityDBO) =>
             UserActivityEntity.fromUserActivityDBO(userActivityDBO))
+        .toList();
+  }
+
+  Future<bool> isActivityAlreadySynced(String healthKitWorkoutId) async {
+    final allActivities = await getAllUserActivityDBO();
+    return allActivities.any((activity) =>
+        activity.healthKitWorkoutId == healthKitWorkoutId);
+  }
+
+  Future<List<UserActivityEntity>> getAllActivitiesForHealthKitSync() async {
+    final allActivities = await getAllUserActivityDBO();
+    return allActivities
+        .where((activity) => !activity.isFromHealthKit)
+        .map((dbo) => UserActivityEntity.fromUserActivityDBO(dbo))
         .toList();
   }
 }

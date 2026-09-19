@@ -35,6 +35,8 @@ class HomeLoadedState extends HomeState {
   final List<IntakeEntity> dinnerIntakeList;
   final List<IntakeEntity> snackIntakeList;
   final bool usesImperialUnits;
+  final int todaySteps;
+  final bool showConsumedKcalAndMacros;
 
   const HomeLoadedState({
     required this.showDisclaimerDialog,
@@ -57,14 +59,60 @@ class HomeLoadedState extends HomeState {
     required this.dinnerIntakeList,
     required this.snackIntakeList,
     required this.usesImperialUnits,
+    this.todaySteps = 0,
+    this.showConsumedKcalAndMacros = false,
   });
+
+  HomeLoadedState copyWith({int? todaySteps}) {
+    return HomeLoadedState(
+      showDisclaimerDialog: showDisclaimerDialog,
+      totalKcalDaily: totalKcalDaily,
+      totalKcalLeft: totalKcalLeft,
+      totalKcalSupplied: totalKcalSupplied,
+      totalKcalBurned: totalKcalBurned,
+      totalCarbsIntake: totalCarbsIntake,
+      totalFatsIntake: totalFatsIntake,
+      totalProteinsIntake: totalProteinsIntake,
+      totalCarbsGoal: totalCarbsGoal,
+      totalFatsGoal: totalFatsGoal,
+      totalProteinsGoal: totalProteinsGoal,
+      totalSugarsIntake: totalSugarsIntake,
+      totalSaturatedFatIntake: totalSaturatedFatIntake,
+      totalFiberIntake: totalFiberIntake,
+      userActivityList: userActivityList,
+      breakfastIntakeList: breakfastIntakeList,
+      lunchIntakeList: lunchIntakeList,
+      dinnerIntakeList: dinnerIntakeList,
+      snackIntakeList: snackIntakeList,
+      usesImperialUnits: usesImperialUnits,
+      todaySteps: todaySteps ?? this.todaySteps,
+      showConsumedKcalAndMacros: showConsumedKcalAndMacros,
+    );
+  }
 
   @override
   List<Object?> get props => [
+        showDisclaimerDialog,
+        totalKcalDaily,
+        totalKcalLeft,
+        totalKcalSupplied,
+        totalKcalBurned,
+        totalCarbsIntake,
+        totalFatsIntake,
+        totalProteinsIntake,
+        totalCarbsGoal,
+        totalFatsGoal,
+        totalProteinsGoal,
+        totalSugarsIntake,
+        totalSaturatedFatIntake,
+        totalFiberIntake,
+        userActivityList,
         breakfastIntakeList,
         lunchIntakeList,
         dinnerIntakeList,
         snackIntakeList,
-        usesImperialUnits
+        usesImperialUnits,
+        todaySteps,
+        showConsumedKcalAndMacros,
       ];
 }

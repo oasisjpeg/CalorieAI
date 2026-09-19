@@ -3,16 +3,38 @@ import 'package:calorieai/core/data/dbo/intake_dbo.dart';
 import 'package:calorieai/core/data/dbo/intake_type_dbo.dart';
 import 'package:calorieai/core/domain/entity/intake_entity.dart';
 import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
+import 'package:calorieai/core/services/apple_health_service.dart';
+import 'package:calorieai/core/services/synology_health_service.dart';
+import 'package:calorieai/core/data/repository/config_repository.dart';
 
 class IntakeRepository {
   final IntakeDataSource _intakeDataSource;
+  final ConfigRepository? _configRepository;
+  final SynologyHealthService? _synologyHealthService;
 
-  IntakeRepository(this._intakeDataSource);
+  IntakeRepository(this._intakeDataSource, [this._configRepository, this._synologyHealthService]);
 
   Future<void> addIntake(IntakeEntity intakeEntity) async {
     final intakeDBO = IntakeDBO.fromIntakeEntity(intakeEntity);
 
     await _intakeDataSource.addIntake(intakeDBO);
+
+    // Sync to Apple Health if enabled
+    if (_configRepository != null) {
+      final appleHealthSyncEnabled = await _configRepository!.getAppleHealthSyncEnabled();
+      if (appleHealthSyncEnabled) {
+        final appleHealthService = AppleHealthService();
+        await appleHealthService.syncIntake(intakeEntity);
+      }
+    }
+
+    // Sync to Synology Health Service if enabled
+    if (_configRepository != null && _synologyHealthService != null) {
+      final synologyHealthSyncEnabled = await _configRepository!.getSynologyHealthSyncEnabled();
+      if (synologyHealthSyncEnabled) {
+        await _synologyHealthService!.syncIntake(intakeEntity);
+      }
+    }
   }
 
   Future<void> addAllIntakeDBOs(List<IntakeDBO> intakeDBOs) async {
@@ -33,11 +55,25 @@ class IntakeRepository {
     return await _intakeDataSource.getAllIntakes();
   }
 
+  Future<List<IntakeEntity>> getAllIntakes() async {
+    final intakeDBOList = await _intakeDataSource.getAllIntakes();
+    return intakeDBOList
+        .map((intakeDBO) => IntakeEntity.fromIntakeDBO(intakeDBO))
+        .toList();
+  }
+
   Future<List<IntakeEntity>> getIntakeByDateAndType(
       IntakeTypeEntity intakeType, DateTime date) async {
     final intakeDBOList = await _intakeDataSource.getAllIntakesByDate(
         IntakeTypeDBO.fromIntakeTypeEntity(intakeType), date);
 
+    return intakeDBOList
+        .map((intakeDBO) => IntakeEntity.fromIntakeDBO(intakeDBO))
+        .toList();
+  }
+
+  Future<List<IntakeEntity>> getAllIntakesForDate(DateTime date) async {
+    final intakeDBOList = await _intakeDataSource.getAllIntakesForDate(date);
     return intakeDBOList
         .map((intakeDBO) => IntakeEntity.fromIntakeDBO(intakeDBO))
         .toList();

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
+import 'package:calorieai/core/domain/usecase/get_config_usecase.dart';
 import 'package:calorieai/core/utils/locator.dart';
+import 'package:calorieai/core/utils/navigation_options.dart';
 import 'package:calorieai/core/data/datasource/local/saved_recipe_local_data_source.dart';
 import 'package:calorieai/core/data/dbo/saved_recipe_dbo.dart';
+import 'package:calorieai/features/meal_detail/meal_detail_screen.dart';
+import 'package:calorieai/features/recipes/domain/entity/meal_recipe_entity.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 
 typedef S = AppLocalizations;
@@ -84,7 +89,9 @@ class _SavedRecipesScreenState extends State<SavedRecipesScreen> {
                     IconButton(
                       onPressed: () async {
                         await _deleteRecipe(recipe.id);
-                        Navigator.pop(context);
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
                       },
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
                       tooltip: S.of(context).deleteRecipeTooltip,
@@ -100,7 +107,18 @@ class _SavedRecipesScreenState extends State<SavedRecipesScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
+                // Log to diary
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.add_outlined),
+                    label: Text(S.of(context).logToDiaryLabel),
+                    onPressed: () => _logRecipe(context, recipe),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
                 // Nutrition chips
                 Wrap(
                   spacing: 8,
@@ -197,6 +215,54 @@ class _SavedRecipesScreenState extends State<SavedRecipesScreen> {
         ),
       ),
     );
+  }
+
+  /// Converts the saved AI recipe to a MealEntity and opens the regular
+  /// logging flow (MealDetailScreen) after picking a meal type.
+  void _logRecipe(BuildContext sheetContext, SavedRecipeDBO recipe) async {
+    final meal = MealRecipeEntity.fromSavedRecipeDBO(recipe).toMealEntity();
+    final usesImperialUnits =
+        (await locator<GetConfigUsecase>().getConfig()).usesImperialUnits;
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(S.of(context).chooseMealLabel),
+        children: [
+          for (final type in IntakeTypeEntity.values)
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                Navigator.of(sheetContext).pop(); // close the detail sheet
+                Navigator.of(context).pushNamed(
+                    NavigationOptions.mealDetailRoute,
+                    arguments: MealDetailScreenArguments(
+                        meal, type, DateTime.now(), usesImperialUnits));
+              },
+              child: Row(
+                children: [
+                  Icon(type.getIconData(), size: 20),
+                  const SizedBox(width: 12),
+                  Text(_intakeTypeLabel(context, type)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _intakeTypeLabel(BuildContext context, IntakeTypeEntity type) {
+    switch (type) {
+      case IntakeTypeEntity.breakfast:
+        return S.of(context).breakfastLabel;
+      case IntakeTypeEntity.lunch:
+        return S.of(context).lunchLabel;
+      case IntakeTypeEntity.dinner:
+        return S.of(context).dinnerLabel;
+      case IntakeTypeEntity.snack:
+        return S.of(context).snackLabel;
+    }
   }
 
   Widget _buildNutritionChip(String label, int value, MaterialColor color) {

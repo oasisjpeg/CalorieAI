@@ -118,4 +118,92 @@ class ConfigDataSource {
     config?.bmrFormula = formulaString;
     config?.save();
   }
+
+  Future<bool> getAppleHealthSyncEnabled() async {
+    final config = _configBox.get(_configKey);
+    return config?.appleHealthSyncEnabled ?? false;
+  }
+
+  Future<void> setAppleHealthSyncEnabled(bool enabled) async {
+    _log.fine('Updating config appleHealthSyncEnabled to $enabled');
+    final config = _configBox.get(_configKey);
+    config?.appleHealthSyncEnabled = enabled;
+    config?.save();
+  }
+
+  Future<bool> getAppleHealthActivitySyncEnabled() async {
+    final config = _configBox.get(_configKey);
+    return config?.appleHealthActivitySyncEnabled ?? false;
+  }
+
+  Future<void> setAppleHealthActivitySyncEnabled(bool enabled) async {
+    _log.fine('Updating config appleHealthActivitySyncEnabled to $enabled');
+    final config = _configBox.get(_configKey);
+    config?.appleHealthActivitySyncEnabled = enabled;
+    config?.save();
+  }
+
+  Future<void> setLastSteps(int stepsCount, DateTime? updateDate) async {
+    _log.fine('Updating config lastStepsCount to $stepsCount, lastStepsUpdateDate to $updateDate');
+    final config = _configBox.get(_configKey);
+    config?.lastStepsCount = stepsCount;
+    config?.lastStepsUpdateDate = updateDate;
+    config?.save();
+  }
+
+  Future<void> clearLastSteps() async {
+    _log.fine('Clearing config lastStepsCount and lastStepsUpdateDate');
+    final config = _configBox.get(_configKey);
+    config?.lastStepsCount = 0;
+    config?.lastStepsUpdateDate = null;
+    config?.save();
+  }
+
+  Future<DateTime?> getLastHealthKitSyncTimestamp() async {
+    final config = _configBox.get(_configKey);
+    return config?.lastHealthKitSyncTimestamp;
+  }
+
+  Future<void> setLastHealthKitSyncTimestamp(DateTime? timestamp) async {
+    _log.fine('Updating lastHealthKitSyncTimestamp to $timestamp');
+    final config = _configBox.get(_configKey);
+    config?.lastHealthKitSyncTimestamp = timestamp;
+    config?.save();
+  }
+
+  Future<bool> getSynologyHealthSyncEnabled() async {
+    final config = _configBox.get(_configKey);
+    return config?.synologyHealthSyncEnabled ?? false;
+  }
+
+  Future<void> setSynologyHealthSyncEnabled(bool enabled) async {
+    _log.fine('Updating config synologyHealthSyncEnabled to $enabled');
+    final config = _configBox.get(_configKey);
+    config?.synologyHealthSyncEnabled = enabled;
+    config?.save();
+  }
+
+  Future<DateTime?> getSynologyHealthHistoricSyncedAt() async {
+    final config = _configBox.get(_configKey);
+    return config?.synologyHealthHistoricSyncedAt;
+  }
+
+  Future<void> setSynologyHealthHistoricSyncedAt(DateTime? timestamp) async {
+    _log.fine('Updating config synologyHealthHistoricSyncedAt to $timestamp');
+    final config = _configBox.get(_configKey);
+    config?.synologyHealthHistoricSyncedAt = timestamp;
+    config?.save();
+  }
+
+  Future<bool> getShowConsumedKcalAndMacros() async {
+    final config = _configBox.get(_configKey);
+    return config?.showConsumedKcalAndMacros ?? false;
+  }
+
+  Future<void> setShowConsumedKcalAndMacros(bool showConsumed) async {
+    _log.fine('Updating config showConsumedKcalAndMacros to $showConsumed');
+    final config = _configBox.get(_configKey);
+    config?.showConsumedKcalAndMacros = showConsumed;
+    config?.save();
+  }
 }

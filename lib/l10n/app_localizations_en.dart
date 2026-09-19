@@ -429,6 +429,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Information provided\n by the \n\'2011 Compendium\n of Physical Activities\'';
 
   @override
+  String get manualEntryNameLabel => 'Activity name (optional)';
+
+  @override
+  String get manualEntryNameHint => 'e.g., Morning run, Gym workout';
+
+  @override
   String get quantityLabel => 'Quantity';
 
   @override
@@ -1673,4 +1679,127 @@ class AppLocalizationsEn extends AppLocalizations {
   String waterAmountHint(String unit) {
     return 'Enter amount in $unit';
   }
+
+  @override
+  String get settingsAppleHealthSyncLabel => 'Apple Health Sync';
+
+  @override
+  String get settingsAppleHealthSyncSubtitle =>
+      'Sync nutrition data with Apple Health';
+
+  @override
+  String get settingsAppleHealthSyncConnected => 'Connected';
+
+  @override
+  String get settingsAppleHealthResyncLabel => 'Resync meal intakes';
+
+  @override
+  String get settingsAppleHealthResyncSubtitle =>
+      'Resend all meal data to Apple Health';
+
+  @override
+  String get appleHealthResyncInProgress =>
+      'Resyncing all meal intakes to Apple Health...';
+
+  @override
+  String get settingsAppleHealthActivitySyncLabel =>
+      'Apple Health Activity Sync';
+
+  @override
+  String get settingsAppleHealthActivitySyncSubtitle =>
+      'Sync workouts and steps with Apple Health';
+
+  @override
+  String get appleHealthPermissionDenied =>
+      'Please grant access to Apple Health to sync nutrition data';
+
+  @override
+  String get appleHealthSyncError => 'Error syncing with Apple Health';
+
+  @override
+  String get recipesLabel => 'Recipes';
+
+  @override
+  String get myRecipesLabel => 'My Recipes';
+
+  @override
+  String get aiIdeasLabel => 'AI Ideas';
+
+  @override
+  String get recipeExample => 'e.g. your go-to breakfast bowl ...';
+
+  @override
+  String get createRecipeLabel => 'Create recipe';
+
+  @override
+  String get editRecipeLabel => 'Edit recipe';
+
+  @override
+  String get noRecipesYet => 'No recipes yet';
+
+  @override
+  String get noRecipesYetHint =>
+      'Combine foods into a recipe and log it with one tap';
+
+  @override
+  String recipeListSubtitle(int count, int kcal, int servings) {
+    return '$count items · $kcal kcal/serving · $servings servings';
+  }
+
+  @override
+  String get chooseMealLabel => 'Add to…';
+
+  @override
+  String get recipeNameLabel => 'Recipe name';
+
+  @override
+  String get recipeNameRequired => 'Please enter a name';
+
+  @override
+  String get recipeNeedsItems => 'Add at least one item';
+
+  @override
+  String get servingsLabel => 'Servings';
+
+  @override
+  String get batchWeightLabel => 'Total weight';
+
+  @override
+  String get batchWeightHint => 'Empty = sum of ingredients';
+
+  @override
+  String get addComponentLabel => 'Add item';
+
+  @override
+  String get recipeTotalsLabel => 'Totals';
+
+  @override
+  String get saveRecipeLabel => 'Save recipe';
+
+  @override
+  String get recipeSavedSnackbar => 'Recipe saved';
+
+  @override
+  String get logOnceLabel => 'Log once';
+
+  @override
+  String get logToDiaryLabel => 'Log to diary';
+
+  @override
+  String get saveAsRecipeLabel => 'Save as recipe';
+
+  @override
+  String get pickerTodayLabel => 'Today';
+
+  @override
+  String get pickerCustomLabel => 'Custom';
+
+  @override
+  String get pickerAiLabel => 'AI';
+
+  @override
+  String get pickerCustomNameLabel => 'Item name';
+
+  @override
+  String get additionalInfoLabelRecipe => 'Created from your recipe';
 }
