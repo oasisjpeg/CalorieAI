@@ -144,4 +144,16 @@ class ConfigRepository {
   Future<void> setLastHealthKitSyncTimestamp(DateTime? timestamp) async {
     await _configDataSource.setLastHealthKitSyncTimestamp(timestamp);
   }
+
+  Future<void> setShowWeightShortcut(bool show) async {
+    await _configDataSource.setShowWeightShortcut(show);
+  }
+
+  Future<void> setShowWaterShortcut(bool show) async {
+    await _configDataSource.setShowWaterShortcut(show);
+  }
+
+  Future<void> setShowStepsShortcut(bool show) async {
+    await _configDataSource.setShowStepsShortcut(show);
+  }
 }

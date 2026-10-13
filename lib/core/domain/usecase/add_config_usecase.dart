@@ -86,4 +86,16 @@ class AddConfigUsecase {
   Future<void> setSynologyHealthHistoricSyncedAt(DateTime? timestamp) async {
     await _configRepository.setSynologyHealthHistoricSyncedAt(timestamp);
   }
+
+  Future<void> setShowWeightShortcut(bool show) async {
+    await _configRepository.setShowWeightShortcut(show);
+  }
+
+  Future<void> setShowWaterShortcut(bool show) async {
+    await _configRepository.setShowWaterShortcut(show);
+  }
+
+  Future<void> setShowStepsShortcut(bool show) async {
+    await _configRepository.setShowStepsShortcut(show);
+  }
 }

@@ -2,6 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:calorieai/core/data/repository/weight_repository.dart';
 import 'package:calorieai/core/domain/entity/weight_entry_entity.dart';
+import 'package:calorieai/core/domain/usecase/get_config_usecase.dart';
+import 'package:calorieai/core/services/apple_health_service.dart';
+import 'package:calorieai/core/utils/locator.dart';
 import 'package:intl/intl.dart';
 
 enum WeightTimeRange {
@@ -15,12 +18,14 @@ class WeightGraphWidget extends StatefulWidget {
   final bool usesImperialUnits;
   final WeightTimeRange? initialTimeRange;
   final Function(DateTime)? onDeleteEntry;
+  final int reloadToken;
 
   const WeightGraphWidget({
     super.key,
     required this.usesImperialUnits,
     this.initialTimeRange = WeightTimeRange.last7Days,
     this.onDeleteEntry,
+    this.reloadToken = 0,
   });
 
   @override
@@ -31,6 +36,7 @@ class _WeightGraphWidgetState extends State<WeightGraphWidget> {
   final WeightRepository _weightRepository = WeightRepository();
   WeightTimeRange _selectedTimeRange = WeightTimeRange.last7Days;
   List<WeightEntryEntity> _weightEntries = [];
+  Set<int> _healthKitEntryDates = {};
   bool _isLoading = true;
 
   @override
@@ -40,12 +46,20 @@ class _WeightGraphWidgetState extends State<WeightGraphWidget> {
     loadWeightEntries();
   }
 
+  @override
+  void didUpdateWidget(WeightGraphWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.reloadToken != widget.reloadToken) {
+      loadWeightEntries();
+    }
+  }
+
   Future<void> loadWeightEntries() async {
     setState(() => _isLoading = true);
-    
+
     final now = DateTime.now();
     DateTime startDate;
-    
+
     switch (_selectedTimeRange) {
       case WeightTimeRange.last7Days:
         startDate = now.subtract(const Duration(days: 7));
@@ -60,11 +74,37 @@ class _WeightGraphWidgetState extends State<WeightGraphWidget> {
         startDate = now.subtract(const Duration(days: 365));
         break;
     }
-    
-    final entries = await _weightRepository.getWeightEntriesInRange(startDate, now);
-    
+
+    final localEntries =
+        await _weightRepository.getWeightEntriesInRange(startDate, now);
+
+    // Merge with Apple Health entries when health sync is enabled
+    List<WeightEntryEntity> healthEntries = [];
+    final config = await locator<GetConfigUsecase>().getConfig();
+    if (config.appleHealthSyncEnabled) {
+      healthEntries = await locator<AppleHealthService>()
+          .fetchWeightEntries(startDate, now);
+    }
+
+    final localKeys = localEntries
+        .map((e) =>
+            '${e.date.millisecondsSinceEpoch ~/ 60000}_${e.weightKG.toStringAsFixed(1)}')
+        .toSet();
+    final merged = [...localEntries];
+    final healthDates = <int>{};
+    for (final entry in healthEntries) {
+      final key =
+          '${entry.date.millisecondsSinceEpoch ~/ 60000}_${entry.weightKG.toStringAsFixed(1)}';
+      if (localKeys.contains(key)) continue;
+      merged.add(entry);
+      healthDates.add(entry.date.millisecondsSinceEpoch);
+    }
+    merged.sort((a, b) => a.date.compareTo(b.date));
+
+    if (!mounted) return;
     setState(() {
-      _weightEntries = entries;
+      _weightEntries = merged;
+      _healthKitEntryDates = healthDates;
       _isLoading = false;
     });
   }
@@ -349,6 +389,8 @@ class _WeightGraphWidgetState extends State<WeightGraphWidget> {
 
   Widget _buildHistoryItem(WeightEntryEntity entry, int index) {
     final isLatest = index == 0;
+    final fromHealthKit =
+        _healthKitEntryDates.contains(entry.date.millisecondsSinceEpoch);
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -369,7 +411,7 @@ class _WeightGraphWidgetState extends State<WeightGraphWidget> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
-            Icons.monitor_weight,
+            fromHealthKit ? Icons.favorite : Icons.monitor_weight,
             color: isLatest
                 ? Theme.of(context).colorScheme.onPrimary
                 : Theme.of(context).colorScheme.primary,
@@ -383,12 +425,14 @@ class _WeightGraphWidgetState extends State<WeightGraphWidget> {
           ),
         ),
         subtitle: Text(
-          DateFormat('MMM d, yyyy - HH:mm').format(entry.date),
+          fromHealthKit
+              ? '${DateFormat('MMM d, yyyy - HH:mm').format(entry.date)} - Apple Health'
+              : DateFormat('MMM d, yyyy - HH:mm').format(entry.date),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
-        trailing: widget.onDeleteEntry != null
+        trailing: widget.onDeleteEntry != null && !fromHealthKit
             ? IconButton(
                 icon: const Icon(Icons.delete_outline, size: 20),
                 onPressed: () => _showDeleteDialog(entry),

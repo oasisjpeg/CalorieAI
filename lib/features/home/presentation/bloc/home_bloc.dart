@@ -72,6 +72,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final usesImperialUnits = configData.usesImperialUnits;
       final showDisclaimerDialog = !configData.hasAcceptedDisclaimer;
       final showConsumedKcalAndMacros = configData.showConsumedKcalAndMacros;
+      final showWeightShortcut = configData.showWeightShortcut;
+      final showWaterShortcut = configData.showWaterShortcut;
+      final showStepsShortcut = configData.showStepsShortcut;
       
       // Check if day has changed and convert yesterday's steps to walking activity
       if (configData.lastStepsUpdateDate != null) {
@@ -226,7 +229,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userActivityList: userActivities,
           usesImperialUnits: usesImperialUnits,
           todaySteps: todaySteps,
-          showConsumedKcalAndMacros: showConsumedKcalAndMacros));
+          showConsumedKcalAndMacros: showConsumedKcalAndMacros,
+          showWeightShortcut: showWeightShortcut,
+          showWaterShortcut: showWaterShortcut,
+          showStepsShortcut: showStepsShortcut));
     });
 
     on<RefreshStepsEvent>((event, emit) async {

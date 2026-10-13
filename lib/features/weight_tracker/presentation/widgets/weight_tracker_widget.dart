@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:calorieai/core/data/repository/weight_repository.dart';
 import 'package:calorieai/core/domain/entity/weight_entry_entity.dart';
+import 'package:calorieai/core/domain/usecase/get_config_usecase.dart';
+import 'package:calorieai/core/services/apple_health_service.dart';
+import 'package:calorieai/core/utils/locator.dart';
 import 'package:calorieai/features/weight_tracker/weight_tracker_screen.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +25,7 @@ class WeightTrackerWidget extends StatefulWidget {
 class _WeightTrackerWidgetState extends State<WeightTrackerWidget> {
   final WeightRepository _weightRepository = WeightRepository();
   WeightEntryEntity? _latestWeight;
+  bool _latestFromHealthKit = false;
 
   @override
   void initState() {
@@ -30,9 +34,28 @@ class _WeightTrackerWidgetState extends State<WeightTrackerWidget> {
   }
 
   Future<void> _loadLatestWeight() async {
-    final latest = await _weightRepository.getLatestWeightEntry();
+    var latest = await _weightRepository.getLatestWeightEntry();
+    var fromHealthKit = false;
+
+    // Prefer Apple Health data when health sync is enabled and it has
+    // a newer entry than the local manual entries.
+    final config = await locator<GetConfigUsecase>().getConfig();
+    if (config.appleHealthSyncEnabled) {
+      final healthEntries = await locator<AppleHealthService>()
+          .fetchWeightEntries(DateTime(2000), DateTime.now());
+      if (healthEntries.isNotEmpty) {
+        final latestHealth = healthEntries.last;
+        if (latest == null || latestHealth.date.isAfter(latest.date)) {
+          latest = latestHealth;
+          fromHealthKit = true;
+        }
+      }
+    }
+
+    if (!mounted) return;
     setState(() {
       _latestWeight = latest;
+      _latestFromHealthKit = fromHealthKit;
     });
   }
 
@@ -91,7 +114,9 @@ class _WeightTrackerWidgetState extends State<WeightTrackerWidget> {
           ),
           child: InkWell(
             onTap: _showWeightGraphDialog,
-            onLongPress: () => _showDeleteWeightDialog(weight),
+            onLongPress: _latestFromHealthKit
+                ? null
+                : () => _showDeleteWeightDialog(weight),
             borderRadius: BorderRadius.circular(16.0),
             child: Padding(
               padding: const EdgeInsets.all(12),

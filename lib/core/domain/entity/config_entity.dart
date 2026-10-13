@@ -23,6 +23,9 @@ class ConfigEntity extends Equatable {
   final DateTime? lastHealthKitSyncTimestamp;
   final bool synologyHealthSyncEnabled;
   final DateTime? synologyHealthHistoricSyncedAt;
+  final bool showWeightShortcut;
+  final bool showWaterShortcut;
+  final bool showStepsShortcut;
 
   const ConfigEntity(this.hasAcceptedDisclaimer, this.hasAcceptedPolicy,
       this.hasAcceptedSendAnonymousData, this.appTheme,
@@ -40,7 +43,10 @@ class ConfigEntity extends Equatable {
       this.showConsumedKcalAndMacros = false,
       this.lastHealthKitSyncTimestamp,
       this.synologyHealthSyncEnabled = false,
-      this.synologyHealthHistoricSyncedAt});
+      this.synologyHealthHistoricSyncedAt,
+      this.showWeightShortcut = true,
+      this.showWaterShortcut = true,
+      this.showStepsShortcut = true});
 
   factory ConfigEntity.fromConfigDBO(ConfigDBO dbo) => ConfigEntity(
         dbo.hasAcceptedDisclaimer ?? false,
@@ -62,6 +68,9 @@ class ConfigEntity extends Equatable {
         lastHealthKitSyncTimestamp: dbo.lastHealthKitSyncTimestamp,
         synologyHealthSyncEnabled: dbo.synologyHealthSyncEnabled ?? false,
         synologyHealthHistoricSyncedAt: dbo.synologyHealthHistoricSyncedAt,
+        showWeightShortcut: dbo.showWeightShortcut ?? true,
+        showWaterShortcut: dbo.showWaterShortcut ?? true,
+        showStepsShortcut: dbo.showStepsShortcut ?? true,
       );
 
   static BMRFormula? _parseBMRFormula(String? value) {
@@ -111,6 +120,9 @@ class ConfigEntity extends Equatable {
     DateTime? lastHealthKitSyncTimestamp,
     bool? synologyHealthSyncEnabled,
     DateTime? synologyHealthHistoricSyncedAt,
+    bool? showWeightShortcut,
+    bool? showWaterShortcut,
+    bool? showStepsShortcut,
   }) {
     return ConfigEntity(
       hasAcceptedDisclaimer ?? this.hasAcceptedDisclaimer,
@@ -133,6 +145,9 @@ class ConfigEntity extends Equatable {
       lastHealthKitSyncTimestamp: lastHealthKitSyncTimestamp ?? this.lastHealthKitSyncTimestamp,
       synologyHealthSyncEnabled: synologyHealthSyncEnabled ?? this.synologyHealthSyncEnabled,
       synologyHealthHistoricSyncedAt: synologyHealthHistoricSyncedAt ?? this.synologyHealthHistoricSyncedAt,
+      showWeightShortcut: showWeightShortcut ?? this.showWeightShortcut,
+      showWaterShortcut: showWaterShortcut ?? this.showWaterShortcut,
+      showStepsShortcut: showStepsShortcut ?? this.showStepsShortcut,
     );
   }
 
@@ -156,5 +171,8 @@ class ConfigEntity extends Equatable {
         lastHealthKitSyncTimestamp,
         synologyHealthSyncEnabled,
         synologyHealthHistoricSyncedAt,
+        showWeightShortcut,
+        showWaterShortcut,
+        showStepsShortcut,
       ];
 }

@@ -36,13 +36,16 @@ class ConfigDBOAdapter extends TypeAdapter<ConfigDBO> {
       lastHealthKitSyncTimestamp: fields[16] as DateTime?,
       synologyHealthSyncEnabled: fields[17] as bool?,
       synologyHealthHistoricSyncedAt: fields[18] as DateTime?,
+      showWeightShortcut: fields[19] as bool?,
+      showWaterShortcut: fields[20] as bool?,
+      showStepsShortcut: fields[21] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ConfigDBO obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.hasAcceptedDisclaimer)
       ..writeByte(1)
@@ -80,7 +83,13 @@ class ConfigDBOAdapter extends TypeAdapter<ConfigDBO> {
       ..writeByte(17)
       ..write(obj.synologyHealthSyncEnabled)
       ..writeByte(18)
-      ..write(obj.synologyHealthHistoricSyncedAt);
+      ..write(obj.synologyHealthHistoricSyncedAt)
+      ..writeByte(19)
+      ..write(obj.showWeightShortcut)
+      ..writeByte(20)
+      ..write(obj.showWaterShortcut)
+      ..writeByte(21)
+      ..write(obj.showStepsShortcut);
   }
 
   @override
@@ -131,6 +140,9 @@ ConfigDBO _$ConfigDBOFromJson(Map<String, dynamic> json) => ConfigDBO(
               null
           ? null
           : DateTime.parse(json['synologyHealthHistoricSyncedAt'] as String),
+      showWeightShortcut: json['showWeightShortcut'] as bool? ?? true,
+      showWaterShortcut: json['showWaterShortcut'] as bool? ?? true,
+      showStepsShortcut: json['showStepsShortcut'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$ConfigDBOToJson(ConfigDBO instance) => <String, dynamic>{
@@ -156,6 +168,9 @@ Map<String, dynamic> _$ConfigDBOToJson(ConfigDBO instance) => <String, dynamic>{
       'synologyHealthSyncEnabled': instance.synologyHealthSyncEnabled,
       'synologyHealthHistoricSyncedAt':
           instance.synologyHealthHistoricSyncedAt?.toIso8601String(),
+      'showWeightShortcut': instance.showWeightShortcut,
+      'showWaterShortcut': instance.showWaterShortcut,
+      'showStepsShortcut': instance.showStepsShortcut,
     };
 
 const _$AppThemeDBOEnumMap = {

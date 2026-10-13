@@ -5,6 +5,7 @@ import 'package:calorieai/core/domain/entity/intake_entity.dart';
 import 'package:calorieai/core/domain/entity/intake_type_entity.dart';
 import 'package:calorieai/core/domain/entity/user_activity_entity.dart';
 import 'package:calorieai/core/domain/entity/physical_activity_entity.dart';
+import 'package:calorieai/core/domain/entity/weight_entry_entity.dart';
 
 class AppleHealthService {
   static final _log = Logger('AppleHealthService');
@@ -86,18 +87,20 @@ class AppleHealthService {
     }
 
     try {
-      // Request permissions for activity data types
-      _log.info('Requesting HealthKit activity permissions for STEPS, WORKOUT, DISTANCE_WALKING_RUNNING');
+      // Request permissions for activity data types + weight read
+      _log.info('Requesting HealthKit activity permissions for STEPS, WORKOUT, DISTANCE_WALKING_RUNNING, WEIGHT');
       final bool wasGranted = await _health!.requestAuthorization(
         [
           HealthDataType.STEPS,
           HealthDataType.WORKOUT,
           HealthDataType.DISTANCE_WALKING_RUNNING,
+          HealthDataType.WEIGHT,
         ],
         permissions: [
           HealthDataAccess.READ_WRITE,
           HealthDataAccess.READ_WRITE,
           HealthDataAccess.READ_WRITE,
+          HealthDataAccess.READ,
         ],
       );
       
@@ -527,6 +530,66 @@ class AppleHealthService {
       return healthData;
     } catch (e) {
       _log.severe('Error fetching steps from HealthKit: $e');
+      return [];
+    }
+  }
+
+  /// Ensure weight read permission is granted, requesting if needed.
+  /// iOS does not report read status, so we simply re-request; HealthKit
+  /// only shows the permission sheet for undetermined types.
+  Future<bool> _ensureWeightPermissions() async {
+    if (_health == null) {
+      await init();
+    }
+    if (_health == null) return false;
+
+    try {
+      return await _health!.requestAuthorization(
+        [HealthDataType.WEIGHT],
+        permissions: [HealthDataAccess.READ],
+      );
+    } catch (e) {
+      _log.severe('Error requesting HealthKit weight permission: $e');
+      return false;
+    }
+  }
+
+  /// Fetch weight samples from HealthKit for a date range.
+  /// Returns entries sorted by date ascending. An empty list means either
+  /// no data or no read permission (HealthKit hides read denial).
+  Future<List<WeightEntryEntity>> fetchWeightEntries(
+      DateTime startDate, DateTime endDate) async {
+    final hasPermissions = await _ensureWeightPermissions();
+    if (!hasPermissions) {
+      _log.warning('HealthKit not initialized or weight permission denied');
+      return [];
+    }
+
+    try {
+      final now = DateTime.now();
+      final adjustedEndDate = endDate.isAfter(now) ? now : endDate;
+
+      final healthData = await _health!.getHealthDataFromTypes(
+        startTime: startDate,
+        endTime: adjustedEndDate,
+        types: [HealthDataType.WEIGHT],
+      );
+
+      final entries = <WeightEntryEntity>[];
+      for (final point in healthData) {
+        final value = (point.value as dynamic).numericValue as num?;
+        if (value == null) continue;
+        entries.add(WeightEntryEntity(
+          date: point.dateFrom,
+          weightKG: value.toDouble(),
+        ));
+      }
+
+      entries.sort((a, b) => a.date.compareTo(b.date));
+      _log.info('Fetched ${entries.length} weight entries from HealthKit');
+      return entries;
+    } catch (e) {
+      _log.severe('Error fetching weight from HealthKit: $e');
       return [];
     }
   }

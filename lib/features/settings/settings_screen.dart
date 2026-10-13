@@ -110,6 +110,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _homeBloc.add(LoadItemsEvent());
                   },
                 ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                  child: Text(
+                    'Home Screen Shortcuts',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7)),
+                  ),
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.monitor_weight_outlined),
+                  title: const Text('Weight'),
+                  subtitle: const Text('Show the weight shortcut on home'),
+                  value: state.showWeightShortcut,
+                  onChanged: (bool value) {
+                    _settingsBloc.add(ToggleHomeShortcutVisibilityEvent(
+                        HomeShortcutType.weight, value));
+                    _homeBloc.add(LoadItemsEvent());
+                  },
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.water_drop_outlined),
+                  title: const Text('Water'),
+                  subtitle: const Text('Show the water shortcut on home'),
+                  value: state.showWaterShortcut,
+                  onChanged: (bool value) {
+                    _settingsBloc.add(ToggleHomeShortcutVisibilityEvent(
+                        HomeShortcutType.water, value));
+                    _homeBloc.add(LoadItemsEvent());
+                  },
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.directions_walk_outlined),
+                  title: const Text('Steps'),
+                  subtitle: const Text('Show the steps shortcut on home'),
+                  value: state.showStepsShortcut,
+                  onChanged: (bool value) {
+                    _settingsBloc.add(ToggleHomeShortcutVisibilityEvent(
+                        HomeShortcutType.steps, value));
+                    _homeBloc.add(LoadItemsEvent());
+                  },
+                ),
                 ListTile(
                   leading: const Icon(Icons.favorite_outline),
                   title: Text(S.of(context).settingsAppleHealthSyncLabel),

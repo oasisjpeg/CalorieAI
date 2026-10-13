@@ -63,3 +63,15 @@ class ToggleSynologyHealthSyncEvent extends SettingsEvent {
   @override
   List<Object?> get props => [enabled];
 }
+
+enum HomeShortcutType { weight, water, steps }
+
+class ToggleHomeShortcutVisibilityEvent extends SettingsEvent {
+  final HomeShortcutType shortcut;
+  final bool visible;
+
+  const ToggleHomeShortcutVisibilityEvent(this.shortcut, this.visible);
+
+  @override
+  List<Object?> get props => [shortcut, visible];
+}

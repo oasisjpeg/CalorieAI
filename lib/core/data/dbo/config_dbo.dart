@@ -46,6 +46,12 @@ class ConfigDBO extends HiveObject {
   bool? synologyHealthSyncEnabled;
   @HiveField(18)
   DateTime? synologyHealthHistoricSyncedAt;
+  @HiveField(19)
+  bool? showWeightShortcut;
+  @HiveField(20)
+  bool? showWaterShortcut;
+  @HiveField(21)
+  bool? showStepsShortcut;
 
   ConfigDBO(
       {this.hasAcceptedDisclaimer = false,
@@ -66,7 +72,10 @@ class ConfigDBO extends HiveObject {
       this.showConsumedKcalAndMacros = false,
       this.lastHealthKitSyncTimestamp,
       this.synologyHealthSyncEnabled = false,
-      this.synologyHealthHistoricSyncedAt});
+      this.synologyHealthHistoricSyncedAt,
+      this.showWeightShortcut = true,
+      this.showWaterShortcut = true,
+      this.showStepsShortcut = true});
 
   factory ConfigDBO.empty() =>
       ConfigDBO(selectedAppTheme: AppThemeDBO.system);
@@ -90,7 +99,10 @@ class ConfigDBO extends HiveObject {
       showConsumedKcalAndMacros: entity.showConsumedKcalAndMacros,
       lastHealthKitSyncTimestamp: entity.lastHealthKitSyncTimestamp,
       synologyHealthSyncEnabled: entity.synologyHealthSyncEnabled,
-      synologyHealthHistoricSyncedAt: entity.synologyHealthHistoricSyncedAt);
+      synologyHealthHistoricSyncedAt: entity.synologyHealthHistoricSyncedAt,
+      showWeightShortcut: entity.showWeightShortcut,
+      showWaterShortcut: entity.showWaterShortcut,
+      showStepsShortcut: entity.showStepsShortcut);
 
   factory ConfigDBO.fromJson(Map<String, dynamic> json) =>
       _$ConfigDBOFromJson(json);

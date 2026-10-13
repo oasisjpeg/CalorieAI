@@ -9,6 +9,7 @@ import 'package:calorieai/features/add_meal/presentation/add_meal_type.dart';
 import 'package:calorieai/features/diary/presentation/bloc/calendar_day_bloc.dart';
 import 'package:calorieai/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:calorieai/features/home/presentation/bloc/home_bloc.dart';
+import 'package:calorieai/features/home/presentation/widgets/nutrition_facts_bottom_sheet.dart';
 import 'package:calorieai/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
 import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
@@ -60,32 +61,46 @@ class _IntakeVerticalListState extends State<IntakeVerticalList> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          alignment: Alignment.centerLeft,
-          child: Row(
-            children: [
-                Icon(widget.listIcon,
-                    size: 24, color: Theme.of(context).colorScheme.onSurface),
-              const SizedBox(width: 4.0),
-              Text(
-                widget.title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
-              ),
-              const Spacer(),
-              if (totalKcal > 0)
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: widget.intakeList.isEmpty
+              ? null
+              : () => _showMealNutritionSheet(context),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                  Icon(widget.listIcon,
+                      size: 24, color: Theme.of(context).colorScheme.onSurface),
+                const SizedBox(width: 4.0),
                 Text(
-                  '${totalKcal.toInt()} ${S.of(context).kcalLabel}',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  widget.title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                ),
+                const Spacer(),
+                if (totalKcal > 0) ...[
+                  Text(
+                    '${totalKcal.toInt()} ${S.of(context).kcalLabel}',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7)),
+                  ),
+                  const SizedBox(width: 4.0),
+                  Icon(Icons.info_outline,
+                      size: 16,
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withValues(alpha: 0.7)),
-                ),
-            ],
+                          .withValues(alpha: 0.5)),
+                ],
+              ],
+            ),
           ),
         ),
         DragTarget<IntakeEntity>(
@@ -161,6 +176,32 @@ class _IntakeVerticalListState extends State<IntakeVerticalList> {
           },
         ),
       ],
+    );
+  }
+
+  void _showMealNutritionSheet(BuildContext context) {
+    final intakes = widget.intakeList;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => NutritionFactsBottomSheet(
+        title: widget.title,
+        totalKcalSupplied:
+            intakes.fold<double>(0, (sum, intake) => sum + intake.totalKcal),
+        totalCarbsIntake: intakes.fold<double>(
+            0, (sum, intake) => sum + intake.totalCarbsGram),
+        totalFatsIntake: intakes.fold<double>(
+            0, (sum, intake) => sum + intake.totalFatsGram),
+        totalProteinsIntake: intakes.fold<double>(
+            0, (sum, intake) => sum + intake.totalProteinsGram),
+        totalSugarsIntake: intakes.fold<double>(
+            0, (sum, intake) => sum + intake.totalSugarsGram),
+        totalSaturatedFatIntake: intakes.fold<double>(
+            0, (sum, intake) => sum + intake.totalSaturatedFatGram),
+        totalFiberIntake: intakes.fold<double>(
+            0, (sum, intake) => sum + intake.totalFiberGram),
+      ),
     );
   }
 

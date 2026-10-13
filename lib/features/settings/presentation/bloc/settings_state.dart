@@ -27,6 +27,9 @@ class SettingsLoadedState extends SettingsState {
   final bool synologyHealthSyncEnabled;
   final DateTime? synologyHealthHistoricSyncedAt;
   final bool synologyServerReachable;
+  final bool showWeightShortcut;
+  final bool showWaterShortcut;
+  final bool showStepsShortcut;
 
   const SettingsLoadedState(
     this.versionNumber,
@@ -41,6 +44,9 @@ class SettingsLoadedState extends SettingsState {
     this.synologyHealthSyncEnabled = false,
     this.synologyHealthHistoricSyncedAt,
     this.synologyServerReachable = true,
+    this.showWeightShortcut = true,
+    this.showWaterShortcut = true,
+    this.showStepsShortcut = true,
   });
 
   SettingsLoadedState copyWith({
@@ -56,6 +62,9 @@ class SettingsLoadedState extends SettingsState {
     bool? synologyHealthSyncEnabled,
     DateTime? synologyHealthHistoricSyncedAt,
     bool? synologyServerReachable,
+    bool? showWeightShortcut,
+    bool? showWaterShortcut,
+    bool? showStepsShortcut,
   }) {
     return SettingsLoadedState(
       versionNumber ?? this.versionNumber,
@@ -71,10 +80,13 @@ class SettingsLoadedState extends SettingsState {
       synologyHealthSyncEnabled: synologyHealthSyncEnabled ?? this.synologyHealthSyncEnabled,
       synologyHealthHistoricSyncedAt: synologyHealthHistoricSyncedAt ?? this.synologyHealthHistoricSyncedAt,
       synologyServerReachable: synologyServerReachable ?? this.synologyServerReachable,
+      showWeightShortcut: showWeightShortcut ?? this.showWeightShortcut,
+      showWaterShortcut: showWaterShortcut ?? this.showWaterShortcut,
+      showStepsShortcut: showStepsShortcut ?? this.showStepsShortcut,
     );
   }
 
   @override
   List<Object?> get props =>
-      [versionNumber, sendAnonymousData, appTheme, usesImperialUnits, isSubscribed, foodTrackingNotificationsEnabled, appleHealthSyncEnabled, appleHealthActivitySyncEnabled, showConsumedKcalAndMacros, synologyHealthSyncEnabled, synologyHealthHistoricSyncedAt, synologyServerReachable];
+      [versionNumber, sendAnonymousData, appTheme, usesImperialUnits, isSubscribed, foodTrackingNotificationsEnabled, appleHealthSyncEnabled, appleHealthActivitySyncEnabled, showConsumedKcalAndMacros, synologyHealthSyncEnabled, synologyHealthHistoricSyncedAt, synologyServerReachable, showWeightShortcut, showWaterShortcut, showStepsShortcut];
 }

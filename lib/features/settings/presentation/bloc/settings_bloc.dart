@@ -76,6 +76,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       final showConsumedKcalAndMacros = userConfig.showConsumedKcalAndMacros;
       final synologyHealthSyncEnabled = userConfig.synologyHealthSyncEnabled;
       final synologyHealthHistoricSyncedAt = userConfig.synologyHealthHistoricSyncedAt;
+      final showWeightShortcut = userConfig.showWeightShortcut;
+      final showWaterShortcut = userConfig.showWaterShortcut;
+      final showStepsShortcut = userConfig.showStepsShortcut;
 
       // Check Synology server reachability
       final synologyService = locator<SynologyHealthService>();
@@ -96,7 +99,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           showConsumedKcalAndMacros: showConsumedKcalAndMacros,
           synologyHealthSyncEnabled: synologyHealthSyncEnabled,
           synologyHealthHistoricSyncedAt: synologyHealthHistoricSyncedAt,
-          synologyServerReachable: synologyServerReachable));
+          synologyServerReachable: synologyServerReachable,
+          showWeightShortcut: showWeightShortcut,
+          showWaterShortcut: showWaterShortcut,
+          showStepsShortcut: showStepsShortcut));
     });
 
     on<ToggleFoodTrackingNotificationsEvent>((event, emit) async {
@@ -205,6 +211,26 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     on<ResyncSynologyHealthEvent>((event, emit) async {
       await _resyncSynologyHealth();
+    });
+
+    on<ToggleHomeShortcutVisibilityEvent>((event, emit) async {
+      if (state is SettingsLoadedState) {
+        final currentState = state as SettingsLoadedState;
+        switch (event.shortcut) {
+          case HomeShortcutType.weight:
+            await _addConfigUsecase.setShowWeightShortcut(event.visible);
+            emit(currentState.copyWith(showWeightShortcut: event.visible));
+            break;
+          case HomeShortcutType.water:
+            await _addConfigUsecase.setShowWaterShortcut(event.visible);
+            emit(currentState.copyWith(showWaterShortcut: event.visible));
+            break;
+          case HomeShortcutType.steps:
+            await _addConfigUsecase.setShowStepsShortcut(event.visible);
+            emit(currentState.copyWith(showStepsShortcut: event.visible));
+            break;
+        }
+      }
     });
 
   }

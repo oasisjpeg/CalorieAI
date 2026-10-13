@@ -4,6 +4,7 @@ import 'package:calorieai/l10n/app_localizations.dart';
 typedef S = AppLocalizations;
 
 class NutritionFactsBottomSheet extends StatelessWidget {
+  final String? title;
   final double totalKcalSupplied;
   final double totalCarbsIntake;
   final double totalFatsIntake;
@@ -11,12 +12,13 @@ class NutritionFactsBottomSheet extends StatelessWidget {
   final double totalSugarsIntake;
   final double totalSaturatedFatIntake;
   final double totalFiberIntake;
-  final double totalCarbsGoal;
-  final double totalFatsGoal;
-  final double totalProteinsGoal;
+  final double? totalCarbsGoal;
+  final double? totalFatsGoal;
+  final double? totalProteinsGoal;
 
   const NutritionFactsBottomSheet({
     super.key,
+    this.title,
     required this.totalKcalSupplied,
     required this.totalCarbsIntake,
     required this.totalFatsIntake,
@@ -24,9 +26,9 @@ class NutritionFactsBottomSheet extends StatelessWidget {
     required this.totalSugarsIntake,
     required this.totalSaturatedFatIntake,
     required this.totalFiberIntake,
-    required this.totalCarbsGoal,
-    required this.totalFatsGoal,
-    required this.totalProteinsGoal,
+    this.totalCarbsGoal,
+    this.totalFatsGoal,
+    this.totalProteinsGoal,
   });
 
   @override
@@ -62,7 +64,7 @@ class NutritionFactsBottomSheet extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  S.of(context).nutritionFactsLabel,
+                  title ?? S.of(context).nutritionFactsLabel,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),

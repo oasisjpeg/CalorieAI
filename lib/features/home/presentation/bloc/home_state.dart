@@ -37,6 +37,9 @@ class HomeLoadedState extends HomeState {
   final bool usesImperialUnits;
   final int todaySteps;
   final bool showConsumedKcalAndMacros;
+  final bool showWeightShortcut;
+  final bool showWaterShortcut;
+  final bool showStepsShortcut;
 
   const HomeLoadedState({
     required this.showDisclaimerDialog,
@@ -61,6 +64,9 @@ class HomeLoadedState extends HomeState {
     required this.usesImperialUnits,
     this.todaySteps = 0,
     this.showConsumedKcalAndMacros = false,
+    this.showWeightShortcut = true,
+    this.showWaterShortcut = true,
+    this.showStepsShortcut = true,
   });
 
   HomeLoadedState copyWith({int? todaySteps}) {
@@ -87,6 +93,9 @@ class HomeLoadedState extends HomeState {
       usesImperialUnits: usesImperialUnits,
       todaySteps: todaySteps ?? this.todaySteps,
       showConsumedKcalAndMacros: showConsumedKcalAndMacros,
+      showWeightShortcut: showWeightShortcut,
+      showWaterShortcut: showWaterShortcut,
+      showStepsShortcut: showStepsShortcut,
     );
   }
 
@@ -114,5 +123,8 @@ class HomeLoadedState extends HomeState {
         usesImperialUnits,
         todaySteps,
         showConsumedKcalAndMacros,
+        showWeightShortcut,
+        showWaterShortcut,
+        showStepsShortcut,
       ];
 }

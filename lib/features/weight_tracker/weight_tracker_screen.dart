@@ -20,6 +20,7 @@ class WeightTrackerScreen extends StatefulWidget {
 
 class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
   final WeightRepository _weightRepository = WeightRepository();
+  int _reloadToken = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +51,7 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
             Expanded(
               child: WeightGraphWidget(
                 usesImperialUnits: widget.usesImperialUnits,
+                reloadToken: _reloadToken,
                 onDeleteEntry: (date) async {
                   await _weightRepository.deleteWeightEntry(date);
                 },
@@ -118,6 +120,7 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
                 await _weightRepository.addWeightEntry(entry);
                 if (context.mounted) {
                   Navigator.pop(context);
+                  setState(() => _reloadToken++);
                 }
               }
             },

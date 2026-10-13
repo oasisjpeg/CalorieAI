@@ -206,4 +206,40 @@ class ConfigDataSource {
     config?.showConsumedKcalAndMacros = showConsumed;
     config?.save();
   }
+
+  Future<bool> getShowWeightShortcut() async {
+    final config = _configBox.get(_configKey);
+    return config?.showWeightShortcut ?? true;
+  }
+
+  Future<void> setShowWeightShortcut(bool show) async {
+    _log.fine('Updating config showWeightShortcut to $show');
+    final config = _configBox.get(_configKey);
+    config?.showWeightShortcut = show;
+    config?.save();
+  }
+
+  Future<bool> getShowWaterShortcut() async {
+    final config = _configBox.get(_configKey);
+    return config?.showWaterShortcut ?? true;
+  }
+
+  Future<void> setShowWaterShortcut(bool show) async {
+    _log.fine('Updating config showWaterShortcut to $show');
+    final config = _configBox.get(_configKey);
+    config?.showWaterShortcut = show;
+    config?.save();
+  }
+
+  Future<bool> getShowStepsShortcut() async {
+    final config = _configBox.get(_configKey);
+    return config?.showStepsShortcut ?? true;
+  }
+
+  Future<void> setShowStepsShortcut(bool show) async {
+    _log.fine('Updating config showStepsShortcut to $show');
+    final config = _configBox.get(_configKey);
+    config?.showStepsShortcut = show;
+    config?.save();
+  }
 }

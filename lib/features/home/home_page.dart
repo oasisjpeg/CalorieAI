@@ -86,7 +86,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               state.userActivityList,
               state.usesImperialUnits,
               state.todaySteps,
-              state.showConsumedKcalAndMacros);
+              state.showConsumedKcalAndMacros,
+              state.showWeightShortcut,
+              state.showWaterShortcut,
+              state.showStepsShortcut);
         } else {
           return _getLoadingContent();
         }
@@ -134,7 +137,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       List<UserActivityEntity> userActivities,
       bool usesImperialUnits,
       int todaySteps,
-      bool showConsumedKcalAndMacros) {
+      bool showConsumedKcalAndMacros,
+      bool showWeightShortcut,
+      bool showWaterShortcut,
+      bool showStepsShortcut) {
     if (showDisclaimerDialog) {
       _showDisclaimerDialog(context);
     }
@@ -161,77 +167,82 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           showConsumedKcalAndMacros: showConsumedKcalAndMacros,
         ),
         // Shortcuts section with water, weight, and steps in a row
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          alignment: Alignment.centerLeft,
-          child: Row(
-            children: [
-              const Icon(
-                Icons.flash_on,
-                size: 24,
-              ),
-              const SizedBox(width: 8.0),
-              Text(
-                'Shortcuts',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface),
-              ),
-            ],
+        if (showWeightShortcut || showWaterShortcut || showStepsShortcut)
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.flash_on,
+                  size: 24,
+                ),
+                const SizedBox(width: 8.0),
+                Text(
+                  'Shortcuts',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(
-          height: 120,
-          child: Row(
-            children: [
-              Expanded(
-                child: WeightTrackerWidget(
-                  usesImperialUnits: usesImperialUnits,
-                ),
-              ),
-              Expanded(
-                child: WaterSummaryWidget(
-                  usesImperialUnits: usesImperialUnits,
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        if (showWeightShortcut || showWaterShortcut || showStepsShortcut)
+          SizedBox(
+            height: 120,
+            child: Row(
+              children: [
+                if (showWeightShortcut)
+                  Expanded(
+                    child: WeightTrackerWidget(
+                      usesImperialUnits: usesImperialUnits,
                     ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.directions_walk,
-                        size: 32,
-                        color: Colors.green,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        todaySteps.toString(),
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      Text(
-                        'Steps',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
+                if (showWaterShortcut)
+                  Expanded(
+                    child: WaterSummaryWidget(
+                      usesImperialUnits: usesImperialUnits,
+                    ),
                   ),
-                ),
-              ),
-            ],
+                if (showStepsShortcut)
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.directions_walk,
+                            size: 32,
+                            color: Colors.green,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            todaySteps.toString(),
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          Text(
+                            'Steps',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
         
         IntakeVerticalList(
           day: DateTime.now(),
