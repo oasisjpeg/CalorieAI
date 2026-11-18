@@ -1,5 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
+part 'pending_health_sync_dbo.g.dart';
+
 @HiveType(typeId: 24)
 class PendingHealthSyncDBO extends HiveObject {
   @HiveField(0)
